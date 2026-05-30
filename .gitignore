@@ -1,0 +1,101 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# ─── Dependencies ────────────────────────────────────────────────────────────
+node_modules/
+
+# ─── Expo ────────────────────────────────────────────────────────────────────
+.expo/
+.expo-shared/
+dist/
+web-build/
+expo-env.d.ts
+
+# ─── Native (Prebuild / EAS) ─────────────────────────────────────────────────
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# Generated native folders (when using `npx expo prebuild`)
+/ios
+/android
+
+# ─── Metro ───────────────────────────────────────────────────────────────────
+.metro-health-check*
+
+# ─── Node.js ─────────────────────────────────────────────────────────────────
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+.turbo/
+.cache/
+
+# ─── Environment & Secrets ───────────────────────────────────────────────────
+.env
+.env.local
+.env*.local
+
+# ─── TypeScript ──────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ─── Testing & Coverage ──────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── macOS ───────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# ─── Windows ─────────────────────────────────────────────────────────────────
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# ─── Linux ───────────────────────────────────────────────────────────────────
+*~
+.directory
+.Trash-*
+
+# ─── IDEs & Editors ──────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Cursor IDE (lokale Agent-/Session-Daten)
+.cursor/
