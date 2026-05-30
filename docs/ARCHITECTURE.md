@@ -28,15 +28,15 @@ flowchart LR
 
 ### Kernprinzipien
 
-| Prinzip | Bedeutung |
-|---|---|
-| **Client-only** | Kein Server, keine API, keine Datenbank — alles läuft auf dem Gerät |
-| **JSON-basiert** | Restaurant-Listen, Metadaten und Konfiguration als versionierte JSON-Dateien |
-| **Offline-first** | Daten sind mit der App gebündelt; keine Netzwerk-Abhängigkeit für Kernfunktionen |
+| Prinzip                | Bedeutung                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| **Client-only**        | Kein Server, keine API, keine Datenbank — alles läuft auf dem Gerät                 |
+| **JSON-basiert**       | Restaurant-Listen, Metadaten und Konfiguration als versionierte JSON-Dateien        |
+| **Offline-first**      | Daten sind mit der App gebündelt; keine Netzwerk-Abhängigkeit für Kernfunktionen    |
 | **Schichten-Trennung** | UI, Logik, Daten und State sind klar getrennt (`screens`, `hooks`, `data`, `store`) |
-| **TypeScript überall** | Typen in `src/types/` sichern Datenverträge zwischen Schichten ab |
+| **TypeScript überall** | Typen in `src/types/` sichern Datenverträge zwischen Schichten ab                   |
 
-### Was bewusst *nicht* vorgesehen ist (Phase 1)
+### Was bewusst _nicht_ vorgesehen ist (Phase 1)
 
 - Kein REST- oder GraphQL-Backend
 - Keine Cloud-Datenbank (Firebase, Supabase, …)
@@ -68,18 +68,18 @@ celiacsafe/
 
 ### Was gehört wohin?
 
-| Ordner | Inhalt | Beispiele |
-|---|---|---|
-| **`screens/`** | Ganze Bildschirme, die Navigation ansteuert. Orchestrieren Hooks, Store und Components — enthalten **keine** tiefen Business-Logik-Details. | `BuscarScreen.tsx`, `MapaScreen.tsx` |
-| **`components/`** | Kleine, wiederverwendbare UI-Teile ohne eigene Datenquelle. Bekommen alles über Props. | `RestaurantCard.tsx`, `FilterChip.tsx` |
-| **`navigation/`** | Tab- und Stack-Navigator, Route-Typen, Tab-Icons. Keine UI-Logik. | `RootTabs.tsx` |
-| **`theme/`** | Zentrale Design-Werte — Farben, Schriften, Abstände. Keine Komponenten. | `colors.ts`, `spacing.ts` |
-| **`types/`** | Gemeinsame TypeScript-Definitionen, die mehrere Schichten nutzen. | `Restaurant.ts`, `FilterOptions.ts` |
-| **`data/`** | JSON-Dateien **und** Funktionen zum Laden/Parsen/Validieren. Keine React-Abhängigkeit. | `restaurants.json`, `loadRestaurants.ts` |
-| **`hooks/`** | Custom Hooks: kapseln Datenladen, Filterlogik, Favoriten. Verbinden `data/` mit UI/Store. | `useRestaurants.ts`, `useFavorites.ts` |
-| **`utils/`** | Pure Funktionen ohne React- oder Expo-Abhängigkeit. | `filterRestaurants.ts`, `formatDistance.ts` |
-| **`store/`** | Globaler State (Context, Zustand o. Ä.) für datenübergreifende Zustände. | `FavoritesContext.tsx` |
-| **`i18n/`** | Übersetzungsdateien und Hilfsfunktionen für Mehrsprachigkeit. | `es.ts`, `de.ts` |
+| Ordner            | Inhalt                                                                                                                                      | Beispiele                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| **`screens/`**    | Ganze Bildschirme, die Navigation ansteuert. Orchestrieren Hooks, Store und Components — enthalten **keine** tiefen Business-Logik-Details. | `BuscarScreen.tsx`, `MapaScreen.tsx`        |
+| **`components/`** | Kleine, wiederverwendbare UI-Teile ohne eigene Datenquelle. Bekommen alles über Props.                                                      | `RestaurantCard.tsx`, `FilterChip.tsx`      |
+| **`navigation/`** | Tab- und Stack-Navigator, Route-Typen, Tab-Icons. Keine UI-Logik.                                                                           | `RootTabs.tsx`                              |
+| **`theme/`**      | Zentrale Design-Werte — Farben, Schriften, Abstände. Keine Komponenten.                                                                     | `colors.ts`, `spacing.ts`                   |
+| **`types/`**      | Gemeinsame TypeScript-Definitionen, die mehrere Schichten nutzen.                                                                           | `Restaurant.ts`, `FilterOptions.ts`         |
+| **`data/`**       | JSON-Dateien **und** Funktionen zum Laden/Parsen/Validieren. Keine React-Abhängigkeit.                                                      | `restaurants.json`, `loadRestaurants.ts`    |
+| **`hooks/`**      | Custom Hooks: kapseln Datenladen, Filterlogik, Favoriten. Verbinden `data/` mit UI/Store.                                                   | `useRestaurants.ts`, `useFavorites.ts`      |
+| **`utils/`**      | Pure Funktionen ohne React- oder Expo-Abhängigkeit.                                                                                         | `filterRestaurants.ts`, `formatDistance.ts` |
+| **`store/`**      | Globaler State (Context, Zustand o. Ä.) für datenübergreifende Zustände.                                                                    | `FavoritesContext.tsx`                      |
+| **`i18n/`**       | Übersetzungsdateien und Hilfsfunktionen für Mehrsprachigkeit.                                                                               | `es.ts`, `de.ts`                            |
 
 ### Abhängigkeitsregeln
 
@@ -196,12 +196,12 @@ flowchart LR
 
 ### Wo liegt welcher State?
 
-| State | Ebene | Ort | Beispiel |
-|---|---|---|---|
-| UI-Zustand eines Screens | **Lokal** | `useState` im Screen | Suchbegriff, Sortierreihenfolge |
-| Geladene Daten + Ableitungen | **Hook** | `src/hooks/` | Restaurant-Liste nach Filter |
-| App-weite Persistenz | **Global** | `src/store/` | Favoriten, Sprache, Onboarding-Flag |
-| Statische Konfiguration | **Kein State** | `src/data/`, `src/theme/` | JSON-Dateien, Farben |
+| State                        | Ebene          | Ort                       | Beispiel                            |
+| ---------------------------- | -------------- | ------------------------- | ----------------------------------- |
+| UI-Zustand eines Screens     | **Lokal**      | `useState` im Screen      | Suchbegriff, Sortierreihenfolge     |
+| Geladene Daten + Ableitungen | **Hook**       | `src/hooks/`              | Restaurant-Liste nach Filter        |
+| App-weite Persistenz         | **Global**     | `src/store/`              | Favoriten, Sprache, Onboarding-Flag |
+| Statische Konfiguration      | **Kein State** | `src/data/`, `src/theme/` | JSON-Dateien, Farben                |
 
 ### Entscheidungsregel
 
@@ -221,15 +221,15 @@ Einheitliche Benennung hält das Projekt lesbar — besonders wichtig, wenn es w
 
 ### Dateien & Ordner
 
-| Art | Konvention | Beispiel |
-|---|---|---|
-| React-Komponente (Screen) | `PascalCase` + `Screen` | `BuscarScreen.tsx` |
-| React-Komponente (UI) | `PascalCase` | `RestaurantCard.tsx` |
-| Custom Hook | `camelCase` + `use`-Präfix | `useRestaurants.ts` |
-| Utility-Funktion | `camelCase` | `filterRestaurants.ts` |
-| TypeScript-Typ/Interface | `PascalCase` | `Restaurant.ts` |
-| JSON-Datendatei | `kebab-case` | `restaurants.json` |
-| Theme-Token | `camelCase` (Objekt-Keys) | `colors.primary` |
+| Art                       | Konvention                 | Beispiel               |
+| ------------------------- | -------------------------- | ---------------------- |
+| React-Komponente (Screen) | `PascalCase` + `Screen`    | `BuscarScreen.tsx`     |
+| React-Komponente (UI)     | `PascalCase`               | `RestaurantCard.tsx`   |
+| Custom Hook               | `camelCase` + `use`-Präfix | `useRestaurants.ts`    |
+| Utility-Funktion          | `camelCase`                | `filterRestaurants.ts` |
+| TypeScript-Typ/Interface  | `PascalCase`               | `Restaurant.ts`        |
+| JSON-Datendatei           | `kebab-case`               | `restaurants.json`     |
+| Theme-Token               | `camelCase` (Objekt-Keys)  | `colors.primary`       |
 
 ### Code
 
@@ -263,11 +263,11 @@ export const colors = { primary: '#A5D6A7', ... };
 
 ### Sprache im Code
 
-| Bereich | Sprache |
-|---|---|
-| Code (Variablen, Funktionen, Typen) | Englisch |
-| UI-Texte (sichtbar für Nutzer) | Spanisch (Primärsprache), später Deutsch via `i18n/` |
-| Dokumentation (`docs/`, `README.md`) | Deutsch |
+| Bereich                              | Sprache                                              |
+| ------------------------------------ | ---------------------------------------------------- |
+| Code (Variablen, Funktionen, Typen)  | Englisch                                             |
+| UI-Texte (sichtbar für Nutzer)       | Spanisch (Primärsprache), später Deutsch via `i18n/` |
+| Dokumentation (`docs/`, `README.md`) | Deutsch                                              |
 
 ---
 

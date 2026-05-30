@@ -16,11 +16,11 @@ Das Grundgerüst der App steht: Navigation, Theme, Projektstruktur, ESLint und P
 
 ## Tech-Stack
 
-| Technologie | Verwendung |
-|---|---|
-| **Expo SDK 52+** | Cross-Platform-Framework für iOS und Android |
-| **React Native + TypeScript** | UI und typsichere Entwicklung |
-| **React Navigation 7** | Bottom-Tab-Navigation zwischen den Hauptbereichen |
+| Technologie                   | Verwendung                                        |
+| ----------------------------- | ------------------------------------------------- |
+| **Expo SDK 52+**              | Cross-Platform-Framework für iOS und Android      |
+| **React Native + TypeScript** | UI und typsichere Entwicklung                     |
+| **React Navigation 7**        | Bottom-Tab-Navigation zwischen den Hauptbereichen |
 
 Weitere Tools: ESLint, Prettier, `@expo/vector-icons`
 
@@ -86,33 +86,33 @@ celiacsafe/
 └── package.json
 ```
 
-| Ordner | Beschreibung |
-|---|---|
-| `src/screens/` | Vollständige App-Bildschirme — ein Screen pro Tab oder Flow |
+| Ordner            | Beschreibung                                                 |
+| ----------------- | ------------------------------------------------------------ |
+| `src/screens/`    | Vollständige App-Bildschirme — ein Screen pro Tab oder Flow  |
 | `src/components/` | Kleine, wiederverwendbare UI-Teile (Buttons, Karten, Badges) |
-| `src/navigation/` | Tab- und Stack-Navigator, Routing-Konfiguration |
-| `src/theme/` | Zentrales Design-System (Farben, Typografie, Spacing) |
-| `src/types/` | Gemeinsame TypeScript-Definitionen (Restaurant, Filter, …) |
-| `src/data/` | Statische JSON-Daten und Daten-Pipeline-Quellen |
-| `src/hooks/` | Custom Hooks (z. B. Favoriten, Suche, Standort) |
-| `src/utils/` | Pure Hilfsfunktionen ohne React-Abhängigkeit |
-| `src/store/` | Globaler App-State (Context, Zustand o. Ä.) |
-| `src/i18n/` | Mehrsprachige Texte und Lokalisierung |
+| `src/navigation/` | Tab- und Stack-Navigator, Routing-Konfiguration              |
+| `src/theme/`      | Zentrales Design-System (Farben, Typografie, Spacing)        |
+| `src/types/`      | Gemeinsame TypeScript-Definitionen (Restaurant, Filter, …)   |
+| `src/data/`       | Statische JSON-Daten und Daten-Pipeline-Quellen              |
+| `src/hooks/`      | Custom Hooks (z. B. Favoriten, Suche, Standort)              |
+| `src/utils/`      | Pure Hilfsfunktionen ohne React-Abhängigkeit                 |
+| `src/store/`      | Globaler App-State (Context, Zustand o. Ä.)                  |
+| `src/i18n/`       | Mehrsprachige Texte und Lokalisierung                        |
 
 ---
 
 ## Roadmap
 
-| Modul | Status | Inhalt |
-|---|---|---|
-| **M01** | ✅ | Setup — Expo, Navigation, Theme, ESLint/Prettier |
-| **M02** | ⏳ | Datenmodell & JSON-Pipeline |
-| **M03** | ⏳ | Restaurant-Liste |
-| **M04** | ⏳ | Filter & Suche |
-| **M05** | ⏳ | Karte (Mapa) |
-| **M06** | ⏳ | Favoriten |
-| **M07** | ⏳ | Profil & Einstellungen |
-| **M08** | ⏳ | Community (Comunidad) |
+| Modul   | Status | Inhalt                                           |
+| ------- | ------ | ------------------------------------------------ |
+| **M01** | ✅     | Setup — Expo, Navigation, Theme, ESLint/Prettier |
+| **M02** | ⏳     | Datenmodell & JSON-Pipeline                      |
+| **M03** | ⏳     | Restaurant-Liste                                 |
+| **M04** | ⏳     | Filter & Suche                                   |
+| **M05** | ⏳     | Karte (Mapa)                                     |
+| **M06** | ⏳     | Favoriten                                        |
+| **M07** | ⏳     | Profil & Einstellungen                           |
+| **M08** | ⏳     | Community (Comunidad)                            |
 
 ---
 
