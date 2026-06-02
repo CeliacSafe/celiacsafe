@@ -4,9 +4,10 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import BadgePill from '../components/BadgePill';
 import { getRestaurantById } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
+import type { MapaStackParamList } from '../navigation/MapaStack';
 import { colors } from '../theme/colors';
 
-type Props = NativeStackScreenProps<BuscarStackParamList, 'RestaurantDetail'>;
+type Props = NativeStackScreenProps<BuscarStackParamList | MapaStackParamList, 'RestaurantDetail'>;
 
 export default function DetailScreen({ route }: Props) {
   const { restaurantId } = route.params;

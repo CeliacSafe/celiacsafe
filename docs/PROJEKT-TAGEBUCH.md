@@ -134,3 +134,37 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 - Marker und Clustering vorbereiten
 
 ---
+
+## 2026-06-02 — M05 abgeschlossen
+
+**Heute geschafft:**
+
+- Geocoding-Skript mit Nominatim und Stadt-Fallback
+- 107 Restaurants haben jetzt Koordinaten
+- `react-native-maps` integriert
+- `CustomMarker` im Brand-Design
+- `RestaurantBottomSheet` mit Aktionen (Anrufen, Webseite, Route, Detail)
+- `MapaStack` für Detail-Navigation aus der Karte
+- `useUserLocation`-Hook + `MyLocationButton`
+- Region-Quick-Jumps oben (España, Madrid, Barcelona, Mallorca, …)
+- Filter aus M04 wirken auch auf der Karte
+- Marker-Performance: `React.memo`, `tracksViewChanges={false}`, `RestaurantMapMarker`
+
+**Gelernt:**
+
+- Plattform-spezifische APIs (Apple Maps vs. Google Maps)
+- Native Marker-Performance (`tracksViewChanges`)
+- Geocoding über öffentliche APIs
+- Standort-Berechtigungen (When-In-Use)
+- `animateToRegion` für sanfte Karten-Übergänge
+
+**Aufwand insgesamt:** ~12 Std über 7 Tage  
+**Stimmung:** Karten machen einfach Spaß
+
+### Nächster Schritt
+
+**Modul M06 — Volle Detail-Ansicht**
+
+- DetailScreen ausbauen (Bilder, Öffnungszeiten, vollständige Infos)
+
+---

@@ -30,4 +30,3 @@ export const SORT_OPTIONS = [
     },
   },
 ] as const;
-

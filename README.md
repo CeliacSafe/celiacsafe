@@ -8,19 +8,21 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
-**In Entwicklung — M04 abgeschlossen: Filter & Suche**
+**In Entwicklung — M05 abgeschlossen: Karte mit Pins und Bottom-Sheet**
 
-Die Suchliste ist vollständig filterbar: Textsuche mit Akzent-Normalisierung, sieben Venue-Type-Pills, erweiterte Filter im Bottom-Sheet (Region, Preis, Verifizierung, Sortierung), Live-Counter und „Filter zurücksetzen“ im Leerzustand. Globaler Filter-State läuft über Zustand (`useFilterStore`).
+Die Kartenansicht zeigt alle Restaurants als Marken-Pins auf einer Spanien-Karte. Marker-Tap öffnet ein Bottom-Sheet mit Aktionen (Anrufen, Website, Route, Detail). Filter aus M04 wirken auch auf der Karte. Standort-Zentrierung und Region-Quick-Jumps (Madrid, Barcelona, Mallorca, …) sind integriert.
 
 ---
 
 ## Tech-Stack
 
-| Technologie                   | Verwendung                                        |
-| ----------------------------- | ------------------------------------------------- |
-| **Expo SDK 52+**              | Cross-Platform-Framework für iOS und Android      |
-| **React Native + TypeScript** | UI und typsichere Entwicklung                     |
-| **React Navigation 7**        | Bottom-Tab-Navigation zwischen den Hauptbereichen |
+| Technologie                   | Verwendung                                         |
+| ----------------------------- | -------------------------------------------------- |
+| **Expo SDK 52+**              | Cross-Platform-Framework für iOS und Android       |
+| **React Native + TypeScript** | UI und typsichere Entwicklung                      |
+| **React Navigation 7**        | Bottom-Tab-Navigation zwischen den Hauptbereichen  |
+| **react-native-maps**         | Karte (Apple Maps / Google Maps je nach Plattform) |
+| **expo-location**             | Standort nur on-demand (My-Location-Button)        |
 
 Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@gorhom/bottom-sheet`, `@expo/vector-icons`
 
@@ -32,6 +34,7 @@ Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@gorhom/bottom-sh
 
 - [Node.js](https://nodejs.org/) (LTS empfohlen)
 - [Expo Go](https://expo.dev/go) auf dem Android-Gerät (oder iOS)
+- Python 3 + `pip install -r scripts/requirements.txt` (für Daten-Pipeline)
 
 ### Installation und Start
 
@@ -56,6 +59,14 @@ npm run start:tunnel   # explizit Tunnel (gleich wie npm start)
 npm run start:lan      # nur LAN, wenn Tunnel Probleme macht
 ```
 
+### Daten-Pipeline
+
+```bash
+npm run geocode      # v3.xlsx → v4.xlsx mit Koordinaten (Nominatim + Stadt-Fallback)
+npm run data:build   # v4.xlsx → src/data/restaurants.json
+python scripts/verify-geo.py   # Koordinaten in JSON prüfen
+```
+
 ### Code-Qualität
 
 ```bash
@@ -66,18 +77,39 @@ npm test          # Jest — Such-/Filter-Logik (searchAndFilter)
 
 ---
 
+## Geo-Daten
+
+- Jedes Restaurant in `src/data/restaurants.json` enthält **`latitude`** und **`longitude`** (107 Einträge nach Geocoding).
+- **`scripts/geocode.py`**: Online-Geocoding via [Nominatim](https://nominatim.openstreetmap.org/) (1,2 s Pause pro Request), Fallback auf Stadt-Mittelpunkt; optional `--fallback-only`.
+- **`npm run geocode`**: Erzeugt `data-source/CeliacSafe_Datenbank_v4.xlsx` aus v3.
+- **`npm run data:build`**: Exportiert die angereicherte Excel nach JSON für die App.
+
+---
+
+## Berechtigungen
+
+| Berechtigung               | Wann                                    | Zweck                                                      |
+| -------------------------- | --------------------------------------- | ---------------------------------------------------------- |
+| **Standort (When In Use)** | Nur beim Tap auf den My-Location-Button | Karte auf Nutzerposition zentrieren, blauer Standort-Punkt |
+
+Es wird **kein** Hintergrund-Standort abgefragt. Der Berechtigungstext steht in `app.json` (`NSLocationWhenInUseUsageDescription`).
+
+---
+
 ## Projektstruktur
 
 ```
 celiacsafe/
 ├── App.tsx                 # Einstiegspunkt (SafeArea, Navigation)
+├── scripts/                # geocode.py, excel-to-json.py, verify-geo.py
+├── data-source/            # Excel-Quellen (v3, v4)
 ├── src/
 │   ├── screens/            # Bildschirme der App (Buscar, Mapa, Favoritos, …)
 │   ├── components/         # Wiederverwendbare UI-Bausteine
 │   ├── navigation/         # React-Navigation-Konfiguration (Bottom Tabs)
 │   ├── theme/              # Farben, Schriften, Abstände
 │   ├── types/              # TypeScript-Typen und Interfaces
-│   ├── data/               # Statische Daten (JSON, Restaurant-Listen)
+│   ├── data/               # Statische Daten (JSON, quickJumps, filterOptions)
 │   ├── hooks/              # Eigene React-Hooks
 │   ├── utils/              # Hilfsfunktionen
 │   ├── store/              # App-State-Management
@@ -85,19 +117,6 @@ celiacsafe/
 ├── assets/                 # Icons, Splash-Screen, Bilder
 └── package.json
 ```
-
-| Ordner            | Beschreibung                                                 |
-| ----------------- | ------------------------------------------------------------ |
-| `src/screens/`    | Vollständige App-Bildschirme — ein Screen pro Tab oder Flow  |
-| `src/components/` | Kleine, wiederverwendbare UI-Teile (Buttons, Karten, Badges) |
-| `src/navigation/` | Tab- und Stack-Navigator, Routing-Konfiguration              |
-| `src/theme/`      | Zentrales Design-System (Farben, Typografie, Spacing)        |
-| `src/types/`      | Gemeinsame TypeScript-Definitionen (Restaurant, Filter, …)   |
-| `src/data/`       | Statische JSON-Daten und Daten-Pipeline-Quellen              |
-| `src/hooks/`      | Custom Hooks (z. B. Favoriten, Suche, Standort)              |
-| `src/utils/`      | Pure Hilfsfunktionen ohne React-Abhängigkeit                 |
-| `src/store/`      | Globaler App-State (Context, Zustand o. Ä.)                  |
-| `src/i18n/`       | Mehrsprachige Texte und Lokalisierung                        |
 
 ---
 
@@ -107,11 +126,10 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 
 - `RestaurantCard` - Hauptkarte der Suchliste mit Bild, Badges und Favoriten-Icon
 - `BadgePill` - Einheitliche Tag-/Badge-Darstellung fuer Status, Cuisine und Preis
-- `SkeletonCard` - Lade-Platzhalter mit Pulse-Animation fuer Listen
-- `EmptyState` - Leerer Zustand mit Icon, Titel und optionaler Beschreibung
-- `SearchBar` - Suchfeld mit Clear-Button, angebunden an `useFilterStore`
-- `FilterPills` - Horizontale Venue-Type-Pills und „Más filtros“-Einstieg
-- `FilterBottomSheet` - Region, Preis, Verifizierung (FACE/AOECS), Sortierung
+- `SearchBar`, `FilterPills`, `FilterBottomSheet` - Suche und Filter (M04)
+- `CustomMarker`, `RestaurantMapMarker` - Marken-Pins auf der Karte
+- `RestaurantBottomSheet` - Vorschau und Aktionen beim Marker-Tap
+- `MyLocationButton`, `RegionQuickJumps` - Standort und Karten-Shortcuts
 
 ---
 
@@ -119,18 +137,28 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 
 - **Suche** in Name, Stadt, Region und Cuisine (mehrere Begriffe = UND)
 - **Akzent-insensitive Suche** — z. B. „Cataluna“ findet „Cataluña“ (Unicode-NFD)
-- **7 Venue-Type-Filter-Pills** (Restaurant, Café, Hotel, …)
-- **Bottom-Sheet** mit Region, Preis, Verifizierung und Sortierung (`@gorhom/bottom-sheet`)
-- **Live-Counter** der gefilterten Ergebnisse
-- **Filter zurücksetzen** — im Bottom-Sheet und im Empty-State („Limpiar filtros“)
+- **7 Venue-Type-Filter-Pills**, Bottom-Sheet mit Region/Preis/Verifizierung/Sortierung
+- **Live-Counter**, **Filter zurücksetzen** im Leerzustand
+- Globaler State: **`useFilterStore`** + **`applyFilters`**
+
+---
+
+## Features (M05 — Karte)
+
+- **107 Pins** auf Spanien-Karte (`react-native-maps`, `PROVIDER_DEFAULT`)
+- **RestaurantBottomSheet** — Anrufen, Website, Route, Navigation zu Detail
+- **MapaStack** — Detail aus dem Mapa-Tab mit Zurück zur Karte
+- **M04-Filter** wirken auf sichtbare Pins (gleicher Zustand-Store)
+- **My Location** — `expo-location`, Berechtigung nur on-demand
+- **Region-Quick-Jumps** — España, Madrid, Barcelona, Mallorca, Valencia, Andalucía, Euskadi
 
 ---
 
 ## State Management
 
 - **Zustand** für globalen Filter-State (`src/store/filterStore.ts`)
-- **`useFilterStore`** wird in `SearchBar`, `FilterPills`, `FilterBottomSheet` und `BuscarScreen` geteilt
-- **`applyFilters`** (`src/utils/searchAndFilter.ts`) kombiniert Suche, Filter und Sortierung; getestet mit Jest
+- **`useFilterStore`** in Buscar- und Mapa-Flow geteilt
+- **`applyFilters`** kombiniert Suche, Filter und Sortierung; getestet mit Jest
 
 ---
 
@@ -142,8 +170,10 @@ graph TD
   RootTabs --> BuscarStack
   BuscarStack --> BuscarList
   BuscarStack --> RestaurantDetail
+  RootTabs --> MapaStack
+  MapaStack --> MapaMain
+  MapaStack --> RestaurantDetail
   RootTabs --> ComunidadScreen
-  RootTabs --> MapaScreen
   RootTabs --> FavoritosScreen
   RootTabs --> PerfilScreen
 ```
@@ -158,7 +188,7 @@ graph TD
 | **M02** | ✅     | Datenmodell & JSON-Pipeline                      |
 | **M03** | ✅     | Restaurant-Liste mit Card-Komponente             |
 | **M04** | ✅     | Filter & Suche                                   |
-| **M05** | ⏳     | Karte (Mapa)                                     |
+| **M05** | ✅     | Karte (Mapa)                                     |
 | **M06** | ⏳     | Volle Detail-Ansicht                             |
 | **M07** | ⏳     | Profil & Einstellungen                           |
 | **M08** | ⏳     | Community (Comunidad)                            |

@@ -20,4 +20,3 @@ export const VENUE_TYPE_NAMES: Record<VenueType, LocalizedLabel> = {
   burger_joint: { es: 'Hamburgueserias', en: 'Burger places', de: 'Burgerlokale' },
   asian_restaurant: { es: 'Asiatico', en: 'Asian', de: 'Asiatisch' },
 };
-

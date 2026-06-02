@@ -130,7 +130,12 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                   onPress={() => toggleRegion(regionCode)}
                   style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
                 >
-                  <Text style={[styles.chipLabel, active ? styles.chipLabelActive : styles.chipLabelInactive]}>
+                  <Text
+                    style={[
+                      styles.chipLabel,
+                      active ? styles.chipLabelActive : styles.chipLabelInactive,
+                    ]}
+                  >
                     {REGION_NAMES[regionCode][chipLabelsByLanguage[language]]}
                   </Text>
                 </Pressable>
@@ -148,7 +153,12 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                   onPress={() => togglePriceRange(range)}
                   style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
                 >
-                  <Text style={[styles.chipLabel, active ? styles.chipLabelActive : styles.chipLabelInactive]}>
+                  <Text
+                    style={[
+                      styles.chipLabel,
+                      active ? styles.chipLabelActive : styles.chipLabelInactive,
+                    ]}
+                  >
                     {range}
                   </Text>
                 </Pressable>
@@ -176,7 +186,12 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProp
                   onPress={() => setSortBy(option.code)}
                   style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
                 >
-                  <Text style={[styles.chipLabel, active ? styles.chipLabelActive : styles.chipLabelInactive]}>
+                  <Text
+                    style={[
+                      styles.chipLabel,
+                      active ? styles.chipLabelActive : styles.chipLabelInactive,
+                    ]}
+                  >
                     {option.labels[chipLabelsByLanguage[language]]}
                   </Text>
                 </Pressable>
@@ -290,4 +305,3 @@ const styles = StyleSheet.create({
 FilterBottomSheet.displayName = 'FilterBottomSheet';
 
 export default FilterBottomSheet;
-

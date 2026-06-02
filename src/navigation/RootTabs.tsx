@@ -4,9 +4,9 @@ import type { ComponentProps } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BuscarStack from './BuscarStack';
+import MapaStack from './MapaStack';
 import { ComunidadScreen } from '../screens/ComunidadScreen';
 import { FavoritosScreen } from '../screens/FavoritosScreen';
-import { MapaScreen } from '../screens/MapaScreen';
 import { PerfilScreen } from '../screens/PerfilScreen';
 import { colors } from '../theme/colors';
 
@@ -100,8 +100,9 @@ export function RootTabs() {
       />
       <Tab.Screen
         name="Mapa"
-        component={MapaScreen}
+        component={MapaStack}
         options={{
+          headerShown: false,
           tabBarLabel: tabConfig.Mapa.label,
           tabBarIcon: createTabBarIcon('Mapa'),
         }}

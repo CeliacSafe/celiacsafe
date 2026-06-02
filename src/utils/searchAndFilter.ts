@@ -15,7 +15,11 @@ export interface FilterCriteria {
 }
 
 export function normalize(s: string): string {
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  return s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
 }
 
 export function matchesQuery(restaurant: Restaurant, query: string): boolean {
@@ -94,4 +98,3 @@ export function applyFilters(
     .filter((r) => matchesFilter(r, filterCriteria));
   return sortRestaurants(filtered, sortBy);
 }
-

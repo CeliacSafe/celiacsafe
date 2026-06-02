@@ -1,10 +1,5 @@
 import type { Restaurant } from '../../types/Restaurant';
-import {
-  applyFilters,
-  matchesFilter,
-  matchesQuery,
-  sortRestaurants,
-} from '../searchAndFilter';
+import { applyFilters, matchesFilter, matchesQuery, sortRestaurants } from '../searchAndFilter';
 
 function createRestaurant(overrides: Partial<Restaurant>): Restaurant {
   return {
@@ -218,4 +213,3 @@ describe('applyFilters', () => {
     expect(result.map((r) => r.name)).toEqual(['Avocado Mallorca', 'As de Bastos']);
   });
 });
-
