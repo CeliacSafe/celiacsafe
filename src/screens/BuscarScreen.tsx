@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type {
@@ -9,22 +9,82 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import EmptyState from '../components/EmptyState';
+import FilterBottomSheet, { type FilterBottomSheetRef } from '../components/FilterBottomSheet';
+import FilterPills from '../components/FilterPills';
 import RestaurantCard from '../components/RestaurantCard';
+import SearchBar from '../components/SearchBar';
 import SkeletonCard from '../components/SkeletonCard';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
+import { useFilterStore } from '../store/filterStore';
 import type { Restaurant } from '../types/Restaurant';
 import { colors } from '../theme/colors';
+import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XS, SPACE_XXL } from '../theme/spacing';
 import { formatResultCount } from '../utils/pluralize';
+import { applyFilters } from '../utils/searchAndFilter';
 
 type BuscarNavigationProp = NativeStackNavigationProp<BuscarStackParamList, 'BuscarList'>;
 type BuscarScreenProps = NativeStackScreenProps<BuscarStackParamList, 'BuscarList'>;
 const ITEM_HEIGHT = 320;
 
 export function BuscarScreen(_screenProps: BuscarScreenProps) {
+  const filterSheetRef = useRef<FilterBottomSheetRef>(null);
   const navigation = useNavigation<BuscarNavigationProp>();
   const { restaurants, loading, error, refetch } = useRestaurants();
+  const searchQuery = useFilterStore((state) => state.searchQuery);
+  const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
+  const selectedRegions = useFilterStore((state) => state.selectedRegions);
+  const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
+  const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
+  const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
+  const sortBy = useFilterStore((state) => state.sortBy);
+  const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
+  const resetFilters = useFilterStore((state) => state.resetFilters);
   const [refreshing, setRefreshing] = useState(false);
+  const lang = 'es';
+
+  const emptyStateTexts = {
+    es: {
+      filteredTitle: 'Sin resultados',
+      filteredDescription: 'Prueba a quitar algunos filtros',
+      clearAction: 'Limpiar filtros',
+      defaultTitle: 'Aun no hay restaurantes',
+    },
+    en: {
+      filteredTitle: 'No results',
+      filteredDescription: 'Try removing some filters',
+      clearAction: 'Clear filters',
+      defaultTitle: 'No restaurants yet',
+    },
+    de: {
+      filteredTitle: 'Keine Ergebnisse',
+      filteredDescription: 'Versuche, einige Filter zu entfernen',
+      clearAction: 'Filter zuruecksetzen',
+      defaultTitle: 'Noch keine Restaurants',
+    },
+  } as const;
+
+  const filterCriteria = useMemo(
+    () => ({
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+    }),
+    [
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+    ]
+  );
+
+  const filteredRestaurants = useMemo(
+    () => applyFilters(restaurants, searchQuery, filterCriteria, sortBy),
+    [restaurants, searchQuery, filterCriteria, sortBy]
+  );
 
   // Navigation zum Detail-Screen pro Restaurant.
   const openDetail = useCallback(
@@ -60,20 +120,18 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           <Text style={styles.subtitle}>Guia esencial sin gluten</Text>
         </View>
 
-        <View style={styles.searchBarPlaceholder}>
-          <MaterialCommunityIcons name="magnify" size={18} color={colors.textSecondary} />
-          <Text style={styles.searchPlaceholderText}>Buscar restaurantes, cafes o lugares...</Text>
-        </View>
+        <SearchBar placeholder="Buscar restaurantes, cafés o lugares..." />
+        <FilterPills language={lang} onMoreFiltersPress={() => filterSheetRef.current?.expand()} />
 
         <View style={styles.counterRow}>
           <MaterialCommunityIcons name="star-four-points" size={14} color={colors.primary} />
           <Text style={styles.counterText}>
-            {formatResultCount(restaurants.length).toUpperCase()}
+            {formatResultCount(filteredRestaurants.length, lang).toUpperCase()}
           </Text>
         </View>
       </View>
     ),
-    [restaurants.length]
+    [filteredRestaurants.length, lang]
   );
 
   return (
@@ -88,18 +146,29 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           renderItem={() => <SkeletonCard />}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         />
       ) : (
         <FlatList
-          data={restaurants}
+          data={filteredRestaurants}
           ListHeaderComponent={listHeader}
           stickyHeaderIndices={[0]}
           ListEmptyComponent={
-            <EmptyState
-              iconName="food-off"
-              title="Noch keine Restaurants gefunden"
-              description={error ?? undefined}
-            />
+            hasActiveFilters() ? (
+              <EmptyState
+                iconName="filter-off-outline"
+                title={emptyStateTexts[lang].filteredTitle}
+                description={emptyStateTexts[lang].filteredDescription}
+                actionLabel={emptyStateTexts[lang].clearAction}
+                onAction={resetFilters}
+              />
+            ) : (
+              <EmptyState
+                iconName="food-off"
+                title={emptyStateTexts[lang].defaultTitle}
+                description={error ?? undefined}
+              />
+            )
           }
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
@@ -117,8 +186,10 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
             index,
           })}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         />
       )}
+      <FilterBottomSheet ref={filterSheetRef} language={lang} />
     </SafeAreaView>
   );
 }
@@ -130,12 +201,12 @@ const styles = StyleSheet.create({
   },
   stickyHeader: {
     backgroundColor: colors.background,
-    paddingTop: 8,
-    paddingBottom: 12,
+    paddingTop: SPACE_SM,
+    paddingBottom: SPACE_MD,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: SPACE_XL,
+    paddingVertical: SPACE_LG,
   },
   title: {
     color: colors.primary,
@@ -143,31 +214,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   subtitle: {
-    marginTop: 4,
-    color: colors.textSecondary,
-    fontSize: 14,
-  },
-  searchBarPlaceholder: {
-    marginHorizontal: 20,
-    marginTop: 4,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    backgroundColor: colors.surface,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  searchPlaceholderText: {
+    marginTop: SPACE_XS,
     color: colors.textSecondary,
     fontSize: 14,
   },
   counterRow: {
-    marginTop: 12,
-    marginHorizontal: 20,
+    marginTop: SPACE_MD,
+    marginHorizontal: SPACE_XL,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: SPACE_SM - 2,
   },
   counterText: {
     color: colors.primary,
@@ -176,7 +232,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
   },
   listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingHorizontal: SPACE_XL,
+    paddingBottom: SPACE_XXL,
   },
 });

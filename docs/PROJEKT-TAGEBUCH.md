@@ -55,6 +55,7 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 ---
 
 <!-- Nächster Eintrag: Eintrag #002 — M02 Datenmodell & JSON-Pipeline -->
+
 ## Eintrag #002 — M03 Listenansicht abgeschlossen
 
 **Datum:** 2. Juni 2026  
@@ -91,5 +92,45 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 - SearchBar vom Placeholder zur funktionalen Suche ausbauen
 - Filterchips (Kueche, Region, Preis, Verifizierung) einfuehren
 - Ergebniszaehler und Empty-State mit aktiven Filtern verknuepfen
+
+---
+
+## 2026-06-02 — M04 abgeschlossen
+
+**Heute geschafft:**
+
+- Zustand als State-Library kennengelernt
+- `filterStore` mit allen Filter-States
+- `searchAndFilter`-Util mit Akzent-Normalisierung
+- Jest-Tests grün (`matchesQuery`, `matchesFilter`, `sortRestaurants`)
+- `SearchBar`-Komponente mit Clear-Button
+- `FilterPills` horizontal scrollbar
+- `@gorhom/bottom-sheet` eingerichtet
+- `FilterBottomSheet` mit Region, Preis, Verifizierung, Sort
+- `EmptyState` mit „Filter zurücksetzen“-Action
+- Theme-Polish: `spacing.ts`, `radii.ts`, Farben nur aus `colors.ts`
+
+**Probleme & Lösungen:**
+
+- Expo-Tunnel zeitweise instabil → LAN-Start (`npm run start:lan`) als Fallback
+- OneDrive-Pfad blockierte Metro → Entwicklung unter `C:\Dev\celiacsafe`
+
+**Gelernt:**
+
+- Globaler vs. lokaler State
+- `useMemo` für berechnete Werte
+- Unicode-Normalisierung (NFD)
+- Bottom-Sheet-Patterns mit `forwardRef`
+- Test-Driven Development für Logik-Funktionen
+
+**Aufwand insgesamt:** ~6 Std über 2 Tage  
+**Stimmung:** Filter machen die App fertig anzufühlen
+
+### Nächster Schritt
+
+**Modul M05 — Karte (Mapa)**
+
+- Restaurants auf Karte darstellen
+- Marker und Clustering vorbereiten
 
 ---

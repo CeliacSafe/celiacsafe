@@ -2,6 +2,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
+import { RADIUS_PILL } from '../theme/radii';
+import { SPACE_MD, SPACE_SM, SPACE_XS } from '../theme/spacing';
 
 type BadgeVariant = 'sinGluten' | 'verified' | 'priceRange' | 'cuisine' | 'neutral';
 
@@ -19,29 +21,29 @@ type VariantStyle = {
 
 const variantStyles: Record<BadgeVariant, VariantStyle> = {
   sinGluten: {
-    backgroundColor: 'rgba(46, 125, 50, 0.45)',
+    backgroundColor: colors.sinGlutenBg,
     textColor: colors.primary,
     iconColor: colors.primary,
   },
   verified: {
-    backgroundColor: '#1B5E20',
-    textColor: '#FFFFFF',
-    iconColor: '#FFFFFF',
+    backgroundColor: colors.verifiedGreen,
+    textColor: colors.white,
+    iconColor: colors.white,
   },
   priceRange: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    textColor: '#FFFFFF',
-    iconColor: '#FFFFFF',
+    backgroundColor: colors.overlayWhite20,
+    textColor: colors.white,
+    iconColor: colors.white,
   },
   cuisine: {
-    backgroundColor: '#2A2A2A',
+    backgroundColor: colors.cuisineSurface,
     textColor: colors.textSecondary,
     iconColor: colors.textSecondary,
   },
   neutral: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    textColor: '#FFFFFF',
-    iconColor: '#FFFFFF',
+    backgroundColor: colors.overlayWhite15,
+    textColor: colors.white,
+    iconColor: colors.white,
   },
 };
 
@@ -68,12 +70,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    borderRadius: RADIUS_PILL,
+    paddingVertical: SPACE_SM - 2,
+    paddingHorizontal: SPACE_MD,
   },
   icon: {
-    marginRight: 4,
+    marginRight: SPACE_XS,
   },
   label: {
     fontSize: 11,

@@ -6,6 +6,8 @@ import BadgePill from './BadgePill';
 import { getLocalizedName } from '../i18n/getLocalizedName';
 import { REGION_NAMES } from '../i18n/regions';
 import { colors } from '../theme/colors';
+import { RADIUS_CARD, RADIUS_HEART } from '../theme/radii';
+import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XS } from '../theme/spacing';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import type { Restaurant } from '../types/Restaurant';
 
@@ -42,7 +44,7 @@ function RestaurantCard({
       <Pressable
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
-        android_ripple={{ color: 'rgba(255, 255, 255, 0.12)' }}
+        android_ripple={{ color: colors.rippleLight }}
         onPress={onPress}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
@@ -125,13 +127,13 @@ function RestaurantCard({
 const styles = StyleSheet.create({
   cardWrapper: {
     position: 'relative',
-    marginBottom: 16,
+    marginBottom: SPACE_LG,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: RADIUS_CARD,
     overflow: 'hidden',
-    shadowColor: '#000000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -157,26 +159,26 @@ const styles = StyleSheet.create({
   },
   badgeStack: {
     position: 'absolute',
-    top: 12,
-    left: 12,
-    gap: 6,
+    top: SPACE_MD,
+    left: SPACE_MD,
+    gap: SPACE_SM - 2,
   },
   heartButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
+    top: SPACE_MD,
+    right: SPACE_MD,
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: RADIUS_HEART,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#00000080',
+    backgroundColor: colors.overlayDark,
   },
   heartButtonPressed: {
     opacity: 0.85,
   },
   textContainer: {
-    padding: 16,
+    padding: SPACE_LG,
   },
   name: {
     color: colors.textPrimary,
@@ -185,18 +187,18 @@ const styles = StyleSheet.create({
     fontFamily: Platform.select({ ios: 'Helvetica Neue', android: 'sans-serif-medium' }),
   },
   location: {
-    marginTop: 4,
+    marginTop: SPACE_XS,
     color: colors.textSecondary,
     fontSize: 14,
   },
   tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
-    marginTop: 8,
+    gap: SPACE_SM - 2,
+    marginTop: SPACE_SM,
   },
   priceRow: {
-    marginTop: 8,
+    marginTop: SPACE_SM,
     flexDirection: 'row',
   },
 });

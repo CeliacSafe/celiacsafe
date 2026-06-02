@@ -8,9 +8,9 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
-**In Entwicklung — M03 abgeschlossen: Restaurant-Liste mit Card-Komponente**
+**In Entwicklung — M04 abgeschlossen: Filter & Suche**
 
-Die Kernfunktionen der Listenansicht stehen: Stack-Navigation (`BuscarList` -> `RestaurantDetail`), wiederverwendbare Card-Komponenten, Skeleton-Loader, Pull-to-Refresh und lokalisierbarer Ergebnis-Counter.
+Die Suchliste ist vollständig filterbar: Textsuche mit Akzent-Normalisierung, sieben Venue-Type-Pills, erweiterte Filter im Bottom-Sheet (Region, Preis, Verifizierung, Sortierung), Live-Counter und „Filter zurücksetzen“ im Leerzustand. Globaler Filter-State läuft über Zustand (`useFilterStore`).
 
 ---
 
@@ -22,7 +22,7 @@ Die Kernfunktionen der Listenansicht stehen: Stack-Navigation (`BuscarList` -> `
 | **React Native + TypeScript** | UI und typsichere Entwicklung                     |
 | **React Navigation 7**        | Bottom-Tab-Navigation zwischen den Hauptbereichen |
 
-Weitere Tools: ESLint, Prettier, `@expo/vector-icons`
+Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@gorhom/bottom-sheet`, `@expo/vector-icons`
 
 ---
 
@@ -61,6 +61,7 @@ npm run start:lan      # nur LAN, wenn Tunnel Probleme macht
 ```bash
 npm run lint      # ESLint — Fehler und Warnungen prüfen
 npm run format    # Prettier — Code automatisch formatieren
+npm test          # Jest — Such-/Filter-Logik (searchAndFilter)
 ```
 
 ---
@@ -108,6 +109,28 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - `BadgePill` - Einheitliche Tag-/Badge-Darstellung fuer Status, Cuisine und Preis
 - `SkeletonCard` - Lade-Platzhalter mit Pulse-Animation fuer Listen
 - `EmptyState` - Leerer Zustand mit Icon, Titel und optionaler Beschreibung
+- `SearchBar` - Suchfeld mit Clear-Button, angebunden an `useFilterStore`
+- `FilterPills` - Horizontale Venue-Type-Pills und „Más filtros“-Einstieg
+- `FilterBottomSheet` - Region, Preis, Verifizierung (FACE/AOECS), Sortierung
+
+---
+
+## Features (M04 — Filter & Suche)
+
+- **Suche** in Name, Stadt, Region und Cuisine (mehrere Begriffe = UND)
+- **Akzent-insensitive Suche** — z. B. „Cataluna“ findet „Cataluña“ (Unicode-NFD)
+- **7 Venue-Type-Filter-Pills** (Restaurant, Café, Hotel, …)
+- **Bottom-Sheet** mit Region, Preis, Verifizierung und Sortierung (`@gorhom/bottom-sheet`)
+- **Live-Counter** der gefilterten Ergebnisse
+- **Filter zurücksetzen** — im Bottom-Sheet und im Empty-State („Limpiar filtros“)
+
+---
+
+## State Management
+
+- **Zustand** für globalen Filter-State (`src/store/filterStore.ts`)
+- **`useFilterStore`** wird in `SearchBar`, `FilterPills`, `FilterBottomSheet` und `BuscarScreen` geteilt
+- **`applyFilters`** (`src/utils/searchAndFilter.ts`) kombiniert Suche, Filter und Sortierung; getestet mit Jest
 
 ---
 
@@ -134,7 +157,7 @@ graph TD
 | **M01** | ✅     | Setup — Expo, Navigation, Theme, ESLint/Prettier |
 | **M02** | ✅     | Datenmodell & JSON-Pipeline                      |
 | **M03** | ✅     | Restaurant-Liste mit Card-Komponente             |
-| **M04** | ⏳     | Filter & Suche                                   |
+| **M04** | ✅     | Filter & Suche                                   |
 | **M05** | ⏳     | Karte (Mapa)                                     |
 | **M06** | ⏳     | Volle Detail-Ansicht                             |
 | **M07** | ⏳     | Profil & Einstellungen                           |
