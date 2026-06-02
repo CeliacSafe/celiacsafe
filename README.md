@@ -8,9 +8,9 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
-**In Entwicklung — Modul M01 abgeschlossen (Setup)**
+**In Entwicklung — M03 abgeschlossen: Restaurant-Liste mit Card-Komponente**
 
-Das Grundgerüst der App steht: Navigation, Theme, Projektstruktur, ESLint und Prettier sind eingerichtet. Die fünf Haupt-Tabs (Buscar, Comunidad, Mapa, Favoritos, Perfil) sind als Platzhalter vorhanden.
+Die Kernfunktionen der Listenansicht stehen: Stack-Navigation (`BuscarList` -> `RestaurantDetail`), wiederverwendbare Card-Komponenten, Skeleton-Loader, Pull-to-Refresh und lokalisierbarer Ergebnis-Counter.
 
 ---
 
@@ -39,22 +39,21 @@ Weitere Tools: ESLint, Prettier, `@expo/vector-icons`
 # Abhängigkeiten installieren
 npm install
 
-# Entwicklungsserver starten
-npx expo start
+# Entwicklungsserver starten (Tunnel — Standard für Handy-Tests)
+npm start
 ```
 
 ### App auf dem Gerät testen
 
-1. `npx expo start` ausführen — im Terminal erscheint ein QR-Code.
+1. `npm start` ausführen — startet Expo im **Tunnel-Modus** (funktioniert auch ohne gleiches WLAN).
 2. **Expo Go** auf dem Android-Gerät öffnen.
-3. QR-Code scannen — die App lädt auf dem Gerät.
+3. QR-Code scannen — beim ersten Start 30–60 Sekunden warten.
 
-Alternativ im Terminal:
+Alternativ:
 
 ```bash
-npm run android   # Android-Emulator
-npm run ios       # iOS-Simulator (nur macOS)
-npm run web       # Browser-Vorschau
+npm run start:tunnel   # explizit Tunnel (gleich wie npm start)
+npm run start:lan      # nur LAN, wenn Tunnel Probleme macht
 ```
 
 ### Code-Qualität
@@ -101,16 +100,43 @@ celiacsafe/
 
 ---
 
+## Komponenten
+
+Wiederverwendbare UI-Bausteine in `src/components/`:
+
+- `RestaurantCard` - Hauptkarte der Suchliste mit Bild, Badges und Favoriten-Icon
+- `BadgePill` - Einheitliche Tag-/Badge-Darstellung fuer Status, Cuisine und Preis
+- `SkeletonCard` - Lade-Platzhalter mit Pulse-Animation fuer Listen
+- `EmptyState` - Leerer Zustand mit Icon, Titel und optionaler Beschreibung
+
+---
+
+## Navigation-Struktur
+
+```mermaid
+graph TD
+  RootTabs
+  RootTabs --> BuscarStack
+  BuscarStack --> BuscarList
+  BuscarStack --> RestaurantDetail
+  RootTabs --> ComunidadScreen
+  RootTabs --> MapaScreen
+  RootTabs --> FavoritosScreen
+  RootTabs --> PerfilScreen
+```
+
+---
+
 ## Roadmap
 
 | Modul   | Status | Inhalt                                           |
 | ------- | ------ | ------------------------------------------------ |
 | **M01** | ✅     | Setup — Expo, Navigation, Theme, ESLint/Prettier |
-| **M02** | ⏳     | Datenmodell & JSON-Pipeline                      |
-| **M03** | ⏳     | Restaurant-Liste                                 |
+| **M02** | ✅     | Datenmodell & JSON-Pipeline                      |
+| **M03** | ✅     | Restaurant-Liste mit Card-Komponente             |
 | **M04** | ⏳     | Filter & Suche                                   |
 | **M05** | ⏳     | Karte (Mapa)                                     |
-| **M06** | ⏳     | Favoriten                                        |
+| **M06** | ⏳     | Volle Detail-Ansicht                             |
 | **M07** | ⏳     | Profil & Einstellungen                           |
 | **M08** | ⏳     | Community (Comunidad)                            |
 

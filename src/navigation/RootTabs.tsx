@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BuscarScreen } from '../screens/BuscarScreen';
+import BuscarStack from './BuscarStack';
 import { ComunidadScreen } from '../screens/ComunidadScreen';
 import { FavoritosScreen } from '../screens/FavoritosScreen';
 import { MapaScreen } from '../screens/MapaScreen';
@@ -56,23 +57,35 @@ function createTabBarIcon(routeName: keyof RootTabParamList) {
 }
 
 export function RootTabs() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       initialRouteName="Buscar"
       screenOptions={{
+        lazy: true,
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '700',
+        },
         tabBarStyle: {
           backgroundColor: colors.surface,
-          borderTopColor: colors.surface,
+          borderTopColor: colors.primaryDark,
+          borderTopWidth: 1,
+          height: 56 + insets.bottom,
+          paddingBottom: insets.bottom + 4,
+          paddingTop: 6,
         },
       }}
     >
       <Tab.Screen
         name="Buscar"
-        component={BuscarScreen}
+        component={BuscarStack}
         options={{
+          headerShown: false,
           tabBarLabel: tabConfig.Buscar.label,
           tabBarIcon: createTabBarIcon('Buscar'),
         }}
