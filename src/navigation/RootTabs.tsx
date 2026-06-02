@@ -4,10 +4,11 @@ import type { ComponentProps } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BuscarStack from './BuscarStack';
+import FavoritosStack from './FavoritosStack';
 import MapaStack from './MapaStack';
 import { ComunidadScreen } from '../screens/ComunidadScreen';
-import { FavoritosScreen } from '../screens/FavoritosScreen';
 import { PerfilScreen } from '../screens/PerfilScreen';
+import { useFavoritesStore } from '../store/favoritesStore';
 import { colors } from '../theme/colors';
 
 type RootTabParamList = {
@@ -58,6 +59,7 @@ function createTabBarIcon(routeName: keyof RootTabParamList) {
 
 export function RootTabs() {
   const insets = useSafeAreaInsets();
+  const favoriteCount = useFavoritesStore((state) => Object.keys(state.favorites).length);
 
   return (
     <Tab.Navigator
@@ -109,10 +111,15 @@ export function RootTabs() {
       />
       <Tab.Screen
         name="Favoritos"
-        component={FavoritosScreen}
+        component={FavoritosStack}
         options={{
           tabBarLabel: tabConfig.Favoritos.label,
           tabBarIcon: createTabBarIcon('Favoritos'),
+          tabBarBadge: favoriteCount > 0 ? favoriteCount : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.heart,
+            color: colors.white,
+          },
         }}
       />
       <Tab.Screen

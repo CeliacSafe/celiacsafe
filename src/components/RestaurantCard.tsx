@@ -3,10 +3,11 @@ import { Image } from 'expo-image';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import BadgePill from './BadgePill';
+import HeartButton from './HeartButton';
 import { getLocalizedName } from '../i18n/getLocalizedName';
 import { REGION_NAMES } from '../i18n/regions';
 import { colors } from '../theme/colors';
-import { RADIUS_CARD, RADIUS_HEART } from '../theme/radii';
+import { RADIUS_CARD } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XS } from '../theme/spacing';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import type { Restaurant } from '../types/Restaurant';
@@ -14,20 +15,12 @@ import type { Restaurant } from '../types/Restaurant';
 interface RestaurantCardProps {
   restaurant: Restaurant;
   onPress: () => void;
-  isFavorite?: boolean;
-  onToggleFavorite?: () => void;
   language?: AppLanguage;
 }
 
 const MAX_CUISINE_TAGS = 3;
 
-function RestaurantCard({
-  restaurant,
-  onPress,
-  isFavorite = false,
-  onToggleFavorite,
-  language = 'es',
-}: RestaurantCardProps) {
+function RestaurantCard({ restaurant, onPress, language = 'es' }: RestaurantCardProps) {
   const showVerificationBadge =
     restaurant.face_program === true || restaurant.aoecs_certified === true;
   const regionLabel = getLocalizedName(REGION_NAMES, restaurant.region_code, language);
@@ -102,24 +95,7 @@ function RestaurantCard({
         </View>
       </Pressable>
 
-      {/* ── Favoriten-Button (eigener Pressable, kein Card-Tap) ── */}
-      <Pressable
-        accessibilityLabel={isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
-        accessibilityRole="button"
-        disabled={!onToggleFavorite}
-        hitSlop={8}
-        onPress={(event) => {
-          event.stopPropagation();
-          onToggleFavorite?.();
-        }}
-        style={({ pressed }) => [styles.heartButton, pressed && styles.heartButtonPressed]}
-      >
-        <MaterialCommunityIcons
-          name={isFavorite ? 'heart' : 'heart-outline'}
-          size={22}
-          color={isFavorite ? colors.heart : colors.textPrimary}
-        />
-      </Pressable>
+      <HeartButton restaurantId={restaurant.id} variant="overlay" style={styles.heartButton} />
     </View>
   );
 }
@@ -167,15 +143,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: SPACE_MD,
     right: SPACE_MD,
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS_HEART,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.overlayDark,
-  },
-  heartButtonPressed: {
-    opacity: 0.85,
+    zIndex: 2,
   },
   textContainer: {
     padding: SPACE_LG,

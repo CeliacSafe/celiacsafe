@@ -8,9 +8,9 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
-**In Entwicklung — M06 abgeschlossen: vollständige Detail-Seite**
+**In Entwicklung — M07 abgeschlossen: Favoriten + Persistenz**
 
-Die Detail-Ansicht zeigt alle Restaurant-Informationen strukturiert: Hero mit Bild und Badges, Schnellaktionen, Verifizierung, Adresse mit Mini-Map, Beschreibung, Öffnungszeiten, Lieferdienste, Reservierung, Kontakt und rechtlicher Disclaimer. Sektionen erscheinen nur, wenn Daten vorhanden sind.
+Restaurants lassen sich favorisieren — in Liste, Detail und auf der Karte. Favoriten überleben App-Neustart via AsyncStorage. Der Favoritos-Tab zeigt die gespeicherten Restaurants sortiert nach Hinzufüge-Datum, mit Tab-Badge und Swipe-to-Remove.
 
 ---
 
@@ -25,7 +25,7 @@ Die Detail-Ansicht zeigt alle Restaurant-Informationen strukturiert: Hero mit Bi
 | **expo-location**             | Standort nur on-demand (My-Location-Button)        |
 | **expo-haptics**              | Haptisches Feedback (Heart-Toggle)                 |
 
-Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@gorhom/bottom-sheet`, `@expo/vector-icons`, `expo-linear-gradient`, `expo-image`
+Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@react-native-async-storage/async-storage`, `@gorhom/bottom-sheet`, `@expo/vector-icons`, `expo-linear-gradient`, `expo-image`, `react-native-reanimated`
 
 ---
 
@@ -73,7 +73,7 @@ python scripts/verify-geo.py   # Koordinaten in JSON prüfen
 ```bash
 npm run lint      # ESLint — Fehler und Warnungen prüfen
 npm run format    # Prettier — Code automatisch formatieren
-npm test          # Jest — Such-/Filter-Logik (searchAndFilter)
+npm test          # Jest — Filter-Logik + Favoriten-Store
 ```
 
 ---
@@ -121,6 +121,17 @@ celiacsafe/
 
 ---
 
+## Datenspeicherung
+
+| Daten        | Speicherort            | Persistenz        | Modul |
+| ------------ | ---------------------- | ----------------- | ----- |
+| Restaurants  | read-only JSON-Asset   | App-Bundle (M02)  | M02   |
+| Favoriten    | AsyncStorage           | Gerät, persistent | M07   |
+| Filter/Suche | Zustand in-memory      | Nur App-Laufzeit  | M04   |
+| Sprache      | AsyncStorage (geplant) | Gerät, persistent | M08   |
+
+---
+
 ## Komponenten
 
 Wiederverwendbare UI-Bausteine in `src/components/`:
@@ -134,6 +145,7 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - `DetailHeader`, `QuickActionsBar`, `VerificationSection`, `AddressSection` - Detail-Seite (M06)
 - `DescriptionBlock`, `CuisineTagsRow`, `OpeningHours`, `SeasonalClosureBanner` - Inhalts-Sektionen
 - `DeliveryButtons`, `ReservationSection`, `ContactDetailsSection`, `Disclaimer` - Aktionen & Rechtliches
+- `HeartButton`, `SwipeableRestaurantCard` - Favoriten-Interaktion (M07)
 
 ---
 
@@ -144,6 +156,19 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - **7 Venue-Type-Filter-Pills**, Bottom-Sheet mit Region/Preis/Verifizierung/Sortierung
 - **Live-Counter**, **Filter zurücksetzen** im Leerzustand
 - Globaler State: **`useFilterStore`** + **`applyFilters`**
+
+---
+
+## Features (M07 — Favoriten)
+
+- **`favoritesStore`** — Zustand + `persist`, speichert nur Restaurant-IDs + Zeitstempel
+- **`HeartButton`** — Store-Anbindung, Haptik, Reanimated Bounce/Wiggle
+- **Synchronisation** — Heart in `RestaurantCard` und `DetailHeader` immer konsistent
+- **`FavoritosScreen`** — sortiert nach Hinzufüge-Datum (neueste zuerst), Empty-State
+- **`FavoritosStack`** — Detail-Navigation aus dem Favoritos-Tab
+- **Tab-Badge** — Live-Anzahl am Favoritos-Tab (`colors.heart`)
+- **Swipe-to-Remove** — nach links wischen entfernt Favorit
+- **Hydration** — Splash bleibt bis AsyncStorage geladen ist
 
 ---
 
@@ -175,8 +200,9 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 
 ## State Management
 
-- **Zustand** für globalen Filter-State (`src/store/filterStore.ts`)
+- **Zustand** für globalen Filter-State (`src/store/filterStore.ts`) — nicht persistent
 - **`useFilterStore`** in Buscar- und Mapa-Flow geteilt
+- **`useFavoritesStore`** mit AsyncStorage-Persistenz (`src/store/favoritesStore.ts`)
 - **`applyFilters`** kombiniert Suche, Filter und Sortierung; getestet mit Jest
 
 ---
@@ -193,7 +219,9 @@ graph TD
   MapaStack --> MapaMain
   MapaStack --> RestaurantDetail
   RootTabs --> ComunidadScreen
-  RootTabs --> FavoritosScreen
+  RootTabs --> FavoritosStack
+  FavoritosStack --> FavoritosList
+  FavoritosStack --> RestaurantDetail
   RootTabs --> PerfilScreen
 ```
 
@@ -209,8 +237,8 @@ graph TD
 | **M04** | ✅     | Filter & Suche                                   |
 | **M05** | ✅     | Karte (Mapa)                                     |
 | **M06** | ✅     | Volle Detail-Ansicht                             |
-| **M07** | ⏳     | Favoriten & Profil                               |
-| **M08** | ⏳     | Community (Comunidad)                            |
+| **M07** | ✅     | Favoriten & Persistenz                           |
+| **M08** | ⏳     | Mehrsprachigkeit                                 |
 
 ---
 

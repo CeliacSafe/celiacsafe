@@ -18,6 +18,7 @@ export const colors = {
   skeletonMuted: 'rgba(255, 255, 255, 0.08)',
   skeletonStrong: 'rgba(255, 255, 255, 0.1)',
   warning: '#FFD54F',
+  error: '#EF5350',
 } as const;
 
 export type AppColor = keyof typeof colors;

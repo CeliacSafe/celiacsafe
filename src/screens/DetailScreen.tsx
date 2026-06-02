@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -17,17 +16,19 @@ import SeasonalClosureBanner from '../components/SeasonalClosureBanner';
 import VerificationSection from '../components/VerificationSection';
 import { getRestaurantById } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
+import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
 import type { MapaStackParamList } from '../navigation/MapaStack';
 import { colors } from '../theme/colors';
 
-type Props = NativeStackScreenProps<BuscarStackParamList | MapaStackParamList, 'RestaurantDetail'>;
+type Props = NativeStackScreenProps<
+  BuscarStackParamList | MapaStackParamList | FavoritosStackParamList,
+  'RestaurantDetail'
+>;
 
 export default function DetailScreen({ route, navigation }: Props) {
   const { restaurantId } = route.params;
   const restaurant = getRestaurantById(restaurantId);
   const language = 'es';
-  // TODO M07: Lokaler isFavorite-State wird durch useFavoritesStore ersetzt
-  const [isFavorite, setIsFavorite] = useState(false);
 
   if (!restaurant) {
     return (
@@ -47,8 +48,6 @@ export default function DetailScreen({ route, navigation }: Props) {
         <DetailHeader
           restaurant={restaurant}
           language={language}
-          isFavorite={isFavorite}
-          onToggleFavorite={() => setIsFavorite((prev) => !prev)}
           onBack={() => navigation.goBack()}
         />
 

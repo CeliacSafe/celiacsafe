@@ -1,11 +1,11 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BadgePill from './BadgePill';
+import HeartButton from './HeartButton';
 import { getLocalizedName, type AppLanguage } from '../i18n/getLocalizedName';
 import { REGION_NAMES } from '../i18n/regions';
 import { colors } from '../theme/colors';
@@ -15,8 +15,6 @@ import type { Restaurant } from '../types/Restaurant';
 
 interface DetailHeaderProps {
   restaurant: Restaurant;
-  isFavorite?: boolean;
-  onToggleFavorite?: () => void;
   onBack?: () => void;
   language?: AppLanguage;
 }
@@ -27,23 +25,12 @@ const GRADIENT_HEIGHT = 100;
 /**
  * Hero-Bereich der Detail-Seite: Bild, Badges, Favoriten- und Zurueck-Buttons, Name.
  */
-function DetailHeader({
-  restaurant,
-  isFavorite = false,
-  onToggleFavorite,
-  onBack,
-  language = 'es',
-}: DetailHeaderProps) {
+function DetailHeader({ restaurant, onBack, language = 'es' }: DetailHeaderProps) {
   const insets = useSafeAreaInsets();
   const showVerificationBadge =
     restaurant.face_program === true || restaurant.aoecs_certified === true;
   const regionLabel = getLocalizedName(REGION_NAMES, restaurant.region_code, language);
   const hasImage = Boolean(restaurant.featured_image_url?.trim());
-
-  const handleHeartPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onToggleFavorite?.();
-  };
 
   return (
     <View style={styles.wrapper}>
@@ -88,18 +75,7 @@ function DetailHeader({
             <View style={styles.iconSpacer} />
           )}
 
-          <Pressable
-            onPress={handleHeartPress}
-            accessibilityLabel={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
-            accessibilityRole="button"
-            style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
-          >
-            <MaterialCommunityIcons
-              name={isFavorite ? 'heart' : 'heart-outline'}
-              size={22}
-              color={isFavorite ? colors.heart : colors.white}
-            />
-          </Pressable>
+          <HeartButton restaurantId={restaurant.id} variant="overlay" />
         </View>
 
         <View style={styles.badgeOverlay}>

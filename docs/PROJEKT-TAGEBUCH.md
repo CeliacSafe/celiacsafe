@@ -207,3 +207,38 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 - Heart-Button funktional in Liste und Detail
 
 ---
+
+## 2026-06-02 — M07 abgeschlossen
+
+**Heute geschafft:**
+
+- AsyncStorage installiert und konfiguriert
+- `favoritesStore` mit Zustand + persist-Middleware
+- `HeartButton` mit Reanimated Scale-Animation
+- Heart-Synchronisation zwischen Card und Detail
+- `FavoritosScreen` mit Sortierung und Empty-State
+- `FavoritosStack` für Detail-Navigation
+- Tab-Badge mit Live-Favoriten-Anzahl
+- Swipe-to-Remove in FavoritosScreen
+- Jest-Tests für Favoriten-Store
+- Splash/Hydration bis AsyncStorage geladen ist
+
+**Gelernt:**
+
+- Persistenz mit `zustand/middleware/persist`
+- Hydration-Status und Splash-Screen-Verzögerung
+- React Hooks: `useSharedValue`, `useAnimatedStyle`
+- Tab-Badge in React Navigation
+- Architekturprinzip: „state colocated with usage“
+
+**Aufwand insgesamt:** ~7 Std über 6 Tage  
+**Stimmung:** Gut — endlich mal kein Marathon-Modul
+
+### Nächster Schritt
+
+**Modul M08 — Mehrsprachigkeit**
+
+- Sprache in AsyncStorage persistieren
+- UI-Texte für es/en/de
+
+---
