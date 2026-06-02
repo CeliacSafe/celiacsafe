@@ -17,6 +17,7 @@ export const colors = {
   overlayWhite20: 'rgba(255, 255, 255, 0.2)',
   skeletonMuted: 'rgba(255, 255, 255, 0.08)',
   skeletonStrong: 'rgba(255, 255, 255, 0.1)',
+  warning: '#FFD54F',
 } as const;
 
 export type AppColor = keyof typeof colors;

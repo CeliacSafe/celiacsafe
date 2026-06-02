@@ -8,9 +8,9 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
-**In Entwicklung — M05 abgeschlossen: Karte mit Pins und Bottom-Sheet**
+**In Entwicklung — M06 abgeschlossen: vollständige Detail-Seite**
 
-Die Kartenansicht zeigt alle Restaurants als Marken-Pins auf einer Spanien-Karte. Marker-Tap öffnet ein Bottom-Sheet mit Aktionen (Anrufen, Website, Route, Detail). Filter aus M04 wirken auch auf der Karte. Standort-Zentrierung und Region-Quick-Jumps (Madrid, Barcelona, Mallorca, …) sind integriert.
+Die Detail-Ansicht zeigt alle Restaurant-Informationen strukturiert: Hero mit Bild und Badges, Schnellaktionen, Verifizierung, Adresse mit Mini-Map, Beschreibung, Öffnungszeiten, Lieferdienste, Reservierung, Kontakt und rechtlicher Disclaimer. Sektionen erscheinen nur, wenn Daten vorhanden sind.
 
 ---
 
@@ -23,8 +23,9 @@ Die Kartenansicht zeigt alle Restaurants als Marken-Pins auf einer Spanien-Karte
 | **React Navigation 7**        | Bottom-Tab-Navigation zwischen den Hauptbereichen  |
 | **react-native-maps**         | Karte (Apple Maps / Google Maps je nach Plattform) |
 | **expo-location**             | Standort nur on-demand (My-Location-Button)        |
+| **expo-haptics**              | Haptisches Feedback (Heart-Toggle)                 |
 
-Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@gorhom/bottom-sheet`, `@expo/vector-icons`
+Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@gorhom/bottom-sheet`, `@expo/vector-icons`, `expo-linear-gradient`, `expo-image`
 
 ---
 
@@ -130,6 +131,9 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - `CustomMarker`, `RestaurantMapMarker` - Marken-Pins auf der Karte
 - `RestaurantBottomSheet` - Vorschau und Aktionen beim Marker-Tap
 - `MyLocationButton`, `RegionQuickJumps` - Standort und Karten-Shortcuts
+- `DetailHeader`, `QuickActionsBar`, `VerificationSection`, `AddressSection` - Detail-Seite (M06)
+- `DescriptionBlock`, `CuisineTagsRow`, `OpeningHours`, `SeasonalClosureBanner` - Inhalts-Sektionen
+- `DeliveryButtons`, `ReservationSection`, `ContactDetailsSection`, `Disclaimer` - Aktionen & Rechtliches
 
 ---
 
@@ -140,6 +144,21 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - **7 Venue-Type-Filter-Pills**, Bottom-Sheet mit Region/Preis/Verifizierung/Sortierung
 - **Live-Counter**, **Filter zurücksetzen** im Leerzustand
 - Globaler State: **`useFilterStore`** + **`applyFilters`**
+
+---
+
+## Features (M06 — Detail-Seite)
+
+- **Hero** mit Bild, Badges (100% sin gluten, Verifizierung, Preis), Heart-Button mit Haptik
+- **Quick-Actions** — Anrufen, WhatsApp, Web, Route (nur wenn Daten vorhanden)
+- **Verifizierungs-Transparenz** — Methoden, FACE/AOECS, Datum, Warnung bei alter Verifizierung
+- **Adress-Sektion** mit Mini-Map (180pt) und Routing-Button
+- **Beschreibung** mit „Leer más“, **Cuisine-Tags**, **Öffnungszeiten** (nur bei Daten)
+- **Lieferdienst-Integration** — Glovo, Just Eat, Uber Eats, Wolt, Deliveroo, eigenes Delivery
+- **Reservierungs-Buttons** — TheFork, OpenTable, Telefon, Walk-in, Instagram DM
+- **Kontakt-Details** — sekundäre Liste (Telefon, Social, E-Mail)
+- **Rechtlicher Disclaimer** — dezent hervorgehoben am Seitenende
+- **`openExternalUrl`** — plattformübergreifendes Linking (`tel:`, `mailto:`, Maps, Social)
 
 ---
 
@@ -189,8 +208,8 @@ graph TD
 | **M03** | ✅     | Restaurant-Liste mit Card-Komponente             |
 | **M04** | ✅     | Filter & Suche                                   |
 | **M05** | ✅     | Karte (Mapa)                                     |
-| **M06** | ⏳     | Volle Detail-Ansicht                             |
-| **M07** | ⏳     | Profil & Einstellungen                           |
+| **M06** | ✅     | Volle Detail-Ansicht                             |
+| **M07** | ⏳     | Favoriten & Profil                               |
 | **M08** | ⏳     | Community (Comunidad)                            |
 
 ---

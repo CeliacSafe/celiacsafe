@@ -168,3 +168,42 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 - DetailScreen ausbauen (Bilder, Öffnungszeiten, vollständige Infos)
 
 ---
+
+## 2026-06-02 — M06 abgeschlossen
+
+**Heute geschafft:**
+
+- `openExternalUrl`-Util für plattform-übergreifendes Linking
+- `DetailHeader` mit Hero, Badges, Heart-Button
+- `QuickActionsBar` mit Anrufen/WhatsApp/Web/Route
+- `VerificationSection` — transparente Erklärung
+- `AddressSection` mit Mini-Map und Routing
+- `DescriptionBlock`, `CuisineTagsRow`, `OpeningHours`
+- `SeasonalClosureBanner` für Saison-Hinweise
+- `DeliveryButtons` (Glovo, Just Eat, Uber Eats, etc.)
+- `ReservationSection` (TheFork, OpenTable, eigene Web, Telefon)
+- `ContactDetailsSection` (sekundäre Kontakt-Methoden)
+- `Disclaimer` mit klarer rechtlicher Information
+- Conditional Rendering — Sektionen nur bei vorhandenen Daten
+- Theme-Polish: einheitliche Sektion-Titel, `RADIUS_SUB` (8) / `RADIUS_INPUT` (12)
+- Haptisches Feedback mit `expo-haptics` (Heart-Toggle)
+
+**Gelernt:**
+
+- Conditional Rendering — wann zeige ich was?
+- Plattform-spezifische URL-Schemata (`tel:`, `mailto:`, `maps:`, `geo:`)
+- Haptisches Feedback mit expo-haptics
+- Wiederverwendung von Komponenten aus früheren Modulen (`BadgePill`, `MapView`)
+- Layout-Hierarchie für inhaltsreiche Seiten
+
+**Aufwand insgesamt:** ~10 Std über 7 Tage  
+**Stimmung:** Die App wirkt jetzt komplett, auch ohne die letzten 6 Module
+
+### Nächster Schritt
+
+**Modul M07 — Favoriten & Persistenz**
+
+- `useFavoritesStore` mit AsyncStorage
+- Heart-Button funktional in Liste und Detail
+
+---

@@ -20,3 +20,41 @@ export const VENUE_TYPE_NAMES: Record<VenueType, LocalizedLabel> = {
   burger_joint: { es: 'Hamburgueserias', en: 'Burger places', de: 'Burgerlokale' },
   asian_restaurant: { es: 'Asiatico', en: 'Asian', de: 'Asiatisch' },
 };
+
+export const CUISINE_TYPE_NAMES: Record<string, LocalizedLabel> = {
+  andaluza: { es: 'Andaluza', en: 'Andalusian', de: 'Andalusisch' },
+  arroces: { es: 'Arroces', en: 'Rice dishes', de: 'Reisgerichte' },
+  asiatica: { es: 'Asiática', en: 'Asian', de: 'Asiatisch' },
+  asturiana: { es: 'Asturiana', en: 'Asturian', de: 'Asturisch' },
+  brasileña: { es: 'Brasileña', en: 'Brazilian', de: 'Brasilianisch' },
+  catalana: { es: 'Catalana', en: 'Catalan', de: 'Katalanisch' },
+  cordobesa: { es: 'Cordobesa', en: 'Cordovan', de: 'Cordobesisch' },
+  espanola: { es: 'Española', en: 'Spanish', de: 'Spanisch' },
+  hamburguesas: { es: 'Hamburguesas', en: 'Burgers', de: 'Burger' },
+  internacional: { es: 'Internacional', en: 'International', de: 'International' },
+  italiana: { es: 'Italiana', en: 'Italian', de: 'Italienisch' },
+  japonesa: { es: 'Japonesa', en: 'Japanese', de: 'Japanisch' },
+  mallorquina: { es: 'Mallorquina', en: 'Majorcan', de: 'Mallorquinisch' },
+  mariscos: { es: 'Mariscos', en: 'Seafood', de: 'Meeresfrüchte' },
+  mediterranea: { es: 'Mediterránea', en: 'Mediterranean', de: 'Mediterran' },
+  mexicana: { es: 'Mexicana', en: 'Mexican', de: 'Mexikanisch' },
+  pasta: { es: 'Pasta', en: 'Pasta', de: 'Pasta' },
+  pizzas: { es: 'Pizzas', en: 'Pizzas', de: 'Pizza' },
+  saludable: { es: 'Saludable', en: 'Healthy', de: 'Gesund' },
+  sidreria: { es: 'Sidrería', en: 'Cider house', de: 'Sidreria' },
+  sushi: { es: 'Sushi', en: 'Sushi', de: 'Sushi' },
+  tapas: { es: 'Tapas', en: 'Tapas', de: 'Tapas' },
+  valenciana: { es: 'Valenciana', en: 'Valencian', de: 'Valencianisch' },
+  vasca: { es: 'Vasca', en: 'Basque', de: 'Baskisch' },
+  vegana: { es: 'Vegana', en: 'Vegan', de: 'Vegan' },
+  vegetariana: { es: 'Vegetariana', en: 'Vegetarian', de: 'Vegetarisch' },
+  venezolana: { es: 'Venezolana', en: 'Venezuelan', de: 'Venezolanisch' },
+};
+
+/** Fallback-Label fuer unbekannte Cuisine-Codes (z. B. wagyu-fusion -> Wagyu Fusion). */
+export function formatCuisineFallback(code: string): string {
+  return code
+    .split(/[-_]/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}

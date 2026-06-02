@@ -1,7 +1,20 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import BadgePill from '../components/BadgePill';
+import AddressSection from '../components/AddressSection';
+import ContactDetailsSection from '../components/ContactDetailsSection';
+import CuisineTagsRow from '../components/CuisineTagsRow';
+import DeliveryButtons from '../components/DeliveryButtons';
+import DescriptionBlock from '../components/DescriptionBlock';
+import DetailHeader from '../components/DetailHeader';
+import Disclaimer from '../components/Disclaimer';
+import EmptyState from '../components/EmptyState';
+import OpeningHours from '../components/OpeningHours';
+import QuickActionsBar from '../components/QuickActionsBar';
+import ReservationSection from '../components/ReservationSection';
+import SeasonalClosureBanner from '../components/SeasonalClosureBanner';
+import VerificationSection from '../components/VerificationSection';
 import { getRestaurantById } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import type { MapaStackParamList } from '../navigation/MapaStack';
@@ -9,86 +22,49 @@ import { colors } from '../theme/colors';
 
 type Props = NativeStackScreenProps<BuscarStackParamList | MapaStackParamList, 'RestaurantDetail'>;
 
-export default function DetailScreen({ route }: Props) {
+export default function DetailScreen({ route, navigation }: Props) {
   const { restaurantId } = route.params;
   const restaurant = getRestaurantById(restaurantId);
+  const language = 'es';
+  // TODO M07: Lokaler isFavorite-State wird durch useFavoritesStore ersetzt
+  const [isFavorite, setIsFavorite] = useState(false);
 
   if (!restaurant) {
     return (
       <View style={styles.container}>
-        <Text style={styles.error}>Restaurant nicht gefunden</Text>
+        <EmptyState
+          iconName="food-off"
+          title="Restaurant nicht gefunden"
+          description="Este restaurante ya no esta disponible."
+        />
       </View>
     );
   }
 
-  const showVerificationBadge =
-    restaurant.face_program === true || restaurant.aoecs_certified === true;
-  const address = restaurant.address_street
-    ? `${restaurant.address_street}, ${restaurant.city}`
-    : restaurant.city;
-
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContent}
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Kopfbereich */}
-      <Text style={styles.name}>{restaurant.name}</Text>
-      <Text style={styles.regionCity}>
-        {restaurant.city} · {restaurant.region_name}
-      </Text>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <DetailHeader
+          restaurant={restaurant}
+          language={language}
+          isFavorite={isFavorite}
+          onToggleFavorite={() => setIsFavorite((prev) => !prev)}
+          onBack={() => navigation.goBack()}
+        />
 
-      {/* Verifizierungs-Badges */}
-      <View style={styles.badgeRow}>
-        <BadgePill label="100% SIN GLUTEN" variant="sinGluten" iconName="check-circle" />
-        {showVerificationBadge ? (
-          <BadgePill label="VERIFICACIÓN OFICIAL" variant="verified" iconName="shield-check" />
-        ) : null}
-      </View>
-
-      {/* Adresse */}
-      <Text style={styles.sectionLabel}>Adresse</Text>
-      <Text style={styles.bodyText}>{address}</Text>
-
-      {/* Cuisine-Tags */}
-      {restaurant.cuisine_types?.length ? (
-        <>
-          <Text style={styles.sectionLabel}>Küche</Text>
-          <View style={styles.tagsRow}>
-            {restaurant.cuisine_types.map((cuisine) => (
-              <BadgePill key={cuisine} label={cuisine} variant="cuisine" />
-            ))}
-          </View>
-        </>
-      ) : null}
-
-      {/* Kontaktvorschau */}
-      {restaurant.phone ? (
-        <>
-          <Text style={styles.sectionLabel}>Telefon</Text>
-          <Text style={styles.bodyText}>{restaurant.phone}</Text>
-        </>
-      ) : null}
-      {restaurant.website ? (
-        <>
-          <Text style={styles.sectionLabel}>Website</Text>
-          <Text style={styles.bodyText}>{restaurant.website}</Text>
-        </>
-      ) : null}
-
-      {/* Beschreibung */}
-      {restaurant.description_es ? (
-        <>
-          <Text style={styles.sectionLabel}>Beschreibung</Text>
-          <Text style={styles.bodyText}>{restaurant.description_es}</Text>
-        </>
-      ) : null}
-
-      <Text style={styles.hint}>
-        Volle Detail-Ansicht mit Karten-Mini, Lieferdiensten und Reservierung kommt in M06.
-      </Text>
-    </ScrollView>
+        <QuickActionsBar restaurant={restaurant} language={language} />
+        <VerificationSection restaurant={restaurant} language={language} />
+        <AddressSection restaurant={restaurant} language={language} />
+        <SeasonalClosureBanner restaurant={restaurant} language={language} />
+        <CuisineTagsRow restaurant={restaurant} language={language} />
+        <DescriptionBlock restaurant={restaurant} language={language} />
+        <OpeningHours restaurant={restaurant} language={language} />
+        <DeliveryButtons restaurant={restaurant} language={language} />
+        <ReservationSection restaurant={restaurant} language={language} />
+        <ContactDetailsSection restaurant={restaurant} language={language} />
+        <Disclaimer variant="full" language={language} />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -98,55 +74,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scrollContent: {
-    padding: 20,
-  },
-  error: {
-    color: colors.heart,
-    fontSize: 20,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  name: {
-    color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '700',
-  },
-  regionCity: {
-    marginTop: 6,
-    color: colors.textSecondary,
-    fontSize: 16,
-  },
-  badgeRow: {
-    marginTop: 14,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  sectionLabel: {
-    marginTop: 18,
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-    textTransform: 'uppercase',
-  },
-  bodyText: {
-    marginTop: 6,
-    color: colors.textPrimary,
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  tagsRow: {
-    marginTop: 8,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-  },
-  hint: {
-    marginTop: 32,
-    color: colors.textSecondary,
-    fontSize: 14,
-    fontStyle: 'italic',
-    textAlign: 'center',
+    paddingBottom: 40,
   },
 });

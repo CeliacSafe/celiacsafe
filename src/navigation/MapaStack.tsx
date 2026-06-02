@@ -25,10 +25,7 @@ export default function MapaStack() {
       <Stack.Screen
         name="RestaurantDetail"
         component={DetailScreen}
-        options={{
-          title: 'Restaurant',
-          headerBackTitle: 'Zurück',
-        }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
