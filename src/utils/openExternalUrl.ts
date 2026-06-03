@@ -8,6 +8,8 @@
 
 import { Alert, Linking, Platform } from 'react-native';
 
+import i18n from '../i18n';
+
 /**
  * Oeffnet eine URL extern. Prueft vorher, ob die URL geoeffnet werden kann.
  */
@@ -17,11 +19,11 @@ export async function openUrl(url: string): Promise<void> {
     if (supported) {
       await Linking.openURL(url);
     } else {
-      Alert.alert('Error', `No se puede abrir: ${url}`);
+      Alert.alert(i18n.t('common.error'), i18n.t('errors.cannot_open_url', { url }));
     }
   } catch (error) {
     console.error('openUrl failed:', error);
-    Alert.alert('Error', 'No se pudo abrir el enlace');
+    Alert.alert(i18n.t('common.error'), i18n.t('errors.link_open_failed'));
   }
 }
 

@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
 import { RADIUS_INPUT } from '../theme/radii';
 import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
@@ -9,19 +9,10 @@ import type { Restaurant } from '../types/Restaurant';
 
 interface SeasonalClosureBannerProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
 }
 
-const PREFIX: Record<AppLanguage, string> = {
-  es: 'Cierre estacional:',
-  en: 'Seasonal closure:',
-  de: 'Saisonal geschlossen:',
-};
-
-/**
- * Auffaelliger Hinweis bei saisonaler Schliessung.
- */
-function SeasonalClosureBanner({ restaurant, language = 'es' }: SeasonalClosureBannerProps) {
+function SeasonalClosureBanner({ restaurant }: SeasonalClosureBannerProps) {
+  const { t } = useTranslation();
   const closure = restaurant.seasonal_closure?.trim();
 
   if (!closure) {
@@ -32,9 +23,7 @@ function SeasonalClosureBanner({ restaurant, language = 'es' }: SeasonalClosureB
     <View style={styles.wrapper}>
       <View style={styles.container}>
         <MaterialCommunityIcons name="alert" size={20} color={colors.background} />
-        <Text style={styles.text}>
-          {PREFIX[language]} {closure}
-        </Text>
+        <Text style={styles.text}>{t('detail.seasonal_closure', { period: closure })}</Text>
       </View>
     </View>
   );
@@ -63,3 +52,5 @@ const styles = StyleSheet.create({
 });
 
 export default SeasonalClosureBanner;
+
+// i18n-migrated

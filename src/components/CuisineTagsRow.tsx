@@ -1,36 +1,23 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
-import { CUISINE_TYPE_NAMES, formatCuisineFallback } from '../i18n/lookups';
-import type { AppLanguage } from '../i18n/getLocalizedName';
+import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
 
 interface CuisineTagsRowProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
-}
-
-const SECTION_TITLES: Record<AppLanguage, string> = {
-  es: 'Cocina',
-  en: 'Cuisine',
-  de: 'Küche',
-};
-
-function getCuisineLabel(code: string, language: AppLanguage): string {
-  const entry = CUISINE_TYPE_NAMES[code];
-  if (entry) {
-    return entry[language] ?? entry.es;
-  }
-  return formatCuisineFallback(code);
 }
 
 /**
  * Horizontale Cuisine-Tags als BadgePill-Reihe.
  */
-function CuisineTagsRow({ restaurant, language = 'es' }: CuisineTagsRowProps) {
+function CuisineTagsRow({ restaurant }: CuisineTagsRowProps) {
+  const { t } = useTranslation();
+  const { cuisineName } = useLocalized();
   const cuisines = restaurant.cuisine_types ?? [];
 
   if (cuisines.length === 0) {
@@ -41,7 +28,7 @@ function CuisineTagsRow({ restaurant, language = 'es' }: CuisineTagsRowProps) {
     <View style={styles.wrapper}>
       <View style={styles.titleRow}>
         <MaterialCommunityIcons name="silverware-fork-knife" size={18} color={colors.primary} />
-        <Text style={styles.title}>{SECTION_TITLES[language]}</Text>
+        <Text style={styles.title}>{t('detail.cuisine')}</Text>
       </View>
       <ScrollView
         horizontal
@@ -49,7 +36,7 @@ function CuisineTagsRow({ restaurant, language = 'es' }: CuisineTagsRowProps) {
         contentContainerStyle={styles.scrollContent}
       >
         {cuisines.map((code) => (
-          <BadgePill key={code} label={getCuisineLabel(code, language)} variant="cuisine" />
+          <BadgePill key={code} label={cuisineName(code)} variant="cuisine" />
         ))}
         <View style={styles.trailingSpacer} />
       </ScrollView>
@@ -83,3 +70,5 @@ const styles = StyleSheet.create({
 });
 
 export default CuisineTagsRow;
+
+// i18n-migrated

@@ -1,0 +1,120 @@
+{
+  "common": {
+    "accept": "Akzeptieren",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "retry": "Erneut versuchen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "tabs": {
+    "search": "Suchen",
+    "community": "Community",
+    "map": "Karte",
+    "favorites": "Favoriten",
+    "profile": "Profil"
+  },
+  "search": {
+    "placeholder": "Restaurants, Cafés oder Orte suchen...",
+    "subtitle": "Essentieller glutenfreier Reiseführer",
+    "no_restaurants_title": "Noch keine Restaurants",
+    "results_found_one": "{{count}} Ergebnis gefunden",
+    "results_found_other": "{{count}} Ergebnisse gefunden",
+    "no_results_title": "Keine Ergebnisse",
+    "no_results_description": "Versuchen Sie, einige Filter zu entfernen",
+    "clear_filters": "Filter zurücksetzen",
+    "sort_by": "Sortieren nach",
+    "sort_name_asc": "Name A–Z",
+    "sort_name_desc": "Name Z–A",
+    "sort_recently_verified": "Kürzlich verifiziert"
+  },
+  "filter": {
+    "title": "Filter",
+    "region": "Region",
+    "price": "Preis",
+    "verification": "Verifizierung",
+    "only_face": "Nur FACE-zertifiziert",
+    "only_aoecs": "Nur AOECS-zertifiziert",
+    "reset": "Zurücksetzen",
+    "apply_one": "{{count}} Ergebnis anwenden",
+    "apply_other": "{{count}} Ergebnisse anwenden",
+    "all": "Alle",
+    "more_filters": "Weitere Filter"
+  },
+  "detail": {
+    "verification": "Verifizierung",
+    "verified_on": "Verifiziert am {{date}}",
+    "verification_outdated": "Alte Verifizierung — bitte vor dem Besuch bestätigen",
+    "certified_by": "Zertifiziert durch: {{authority}}",
+    "address": "Adresse",
+    "directions": "Route planen",
+    "about": "Über das Restaurant",
+    "cuisine": "Küche",
+    "opening_hours": "Öffnungszeiten",
+    "opening_hours_unavailable": "Öffnungszeiten nicht verfügbar",
+    "seasonal_closure": "Saisonal geschlossen: {{period}}",
+    "delivery": "Lieferdienste",
+    "reservation": "Reservierung",
+    "reservation_phone": "Per Telefon",
+    "reservation_walk_in": "Nur ohne Reservierung",
+    "contact": "Kontakt",
+    "call": "Anrufen",
+    "whatsapp": "WhatsApp",
+    "website": "Webseite",
+    "route": "Route",
+    "read_more": "Mehr lesen",
+    "read_less": "Weniger",
+    "not_found_title": "Restaurant nicht gefunden",
+    "not_found_description": "Dieses Restaurant ist nicht mehr verfügbar."
+  },
+  "card": {
+    "badge_sin_gluten": "100% GLUTENFREI",
+    "badge_verified": "OFFIZIELLE VERIFIZIERUNG"
+  },
+  "map": {
+    "view_detail": "Details",
+    "location_denied_title": "Kein Zugriff",
+    "location_denied_message": "Standort konnte nicht ermittelt werden.",
+    "my_location": "Mein Standort"
+  },
+  "community": {
+    "coming_soon": "Demnächst verfügbar"
+  },
+  "favorites": {
+    "title": "Favoriten",
+    "count_one": "{{count}} gespeichertes Restaurant",
+    "count_other": "{{count}} gespeicherte Restaurants",
+    "empty_title": "Noch keine Favoriten",
+    "empty_description": "Tippen Sie auf das Herz bei einem Restaurant, um es zu speichern",
+    "add": "Zu Favoriten hinzufügen",
+    "remove": "Entfernen"
+  },
+  "profile": {
+    "title": "Profil",
+    "language": "Sprache",
+    "about": "Über die App",
+    "legal": "Rechtliches",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen",
+    "version": "Version {{version}}",
+    "contact": "Kontakt",
+    "submit_restaurant": "Restaurant vorschlagen",
+    "rate_app": "App bewerten",
+    "crash_reports": "Anonyme Fehlerberichte"
+  },
+  "errors": {
+    "cannot_open": "Kann nicht geöffnet werden",
+    "cannot_open_url": "Kann nicht geöffnet werden: {{url}}",
+    "link_open_failed": "Link konnte nicht geöffnet werden",
+    "network_error": "Verbindungsfehler",
+    "location_denied": "Standortzugriff verweigert",
+    "generic": "Etwas ist schiefgelaufen"
+  },
+  "disclaimer": {
+    "short": "Nur Orientierungshinweise. Bitte immer beim Restaurant nachfragen.",
+    "full": "Diese App stellt Orientierungshilfen zu Restaurants bereit, die sich als 100 % glutenfrei deklarieren oder von Zöliakie-Vereinigungen zertifiziert sind. Die Betreiber übernehmen keine Garantie für die Richtigkeit, Aktualität oder Lebensmittelsicherheit der einzelnen Betriebe. Bitte bestätigen Sie vor dem Verzehr immer direkt beim Restaurant."
+  }
+}

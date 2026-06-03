@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { useFilterStore } from '../store/filterStore';
 import { colors } from '../theme/colors';
@@ -7,17 +8,15 @@ import { RADIUS_INPUT } from '../theme/radii';
 import { SPACE_MD, SPACE_SM } from '../theme/spacing';
 
 interface SearchBarProps {
-  placeholder?: string;
   onSearchChange?: (query: string) => void;
 }
 
-function SearchBar({ placeholder, onSearchChange }: SearchBarProps) {
+function SearchBar({ onSearchChange }: SearchBarProps) {
+  const { t } = useTranslation();
   const searchQuery = useFilterStore((state) => state.searchQuery);
   const setSearchQuery = useFilterStore((state) => state.setSearchQuery);
 
   const handleChangeText = (query: string) => {
-    // Bei lokaler Datenmenge bewusst ohne Debounce (KISS). Bei 1000+ Items kann
-    // spaeter ein useDebounce-Hook ergänzt werden.
     setSearchQuery(query);
     onSearchChange?.(query);
   };
@@ -34,7 +33,7 @@ function SearchBar({ placeholder, onSearchChange }: SearchBarProps) {
       <TextInput
         value={searchQuery}
         onChangeText={handleChangeText}
-        placeholder={placeholder}
+        placeholder={t('search.placeholder')}
         placeholderTextColor={colors.textSecondary}
         selectionColor={colors.primary}
         style={styles.input}
@@ -73,3 +72,5 @@ const styles = StyleSheet.create({
 });
 
 export default SearchBar;
+
+// i18n-migrated

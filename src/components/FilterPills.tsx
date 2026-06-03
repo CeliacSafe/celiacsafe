@@ -1,7 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { PRIMARY_VENUE_TYPES } from '../data/filterOptions';
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import { VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { useFilterStore } from '../store/filterStore';
 import { colors } from '../theme/colors';
@@ -9,23 +11,12 @@ import { RADIUS_PILL } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XS } from '../theme/spacing';
 
 interface FilterPillsProps {
-  language?: 'es' | 'en' | 'de';
   onMoreFiltersPress?: () => void;
 }
 
-const allLabels = {
-  es: 'Todos',
-  en: 'All',
-  de: 'Alle',
-} as const;
-
-const moreLabels = {
-  es: 'Mas filtros',
-  en: 'More filters',
-  de: 'Mehr Filter',
-} as const;
-
-function FilterPills({ language = 'es', onMoreFiltersPress }: FilterPillsProps) {
+function FilterPills({ onMoreFiltersPress }: FilterPillsProps) {
+  const { t } = useTranslation();
+  const language = useAppLanguage();
   const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
   const selectedRegions = useFilterStore((state) => state.selectedRegions);
   const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
@@ -46,7 +37,6 @@ function FilterPills({ language = 'es', onMoreFiltersPress }: FilterPillsProps) 
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
     >
-      {/* "Alle"-Pill setzt die schnellen Venue-Filter zurueck. */}
       <Pressable
         android_ripple={{ color: colors.rippleLight, borderless: false }}
         onPress={() => useFilterStore.setState({ selectedVenueTypes: [] })}
@@ -57,7 +47,7 @@ function FilterPills({ language = 'es', onMoreFiltersPress }: FilterPillsProps) 
         ]}
       >
         <Text style={[styles.label, isAllActive ? styles.labelActive : styles.labelInactive]}>
-          {allLabels[language]}
+          {t('filter.all')}
         </Text>
       </Pressable>
 
@@ -86,7 +76,6 @@ function FilterPills({ language = 'es', onMoreFiltersPress }: FilterPillsProps) 
         );
       })}
 
-      {/* Platzhalter-Trigger, Bottom-Sheet folgt in Teil 5. */}
       <Pressable
         android_ripple={{ color: colors.rippleLight, borderless: false }}
         onPress={onMoreFiltersPress}
@@ -107,7 +96,7 @@ function FilterPills({ language = 'es', onMoreFiltersPress }: FilterPillsProps) 
             activeAdvancedFilters > 0 ? styles.labelActive : styles.labelInactive,
           ]}
         >
-          {moreLabels[language]}
+          {t('filter.more_filters')}
         </Text>
         {activeAdvancedFilters > 0 ? (
           <View style={styles.countBadge}>
@@ -175,3 +164,5 @@ const styles = StyleSheet.create({
 });
 
 export default FilterPills;
+
+// i18n-migrated

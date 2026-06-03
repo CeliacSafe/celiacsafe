@@ -8,9 +8,9 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
-**In Entwicklung — M07 abgeschlossen: Favoriten + Persistenz**
+**M08 abgeschlossen — Internationalisierung**
 
-Restaurants lassen sich favorisieren — in Liste, Detail und auf der Karte. Favoriten überleben App-Neustart via AsyncStorage. Der Favoritos-Tab zeigt die gespeicherten Restaurants sortiert nach Hinzufüge-Datum, mit Tab-Badge und Swipe-to-Remove.
+Die App unterstützt Spanisch, Englisch und Deutsch. Beim ersten Start wird die Gerätesprache erkannt; im Profil-Tab kann die Sprache manuell gewählt und persistent gespeichert werden. UI-Texte, Region-/Cuisine-Namen, Beschreibungen und Datumsformate reagieren live auf den Sprachwechsel.
 
 ---
 
@@ -23,7 +23,9 @@ Restaurants lassen sich favorisieren — in Liste, Detail und auf der Karte. Fav
 | **React Navigation 7**        | Bottom-Tab-Navigation zwischen den Hauptbereichen  |
 | **react-native-maps**         | Karte (Apple Maps / Google Maps je nach Plattform) |
 | **expo-location**             | Standort nur on-demand (My-Location-Button)        |
-| **expo-haptics**              | Haptisches Feedback (Heart-Toggle)                 |
+| **expo-haptics**              | Haptisches Feedback (Heart-Toggle, Sprachwechsel)  |
+| **i18next + react-i18next**   | UI-Internationalisierung (es/en/de)                |
+| **expo-localization**         | Geräte-Spracherkennung beim ersten Start             |
 
 Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@react-native-async-storage/async-storage`, `@gorhom/bottom-sheet`, `@expo/vector-icons`, `expo-linear-gradient`, `expo-image`, `react-native-reanimated`
 
@@ -128,7 +130,7 @@ celiacsafe/
 | Restaurants  | read-only JSON-Asset   | App-Bundle (M02)  | M02   |
 | Favoriten    | AsyncStorage           | Gerät, persistent | M07   |
 | Filter/Suche | Zustand in-memory      | Nur App-Laufzeit  | M04   |
-| Sprache      | AsyncStorage (geplant) | Gerät, persistent | M08   |
+| Sprache      | AsyncStorage           | Gerät, persistent | M08   |
 
 ---
 
@@ -146,6 +148,46 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - `DescriptionBlock`, `CuisineTagsRow`, `OpeningHours`, `SeasonalClosureBanner` - Inhalts-Sektionen
 - `DeliveryButtons`, `ReservationSection`, `ContactDetailsSection`, `Disclaimer` - Aktionen & Rechtliches
 - `HeartButton`, `SwipeableRestaurantCard` - Favoriten-Interaktion (M07)
+- `LanguageSwitcher` - Sprachauswahl compact/full (M08)
+
+---
+
+## Features (M08 — Internationalisierung)
+
+- **3 Sprachen:** Spanisch (Standard), Englisch, Deutsch
+- **Geräte-Sprache** wird beim ersten Start via `expo-localization` erkannt
+- **Manuelle Sprachauswahl** im Profil-Tab, persistent in AsyncStorage (`languageStore`)
+- **~150 UI-Keys** pro Locale in `src/i18n/locales/{es,en,de}.json`
+- **`useLocalized`** — Region-, Venue- und Cuisine-Namen + mehrsprachige Beschreibungen
+- **`formatDate` / `useFormatDate`** — locale-spezifische Datumsformate (z. B. Verifizierungsdatum)
+- **Pluralformen** via i18next (`_one` / `_other`) für Ergebniszähler und Filter
+
+---
+
+## Internationalisierung
+
+| Thema | Details |
+| ----- | ------- |
+| **Tech-Stack** | i18next, react-i18next, expo-localization |
+| **Locale-Dateien** | `src/i18n/locales/es.json`, `en.json`, `de.json` |
+| **Initialisierung** | `src/i18n/index.ts` (Fallback `es`, `compatibilityJSON: 'v4'`) |
+| **Sprach-Store** | `src/store/languageStore.ts` — Override vs. Gerätesprache |
+| **Lookup-Daten** | `src/data/lookups.ts` → Region/Venue/Cuisine (M02) |
+| **Key-Struktur** | `tabs`, `search`, `filter`, `detail`, `favorites`, `profile`, `errors`, `disclaimer`, `map`, `card`, `community` |
+
+---
+
+## Beitragen
+
+### Neue Sprache hinzufügen
+
+1. Neue Datei `src/i18n/locales/XX.json` anlegen (Keys aus `es.json` kopieren)
+2. In `src/i18n/index.ts` importieren und in `resources` registrieren
+3. `SupportedLanguage`-Typ und `LanguageSwitcher` um die neue Sprache erweitern
+
+### Übersetzungs-Bugs melden
+
+Fehlerhafte oder fehlende Übersetzungen bitte per E-Mail melden (Kontakt folgt in M09).
 
 ---
 
@@ -203,6 +245,8 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - **Zustand** für globalen Filter-State (`src/store/filterStore.ts`) — nicht persistent
 - **`useFilterStore`** in Buscar- und Mapa-Flow geteilt
 - **`useFavoritesStore`** mit AsyncStorage-Persistenz (`src/store/favoritesStore.ts`)
+- **`useLanguageStore`** mit AsyncStorage-Persistenz (`src/store/languageStore.ts`)
+- **`useLocalized`** für Lookup-Tabellen und Beschreibungen (`src/hooks/useLocalized.ts`)
 - **`applyFilters`** kombiniert Suche, Filter und Sortierung; getestet mit Jest
 
 ---
@@ -238,7 +282,7 @@ graph TD
 | **M05** | ✅     | Karte (Mapa)                                     |
 | **M06** | ✅     | Volle Detail-Ansicht                             |
 | **M07** | ✅     | Favoriten & Persistenz                           |
-| **M08** | ⏳     | Mehrsprachigkeit                                 |
+| **M08** | ✅     | Mehrsprachigkeit (es/en/de)                      |
 
 ---
 

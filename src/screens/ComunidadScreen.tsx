@@ -1,13 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { colors } from '../theme/colors';
 
 export function ComunidadScreen() {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>Celiac Safe</Text>
-      <Text style={styles.title}>Comunidad</Text>
-      <Text style={styles.subtitle}>Bald verfügbar</Text>
+      <Text style={styles.title}>{t('tabs.community')}</Text>
+      <Text style={styles.subtitle}>{t('community.coming_soon')}</Text>
     </View>
   );
 }
@@ -37,3 +40,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+// i18n-migrated

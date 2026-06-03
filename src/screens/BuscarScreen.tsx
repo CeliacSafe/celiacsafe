@@ -7,6 +7,7 @@ import type {
 } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
 import FilterBottomSheet, { type FilterBottomSheetRef } from '../components/FilterBottomSheet';
@@ -28,6 +29,7 @@ type BuscarScreenProps = NativeStackScreenProps<BuscarStackParamList, 'BuscarLis
 const ITEM_HEIGHT = 320;
 
 export function BuscarScreen(_screenProps: BuscarScreenProps) {
+  const { t } = useTranslation();
   const filterSheetRef = useRef<FilterBottomSheetRef>(null);
   const navigation = useNavigation<BuscarNavigationProp>();
   const { restaurants, loading, error, refetch } = useRestaurants();
@@ -41,28 +43,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const [refreshing, setRefreshing] = useState(false);
-  const lang = 'es';
-
-  const emptyStateTexts = {
-    es: {
-      filteredTitle: 'Sin resultados',
-      filteredDescription: 'Prueba a quitar algunos filtros',
-      clearAction: 'Limpiar filtros',
-      defaultTitle: 'Aun no hay restaurantes',
-    },
-    en: {
-      filteredTitle: 'No results',
-      filteredDescription: 'Try removing some filters',
-      clearAction: 'Clear filters',
-      defaultTitle: 'No restaurants yet',
-    },
-    de: {
-      filteredTitle: 'Keine Ergebnisse',
-      filteredDescription: 'Versuche, einige Filter zu entfernen',
-      clearAction: 'Filter zuruecksetzen',
-      defaultTitle: 'Noch keine Restaurants',
-    },
-  } as const;
 
   const filterCriteria = useMemo(
     () => ({
@@ -86,7 +66,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     [restaurants, searchQuery, filterCriteria, sortBy]
   );
 
-  // Navigation zum Detail-Screen pro Restaurant.
   const openDetail = useCallback(
     (restaurantId: string) => {
       navigation.navigate('RestaurantDetail', { restaurantId });
@@ -94,7 +73,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     [navigation]
   );
 
-  // Pull-to-Refresh triggert ein erneutes Laden aus dem Daten-Hook.
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -111,33 +89,31 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     [openDetail]
   );
 
-  // Sticky Kopfbereich mit Branding, Suche und Ergebniszaehler.
   const listHeader = useMemo(
     () => (
       <View style={styles.stickyHeader}>
         <View style={styles.header}>
           <Text style={styles.title}>Celiac Safe</Text>
-          <Text style={styles.subtitle}>Guia esencial sin gluten</Text>
+          <Text style={styles.subtitle}>{t('search.subtitle')}</Text>
         </View>
 
-        <SearchBar placeholder="Buscar restaurantes, cafés o lugares..." />
-        <FilterPills language={lang} onMoreFiltersPress={() => filterSheetRef.current?.expand()} />
+        <SearchBar />
+        <FilterPills onMoreFiltersPress={() => filterSheetRef.current?.expand()} />
 
         <View style={styles.counterRow}>
           <MaterialCommunityIcons name="star-four-points" size={14} color={colors.primary} />
           <Text style={styles.counterText}>
-            {formatResultCount(filteredRestaurants.length, lang).toUpperCase()}
+            {formatResultCount(filteredRestaurants.length).toUpperCase()}
           </Text>
         </View>
       </View>
     ),
-    [filteredRestaurants.length, lang]
+    [filteredRestaurants.length, t]
   );
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       {loading ? (
-        // Ladephase: kurz 5 Skeleton-Karten anzeigen.
         <FlatList
           data={Array(5).fill(null)}
           ListHeaderComponent={listHeader}
@@ -157,15 +133,15 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
             hasActiveFilters() ? (
               <EmptyState
                 iconName="filter-off-outline"
-                title={emptyStateTexts[lang].filteredTitle}
-                description={emptyStateTexts[lang].filteredDescription}
-                actionLabel={emptyStateTexts[lang].clearAction}
+                title={t('search.no_results_title')}
+                description={t('search.no_results_description')}
+                actionLabel={t('search.clear_filters')}
                 onAction={resetFilters}
               />
             ) : (
               <EmptyState
                 iconName="food-off"
-                title={emptyStateTexts[lang].defaultTitle}
+                title={t('search.no_restaurants_title')}
                 description={error ?? undefined}
               />
             )
@@ -189,7 +165,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           keyboardShouldPersistTaps="handled"
         />
       )}
-      <FilterBottomSheet ref={filterSheetRef} language={lang} />
+      <FilterBottomSheet ref={filterSheetRef} />
     </SafeAreaView>
   );
 }
@@ -236,3 +212,5 @@ const styles = StyleSheet.create({
     paddingBottom: SPACE_XXL,
   },
 });
+
+// i18n-migrated

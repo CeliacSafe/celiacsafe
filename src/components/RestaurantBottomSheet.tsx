@@ -6,8 +6,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
+import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { RADIUS_BUTTON } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XS, SPACE_XXL } from '../theme/spacing';
@@ -35,6 +37,8 @@ interface ActionItem {
 
 const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBottomSheetProps>(
   ({ restaurant, onClose, onDetailPress }, ref) => {
+    const { t } = useTranslation();
+    const { regionName, cuisineName } = useLocalized();
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ['40%', '70%'], []);
 
@@ -65,25 +69,25 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
       ? [
           {
             icon: 'phone',
-            label: 'Anrufen',
+            label: t('detail.call'),
             visible: Boolean(restaurant.phone),
             onPress: () => openTel(restaurant.phone!),
           },
           {
             icon: 'web',
-            label: 'Website',
+            label: t('detail.website'),
             visible: Boolean(restaurant.website),
             onPress: () => openUrl(restaurant.website!),
           },
           {
             icon: 'map',
-            label: 'Route',
+            label: t('detail.route'),
             visible: restaurant.latitude != null && restaurant.longitude != null,
             onPress: () => openMaps(restaurant.latitude!, restaurant.longitude!),
           },
           {
             icon: 'information',
-            label: 'Detalle',
+            label: t('map.view_detail'),
             visible: true,
             onPress: () => onDetailPress(restaurant.id),
           },
@@ -107,15 +111,15 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
             <View style={styles.header}>
               <Text style={styles.name}>{restaurant.name}</Text>
               <Text style={styles.location}>
-                {restaurant.city} · {restaurant.region_name}
+                {restaurant.city} · {regionName(restaurant.region_code)}
               </Text>
             </View>
 
             <View style={styles.badgeRow}>
-              <BadgePill label="100% SIN GLUTEN" variant="sinGluten" iconName="check-circle" />
+              <BadgePill label={t('card.badge_sin_gluten')} variant="sinGluten" iconName="check-circle" />
               {showVerificationBadge ? (
                 <BadgePill
-                  label="VERIFICACIÓN OFICIAL"
+                  label={t('card.badge_verified')}
                   variant="verified"
                   iconName="shield-check"
                 />
@@ -141,7 +145,7 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
             {restaurant.cuisine_types && restaurant.cuisine_types.length > 0 ? (
               <View style={styles.cuisineRow}>
                 {restaurant.cuisine_types.map((cuisine) => (
-                  <BadgePill key={cuisine} label={cuisine} variant="cuisine" />
+                  <BadgePill key={cuisine} label={cuisineName(cuisine)} variant="cuisine" />
                 ))}
               </View>
             ) : null}
@@ -259,3 +263,5 @@ const styles = StyleSheet.create({
 });
 
 export default RestaurantBottomSheet;
+
+// i18n-migrated

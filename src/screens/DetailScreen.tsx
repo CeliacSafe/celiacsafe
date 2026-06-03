@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useTranslation } from 'react-i18next';
 
 import AddressSection from '../components/AddressSection';
 import ContactDetailsSection from '../components/ContactDetailsSection';
@@ -26,17 +27,17 @@ type Props = NativeStackScreenProps<
 >;
 
 export default function DetailScreen({ route, navigation }: Props) {
+  const { t } = useTranslation();
   const { restaurantId } = route.params;
   const restaurant = getRestaurantById(restaurantId);
-  const language = 'es';
 
   if (!restaurant) {
     return (
       <View style={styles.container}>
         <EmptyState
           iconName="food-off"
-          title="Restaurant nicht gefunden"
-          description="Este restaurante ya no esta disponible."
+          title={t('detail.not_found_title')}
+          description={t('detail.not_found_description')}
         />
       </View>
     );
@@ -45,23 +46,18 @@ export default function DetailScreen({ route, navigation }: Props) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <DetailHeader
-          restaurant={restaurant}
-          language={language}
-          onBack={() => navigation.goBack()}
-        />
-
-        <QuickActionsBar restaurant={restaurant} language={language} />
-        <VerificationSection restaurant={restaurant} language={language} />
-        <AddressSection restaurant={restaurant} language={language} />
-        <SeasonalClosureBanner restaurant={restaurant} language={language} />
-        <CuisineTagsRow restaurant={restaurant} language={language} />
-        <DescriptionBlock restaurant={restaurant} language={language} />
-        <OpeningHours restaurant={restaurant} language={language} />
-        <DeliveryButtons restaurant={restaurant} language={language} />
-        <ReservationSection restaurant={restaurant} language={language} />
-        <ContactDetailsSection restaurant={restaurant} language={language} />
-        <Disclaimer variant="full" language={language} />
+        <DetailHeader restaurant={restaurant} onBack={() => navigation.goBack()} />
+        <QuickActionsBar restaurant={restaurant} />
+        <VerificationSection restaurant={restaurant} />
+        <AddressSection restaurant={restaurant} />
+        <SeasonalClosureBanner restaurant={restaurant} />
+        <CuisineTagsRow restaurant={restaurant} />
+        <DescriptionBlock restaurant={restaurant} />
+        <OpeningHours restaurant={restaurant} />
+        <DeliveryButtons restaurant={restaurant} />
+        <ReservationSection restaurant={restaurant} />
+        <ContactDetailsSection restaurant={restaurant} />
+        <Disclaimer variant="full" />
       </ScrollView>
     </View>
   );
@@ -76,3 +72,5 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
 });
+
+// i18n-migrated

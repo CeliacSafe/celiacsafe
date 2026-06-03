@@ -2,20 +2,20 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { Region } from 'react-native-maps';
 
 import { QUICK_JUMPS } from '../data/quickJumps';
-import type { AppLanguage } from '../i18n/getLocalizedName';
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import { colors } from '../theme/colors';
 import { RADIUS_PILL } from '../theme/radii';
 import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
 
 interface RegionQuickJumpsProps {
   onJumpTo: (region: Region) => void;
-  language?: AppLanguage;
 }
 
 /**
  * Horizontale Shortcut-Pills zum schnellen Springen auf Kartenregionen.
  */
-function RegionQuickJumps({ onJumpTo, language = 'es' }: RegionQuickJumpsProps) {
+function RegionQuickJumps({ onJumpTo }: RegionQuickJumpsProps) {
+  const language = useAppLanguage();
   return (
     <View style={styles.bar}>
       <ScrollView
@@ -72,3 +72,5 @@ const styles = StyleSheet.create({
 });
 
 export default RegionQuickJumps;
+
+// i18n-migrated

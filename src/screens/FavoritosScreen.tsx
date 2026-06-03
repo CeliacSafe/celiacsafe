@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
 import SwipeableRestaurantCard from '../components/SwipeableRestaurantCard';
@@ -15,24 +16,9 @@ import type { Restaurant } from '../types/Restaurant';
 
 type FavoritosNavigationProp = NativeStackNavigationProp<FavoritosStackParamList, 'FavoritosList'>;
 
-const EMPTY_TEXTS = {
-  es: {
-    title: 'Aún no tienes favoritos',
-    description: 'Guarda restaurantes con el corazón para encontrarlos aquí.',
-  },
-  en: {
-    title: 'No favorites yet',
-    description: 'Save restaurants with the heart to find them here.',
-  },
-  de: {
-    title: 'Noch keine Favoriten',
-    description: 'Speichere Restaurants mit dem Herz, um sie hier zu finden.',
-  },
-} as const;
-
 export function FavoritosScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<FavoritosNavigationProp>();
-  const language = 'es';
   const { restaurants, loading } = useRestaurants();
   const favorites = useFavoritesStore((state) => state.favorites);
 
@@ -55,27 +41,21 @@ export function FavoritosScreen() {
 
   const renderItem = useCallback(
     ({ item }: { item: Restaurant }) => (
-      <SwipeableRestaurantCard
-        restaurant={item}
-        onPress={() => openDetail(item.id)}
-        language={language}
-      />
+      <SwipeableRestaurantCard restaurant={item} onPress={() => openDetail(item.id)} />
     ),
-    [language, openDetail]
+    [openDetail]
   );
-
-  const emptyCopy = EMPTY_TEXTS[language];
 
   if (!loading && favoriteRestaurants.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.header}>
-          <Text style={styles.title}>Favoritos</Text>
+          <Text style={styles.title}>{t('favorites.title')}</Text>
         </View>
         <EmptyState
           iconName="heart-outline"
-          title={emptyCopy.title}
-          description={emptyCopy.description}
+          title={t('favorites.empty_title')}
+          description={t('favorites.empty_description')}
         />
       </SafeAreaView>
     );
@@ -91,10 +71,9 @@ export function FavoritosScreen() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.title}>Favoritos</Text>
+            <Text style={styles.title}>{t('favorites.title')}</Text>
             <Text style={styles.subtitle}>
-              {favoriteRestaurants.length}{' '}
-              {favoriteRestaurants.length === 1 ? 'restaurante' : 'restaurantes'}
+              {t('favorites.count', { count: favoriteRestaurants.length })}
             </Text>
           </View>
         }
@@ -128,3 +107,5 @@ const styles = StyleSheet.create({
     paddingBottom: SPACE_XL,
   },
 });
+
+// i18n-migrated

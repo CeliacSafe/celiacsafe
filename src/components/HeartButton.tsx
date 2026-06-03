@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -31,6 +32,7 @@ function HeartButton({
   onPressed,
   style,
 }: HeartButtonProps) {
+  const { t } = useTranslation();
   const isFavorite = useFavoritesStore((state) =>
     Object.prototype.hasOwnProperty.call(state.favorites, restaurantId)
   );
@@ -72,7 +74,7 @@ function HeartButton({
       onPress={handlePress}
       hitSlop={8}
       accessibilityRole="button"
-      accessibilityLabel={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
+      accessibilityLabel={isFavorite ? t('favorites.remove') : t('favorites.add')}
       style={style}
     >
       <Animated.View

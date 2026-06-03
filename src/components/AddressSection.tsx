@@ -1,9 +1,10 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 
 import CustomMarker from './CustomMarker';
-import type { AppLanguage } from '../i18n/getLocalizedName';
+import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { RADIUS_INPUT } from '../theme/radii';
 import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
@@ -12,24 +13,11 @@ import { openMapsRouting } from '../utils/openExternalUrl';
 
 interface AddressSectionProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
 }
-
-const SECTION_TITLES: Record<AppLanguage, string> = {
-  es: 'Dirección',
-  en: 'Address',
-  de: 'Adresse',
-};
-
-const ROUTING_LABELS: Record<AppLanguage, string> = {
-  es: 'Cómo llegar',
-  en: 'Get directions',
-  de: 'Route planen',
-};
 
 const MAP_DELTA = 0.005;
 
-function formatAddress(restaurant: Restaurant): string {
+function formatAddress(restaurant: Restaurant, regionLabel: string): string {
   const parts: string[] = [];
   if (restaurant.address_street) {
     parts.push(restaurant.address_street);
@@ -38,8 +26,8 @@ function formatAddress(restaurant: Restaurant): string {
   if (cityLine) {
     parts.push(cityLine);
   }
-  if (restaurant.region_name) {
-    parts.push(restaurant.region_name);
+  if (regionLabel) {
+    parts.push(regionLabel);
   }
   return parts.join(', ');
 }
@@ -47,8 +35,11 @@ function formatAddress(restaurant: Restaurant): string {
 /**
  * Adresse mit Mini-Map und Routing-Button fuer die Detail-Seite.
  */
-function AddressSection({ restaurant, language = 'es' }: AddressSectionProps) {
-  const addressText = formatAddress(restaurant);
+function AddressSection({ restaurant }: AddressSectionProps) {
+  const { t } = useTranslation();
+  const { regionName } = useLocalized();
+  const regionLabel = regionName(restaurant.region_code);
+  const addressText = formatAddress(restaurant, regionLabel);
   const hasCoordinates = restaurant.latitude != null && restaurant.longitude != null;
 
   if (!addressText && !hasCoordinates) {
@@ -74,7 +65,7 @@ function AddressSection({ restaurant, language = 'es' }: AddressSectionProps) {
     <View style={styles.wrapper}>
       <View style={styles.titleRow}>
         <MaterialCommunityIcons name="map-marker" size={18} color={colors.primary} />
-        <Text style={styles.title}>{SECTION_TITLES[language]}</Text>
+        <Text style={styles.title}>{t('detail.address')}</Text>
       </View>
 
       {addressText ? <Text style={styles.addressText}>{addressText}</Text> : null}
@@ -110,7 +101,7 @@ function AddressSection({ restaurant, language = 'es' }: AddressSectionProps) {
           android_ripple={{ color: colors.rippleLight }}
           style={({ pressed }) => [styles.routeButton, pressed && styles.routePressed]}
         >
-          <Text style={styles.routeLabel}>{ROUTING_LABELS[language]}</Text>
+          <Text style={styles.routeLabel}>{t('detail.directions')}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -166,3 +157,5 @@ const styles = StyleSheet.create({
 });
 
 export default AddressSection;
+
+// i18n-migrated

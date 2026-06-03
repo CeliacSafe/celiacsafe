@@ -1,29 +1,29 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
-import { getLocalizedName } from '../i18n/getLocalizedName';
-import { REGION_NAMES } from '../i18n/regions';
+import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { RADIUS_CARD } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XS } from '../theme/spacing';
-import type { AppLanguage } from '../i18n/getLocalizedName';
 import type { Restaurant } from '../types/Restaurant';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
   onPress: () => void;
-  language?: AppLanguage;
 }
 
 const MAX_CUISINE_TAGS = 3;
 
-function RestaurantCard({ restaurant, onPress, language = 'es' }: RestaurantCardProps) {
+function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
+  const { t } = useTranslation();
+  const { regionName, cuisineName } = useLocalized();
   const showVerificationBadge =
     restaurant.face_program === true || restaurant.aoecs_certified === true;
-  const regionLabel = getLocalizedName(REGION_NAMES, restaurant.region_code, language);
+  const regionLabel = regionName(restaurant.region_code);
   const cuisineTypes = restaurant.cuisine_types ?? [];
   const visibleCuisines = cuisineTypes.slice(0, MAX_CUISINE_TAGS);
   const hiddenCuisineCount = cuisineTypes.length - visibleCuisines.length;
@@ -33,7 +33,6 @@ function RestaurantCard({ restaurant, onPress, language = 'es' }: RestaurantCard
 
   return (
     <View style={styles.cardWrapper}>
-      {/* ── Pressable Card-Body ── */}
       <Pressable
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
@@ -41,7 +40,6 @@ function RestaurantCard({ restaurant, onPress, language = 'es' }: RestaurantCard
         onPress={onPress}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
-        {/* ── Bild-Container ── */}
         <View style={styles.imageContainer}>
           {hasImage ? (
             <Image
@@ -60,16 +58,22 @@ function RestaurantCard({ restaurant, onPress, language = 'es' }: RestaurantCard
             </View>
           )}
 
-          {/* ── Badges oben links ── */}
           <View style={styles.badgeStack}>
-            <BadgePill label="100% SIN GLUTEN" variant="sinGluten" iconName="check-circle" />
+            <BadgePill
+              label={t('card.badge_sin_gluten')}
+              variant="sinGluten"
+              iconName="check-circle"
+            />
             {showVerificationBadge ? (
-              <BadgePill label="VERIFICACIÓN OFICIAL" variant="verified" iconName="shield-check" />
+              <BadgePill
+                label={t('card.badge_verified')}
+                variant="verified"
+                iconName="shield-check"
+              />
             ) : null}
           </View>
         </View>
 
-        {/* ── Text-Container ── */}
         <View style={styles.textContainer}>
           <Text style={styles.name}>{restaurant.name}</Text>
           <Text style={styles.location}>
@@ -79,7 +83,7 @@ function RestaurantCard({ restaurant, onPress, language = 'es' }: RestaurantCard
           {(visibleCuisines.length > 0 || hiddenCuisineCount > 0) && (
             <View style={styles.tagRow}>
               {visibleCuisines.map((cuisine) => (
-                <BadgePill key={cuisine} label={cuisine} variant="cuisine" />
+                <BadgePill key={cuisine} label={cuisineName(cuisine)} variant="cuisine" />
               ))}
               {hiddenCuisineCount > 0 ? (
                 <BadgePill label={`+${hiddenCuisineCount}`} variant="cuisine" />
@@ -172,3 +176,5 @@ const styles = StyleSheet.create({
 });
 
 export default RestaurantCard;
+
+// i18n-migrated

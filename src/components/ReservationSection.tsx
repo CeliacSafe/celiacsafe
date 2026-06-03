@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
 import { RADIUS_INPUT, RADIUS_SUB } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
@@ -10,22 +10,9 @@ import { openPhone, openUrl } from '../utils/openExternalUrl';
 
 interface ReservationSectionProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
 }
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
-
-const SECTION_TITLES: Record<AppLanguage, string> = {
-  es: 'Reservas',
-  en: 'Reservations',
-  de: 'Reservierung',
-};
-
-const WALK_IN_HINT: Record<AppLanguage, string> = {
-  es: 'Solo sin reserva',
-  en: 'Walk-in only',
-  de: 'Nur ohne Reservierung',
-};
 
 const RESERVATION_PLATFORMS: Record<string, { label: string; color: string; icon: IconName }> = {
   thefork: { label: 'TheFork', color: colors.verifiedGreen, icon: 'silverware-fork-knife' },
@@ -112,7 +99,8 @@ function buildActions(restaurant: Restaurant, links: ReservationLink[]): Reserva
 /**
  * Reservierungs-Buttons fuer TheFork, Telefon, Walk-in und weitere Kanaele.
  */
-function ReservationSection({ restaurant, language = 'es' }: ReservationSectionProps) {
+function ReservationSection({ restaurant }: ReservationSectionProps) {
+  const { t } = useTranslation();
   const activeLinks = filterReservationLinks(restaurant.reservation_links);
   const actions = buildActions(restaurant, activeLinks);
 
@@ -127,13 +115,13 @@ function ReservationSection({ restaurant, language = 'es' }: ReservationSectionP
     <View style={styles.wrapper}>
       <View style={styles.titleRow}>
         <MaterialCommunityIcons name="calendar" size={18} color={colors.primary} />
-        <Text style={styles.title}>{SECTION_TITLES[language]}</Text>
+        <Text style={styles.title}>{t('detail.reservation')}</Text>
       </View>
 
       {isSingle && singleAction.isHint ? (
         <View style={styles.hintBox}>
           <MaterialCommunityIcons name={singleAction.icon} size={20} color={colors.textSecondary} />
-          <Text style={styles.hintText}>{WALK_IN_HINT[language]}</Text>
+          <Text style={styles.hintText}>{t('detail.reservation_walk_in')}</Text>
         </View>
       ) : null}
 
@@ -164,7 +152,7 @@ function ReservationSection({ restaurant, language = 'es' }: ReservationSectionP
                     size={20}
                     color={colors.textSecondary}
                   />
-                  <Text style={styles.hintText}>{WALK_IN_HINT[language]}</Text>
+                  <Text style={styles.hintText}>{t('detail.reservation_walk_in')}</Text>
                 </View>
               );
             }

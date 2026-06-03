@@ -1,8 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { WHATSAPP_DEFAULT_MESSAGES } from '../i18n/contact';
-import type { AppLanguage } from '../i18n/getLocalizedName';
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import { colors } from '../theme/colors';
 import { RADIUS_BUTTON } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_XL } from '../theme/spacing';
@@ -11,7 +12,6 @@ import { openMapsRouting, openPhone, openUrl, openWhatsApp } from '../utils/open
 
 interface QuickActionsBarProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
 }
 
 type ActionIconName = keyof typeof MaterialCommunityIcons.glyphMap;
@@ -23,29 +23,21 @@ interface QuickAction {
   onPress: () => void;
 }
 
-const ACTION_LABELS = {
-  call: { es: 'Llamar', en: 'Call', de: 'Anrufen' },
-  whatsapp: { es: 'WhatsApp', en: 'WhatsApp', de: 'WhatsApp' },
-  website: { es: 'Web', en: 'Website', de: 'Webseite' },
-  route: { es: 'Ruta', en: 'Route', de: 'Route' },
-} as const;
-
 function normalizeWebsiteUrl(url: string): string {
   const trimmed = url.trim();
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
-/**
- * Prominente Schnellaktionen direkt unter dem Detail-Header (horizontal scrollbar).
- */
-function QuickActionsBar({ restaurant, language = 'es' }: QuickActionsBarProps) {
+function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
+  const { t } = useTranslation();
+  const language = useAppLanguage();
   const actions: QuickAction[] = [];
 
   if (restaurant.phone) {
     actions.push({
       key: 'call',
       icon: 'phone',
-      label: ACTION_LABELS.call[language],
+      label: t('detail.call'),
       onPress: () => openPhone(restaurant.phone!),
     });
   }
@@ -54,7 +46,7 @@ function QuickActionsBar({ restaurant, language = 'es' }: QuickActionsBarProps) 
     actions.push({
       key: 'whatsapp',
       icon: 'whatsapp',
-      label: ACTION_LABELS.whatsapp[language],
+      label: t('detail.whatsapp'),
       onPress: () => openWhatsApp(restaurant.whatsapp!, WHATSAPP_DEFAULT_MESSAGES[language]),
     });
   }
@@ -63,7 +55,7 @@ function QuickActionsBar({ restaurant, language = 'es' }: QuickActionsBarProps) 
     actions.push({
       key: 'website',
       icon: 'web',
-      label: ACTION_LABELS.website[language],
+      label: t('detail.website'),
       onPress: () => {
         openUrl(normalizeWebsiteUrl(restaurant.website!)).catch(() => undefined);
       },
@@ -74,7 +66,7 @@ function QuickActionsBar({ restaurant, language = 'es' }: QuickActionsBarProps) 
     actions.push({
       key: 'route',
       icon: 'map-marker-radius',
-      label: ACTION_LABELS.route[language],
+      label: t('detail.route'),
       onPress: () => openMapsRouting(restaurant.latitude!, restaurant.longitude!, restaurant.name),
     });
   }
@@ -140,3 +132,5 @@ const styles = StyleSheet.create({
 });
 
 export default QuickActionsBar;
+
+// i18n-migrated

@@ -3,11 +3,11 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
-import { getLocalizedName, type AppLanguage } from '../i18n/getLocalizedName';
-import { REGION_NAMES } from '../i18n/regions';
+import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { RADIUS_BUTTON } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
@@ -16,7 +16,6 @@ import type { Restaurant } from '../types/Restaurant';
 interface DetailHeaderProps {
   restaurant: Restaurant;
   onBack?: () => void;
-  language?: AppLanguage;
 }
 
 const HERO_HEIGHT = 280;
@@ -25,11 +24,13 @@ const GRADIENT_HEIGHT = 100;
 /**
  * Hero-Bereich der Detail-Seite: Bild, Badges, Favoriten- und Zurueck-Buttons, Name.
  */
-function DetailHeader({ restaurant, onBack, language = 'es' }: DetailHeaderProps) {
+function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
+  const { t } = useTranslation();
+  const { regionName } = useLocalized();
   const insets = useSafeAreaInsets();
   const showVerificationBadge =
     restaurant.face_program === true || restaurant.aoecs_certified === true;
-  const regionLabel = getLocalizedName(REGION_NAMES, restaurant.region_code, language);
+  const regionLabel = regionName(restaurant.region_code);
   const hasImage = Boolean(restaurant.featured_image_url?.trim());
 
   return (
@@ -65,7 +66,7 @@ function DetailHeader({ restaurant, onBack, language = 'es' }: DetailHeaderProps
           {onBack ? (
             <Pressable
               onPress={onBack}
-              accessibilityLabel="Volver"
+              accessibilityLabel={t('common.back')}
               accessibilityRole="button"
               style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
             >
@@ -79,9 +80,17 @@ function DetailHeader({ restaurant, onBack, language = 'es' }: DetailHeaderProps
         </View>
 
         <View style={styles.badgeOverlay}>
-          <BadgePill label="100% SIN GLUTEN" variant="sinGluten" iconName="check-circle" />
+          <BadgePill
+            label={t('card.badge_sin_gluten')}
+            variant="sinGluten"
+            iconName="check-circle"
+          />
           {showVerificationBadge ? (
-            <BadgePill label="VERIFICACIÓN OFICIAL" variant="verified" iconName="shield-check" />
+            <BadgePill
+              label={t('card.badge_verified')}
+              variant="verified"
+              iconName="shield-check"
+            />
           ) : null}
           {restaurant.price_range ? (
             <BadgePill label={restaurant.price_range} variant="priceRange" />
@@ -183,3 +192,5 @@ const styles = StyleSheet.create({
 });
 
 export default DetailHeader;
+
+// i18n-migrated

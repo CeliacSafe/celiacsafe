@@ -1,13 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BuscarStack from './BuscarStack';
 import FavoritosStack from './FavoritosStack';
 import MapaStack from './MapaStack';
 import { ComunidadScreen } from '../screens/ComunidadScreen';
-import { PerfilScreen } from '../screens/PerfilScreen';
+import PerfilScreen from '../screens/PerfilScreen';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { colors } from '../theme/colors';
 
@@ -23,27 +24,12 @@ type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
-const tabConfig: Record<keyof RootTabParamList, { label: string; icon: IconName }> = {
-  Buscar: {
-    label: 'BUSCAR',
-    icon: 'magnify',
-  },
-  Comunidad: {
-    label: 'COMUNIDAD',
-    icon: 'account-group-outline',
-  },
-  Mapa: {
-    label: 'MAPA',
-    icon: 'map-marker-radius-outline',
-  },
-  Favoritos: {
-    label: 'FAVORITOS',
-    icon: 'heart-outline',
-  },
-  Perfil: {
-    label: 'PERFIL',
-    icon: 'account-circle-outline',
-  },
+const tabIcons: Record<keyof RootTabParamList, IconName> = {
+  Buscar: 'magnify',
+  Comunidad: 'account-group-outline',
+  Mapa: 'map-marker-radius-outline',
+  Favoritos: 'heart-outline',
+  Perfil: 'account-circle-outline',
 };
 
 type TabBarIconProps = {
@@ -53,11 +39,12 @@ type TabBarIconProps = {
 
 function createTabBarIcon(routeName: keyof RootTabParamList) {
   return function TabBarIcon({ color, size }: TabBarIconProps) {
-    return <MaterialCommunityIcons name={tabConfig[routeName].icon} color={color} size={size} />;
+    return <MaterialCommunityIcons name={tabIcons[routeName]} color={color} size={size} />;
   };
 }
 
 export function RootTabs() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const favoriteCount = useFavoritesStore((state) => Object.keys(state.favorites).length);
 
@@ -88,7 +75,7 @@ export function RootTabs() {
         component={BuscarStack}
         options={{
           headerShown: false,
-          tabBarLabel: tabConfig.Buscar.label,
+          tabBarLabel: t('tabs.search').toUpperCase(),
           tabBarIcon: createTabBarIcon('Buscar'),
         }}
       />
@@ -96,7 +83,7 @@ export function RootTabs() {
         name="Comunidad"
         component={ComunidadScreen}
         options={{
-          tabBarLabel: tabConfig.Comunidad.label,
+          tabBarLabel: t('tabs.community').toUpperCase(),
           tabBarIcon: createTabBarIcon('Comunidad'),
         }}
       />
@@ -105,7 +92,7 @@ export function RootTabs() {
         component={MapaStack}
         options={{
           headerShown: false,
-          tabBarLabel: tabConfig.Mapa.label,
+          tabBarLabel: t('tabs.map').toUpperCase(),
           tabBarIcon: createTabBarIcon('Mapa'),
         }}
       />
@@ -113,7 +100,7 @@ export function RootTabs() {
         name="Favoritos"
         component={FavoritosStack}
         options={{
-          tabBarLabel: tabConfig.Favoritos.label,
+          tabBarLabel: t('tabs.favorites').toUpperCase(),
           tabBarIcon: createTabBarIcon('Favoritos'),
           tabBarBadge: favoriteCount > 0 ? favoriteCount : undefined,
           tabBarBadgeStyle: {
@@ -126,10 +113,12 @@ export function RootTabs() {
         name="Perfil"
         component={PerfilScreen}
         options={{
-          tabBarLabel: tabConfig.Perfil.label,
+          tabBarLabel: t('tabs.profile').toUpperCase(),
           tabBarIcon: createTabBarIcon('Perfil'),
         }}
       />
     </Tab.Navigator>
   );
 }
+
+// i18n-migrated

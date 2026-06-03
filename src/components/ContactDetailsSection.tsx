@@ -1,7 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { WHATSAPP_DEFAULT_MESSAGES } from '../i18n/contact';
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
 import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
@@ -17,16 +19,9 @@ import {
 
 interface ContactDetailsSectionProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
 }
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
-
-const SECTION_TITLES: Record<AppLanguage, string> = {
-  es: 'Contacto',
-  en: 'Contact',
-  de: 'Kontakt',
-};
 
 const FACEBOOK_LABEL: Record<AppLanguage, string> = {
   es: 'Página de FB',
@@ -64,7 +59,9 @@ function formatInstagramLabel(handle: string): string {
 /**
  * Sekundaere Kontaktliste mit Telefon, Social und E-Mail.
  */
-function ContactDetailsSection({ restaurant, language = 'es' }: ContactDetailsSectionProps) {
+function ContactDetailsSection({ restaurant }: ContactDetailsSectionProps) {
+  const { t } = useTranslation();
+  const language = useAppLanguage();
   const rows: ContactRow[] = [];
 
   if (restaurant.phone) {
@@ -141,7 +138,7 @@ function ContactDetailsSection({ restaurant, language = 'es' }: ContactDetailsSe
           size={18}
           color={colors.primary}
         />
-        <Text style={styles.title}>{SECTION_TITLES[language]}</Text>
+        <Text style={styles.title}>{t('detail.contact')}</Text>
       </View>
 
       {rows.map((row, index) => (

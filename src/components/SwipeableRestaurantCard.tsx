@@ -2,9 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useRef } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { useTranslation } from 'react-i18next';
 
 import RestaurantCard from './RestaurantCard';
-import type { AppLanguage } from '../i18n/getLocalizedName';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { colors } from '../theme/colors';
 import { SPACE_SM } from '../theme/spacing';
@@ -13,25 +13,15 @@ import type { Restaurant } from '../types/Restaurant';
 interface SwipeableRestaurantCardProps {
   restaurant: Restaurant;
   onPress: () => void;
-  language?: AppLanguage;
 }
-
-const REMOVE_LABELS: Record<AppLanguage, string> = {
-  es: 'Eliminar',
-  en: 'Remove',
-  de: 'Entfernen',
-};
 
 const ACTION_WIDTH = 80;
 
 /**
  * RestaurantCard mit Swipe-to-Remove fuer die Favoriten-Liste.
  */
-function SwipeableRestaurantCard({
-  restaurant,
-  onPress,
-  language = 'es',
-}: SwipeableRestaurantCardProps) {
+function SwipeableRestaurantCard({ restaurant, onPress }: SwipeableRestaurantCardProps) {
+  const { t } = useTranslation();
   const swipeRef = useRef<Swipeable>(null);
   const removeFavorite = useFavoritesStore((state) => state.removeFavorite);
 
@@ -45,14 +35,14 @@ function SwipeableRestaurantCard({
       <Pressable
         onPress={handleRemove}
         accessibilityRole="button"
-        accessibilityLabel={REMOVE_LABELS[language]}
+        accessibilityLabel={t('favorites.remove')}
         style={styles.deleteAction}
       >
         <MaterialCommunityIcons name="trash-can-outline" size={24} color={colors.white} />
-        <Text style={styles.deleteLabel}>{REMOVE_LABELS[language]}</Text>
+        <Text style={styles.deleteLabel}>{t('favorites.remove')}</Text>
       </Pressable>
     ),
-    [handleRemove, language]
+    [handleRemove, t]
   );
 
   return (
@@ -63,7 +53,7 @@ function SwipeableRestaurantCard({
       overshootRight={false}
       friction={2}
     >
-      <RestaurantCard restaurant={restaurant} onPress={onPress} language={language} />
+      <RestaurantCard restaurant={restaurant} onPress={onPress} />
     </Swipeable>
   );
 }
@@ -84,3 +74,5 @@ const styles = StyleSheet.create({
 });
 
 export default SwipeableRestaurantCard;
+
+// i18n-migrated

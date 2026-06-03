@@ -1,6 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
 import { RADIUS_SUB } from '../theme/radii';
@@ -10,16 +12,9 @@ import { openUrl } from '../utils/openExternalUrl';
 
 interface DeliveryButtonsProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
 }
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
-
-const SECTION_TITLES: Record<AppLanguage, string> = {
-  es: 'Pedidos a domicilio',
-  en: 'Delivery',
-  de: 'Lieferdienste',
-};
 
 const PLATFORM_HINT: Record<AppLanguage, (platform: string) => string> = {
   es: (platform) => `Disponible en ${platform} (busca el nombre del restaurante)`,
@@ -69,7 +64,9 @@ function filterDeliveryLinks(links: DeliveryLink[] | undefined) {
 /**
  * Lieferdienst-Buttons und Hinweise fuer Plattformen ohne direkte URL.
  */
-function DeliveryButtons({ restaurant, language = 'es' }: DeliveryButtonsProps) {
+function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
+  const { t } = useTranslation();
+  const language = useAppLanguage();
   const activeLinks = filterDeliveryLinks(restaurant.delivery_links);
   const withUrl = activeLinks.filter((link) => link.url?.trim());
   const withoutUrl = activeLinks.filter((link) => !link.url?.trim());
@@ -82,7 +79,7 @@ function DeliveryButtons({ restaurant, language = 'es' }: DeliveryButtonsProps) 
     <View style={styles.wrapper}>
       <View style={styles.titleRow}>
         <MaterialCommunityIcons name="moped" size={18} color={colors.primary} />
-        <Text style={styles.title}>{SECTION_TITLES[language]}</Text>
+        <Text style={styles.title}>{t('detail.delivery')}</Text>
       </View>
 
       {withUrl.map((link) => {

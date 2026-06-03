@@ -242,3 +242,42 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 - UI-Texte für es/en/de
 
 ---
+
+## 2026-06-03 — M08 abgeschlossen
+
+**Heute geschafft:**
+
+- i18next + react-i18next + expo-localization installiert
+- 3 Locale-Dateien (es, en, de) mit ~150 Keys jeweils
+- `i18n/index.ts` mit Geräte-Sprach-Erkennung
+- `languageStore` mit Persistenz (Zustand + AsyncStorage)
+- `LanguageSwitcher`-Komponente in zwei Varianten
+- Migration aller UI-Strings durch `useTranslation`
+- `useLocalized`-Hook für Region-/Venue-/Cuisine-Namen + Beschreibungen
+- `formatDate` für locale-spezifische Datumsformate
+- Profil-Tab mit Sprachauswahl, Version, Disclaimer
+
+**Probleme & Lösungen:**
+
+- `compatibilityJSON: 'v4'` in i18next nötig für React Native / Hermes
+- ESLint `i18next/no-literal-string` als Spickzettel — Markenname „Celiac Safe“ bewusst nicht übersetzt
+- Tunnel-Modus (`npm start`) instabil → `npm run start:lan` für Gerätetests
+
+**Gelernt:**
+
+- i18next `compatibilityJSON` v4 für react-native
+- Plural-Forms in i18next (`_one`, `_other`)
+- Geräte-Sprach-Erkennung mit expo-localization
+- `toLocaleDateString` für regionale Datumsformate
+- Architekturprinzip: `useLocalized`-Hook statt `language`-Props
+
+**Aufwand insgesamt:** ~12 Std über 7 Tage  
+**Stimmung:** Erstaunlich befriedigend — die App fühlt sich plötzlich global an
+
+### Nächster Schritt
+
+**Modul M09 — Profil vervollständigen**
+
+- Kontakt, Datenschutz, weitere Profil-Inhalte aktivieren
+
+---

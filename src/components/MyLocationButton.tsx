@@ -8,6 +8,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { useTranslation } from 'react-i18next';
+
 import { colors } from '../theme/colors';
 
 interface MyLocationButtonProps {
@@ -20,11 +22,13 @@ interface MyLocationButtonProps {
  * Schwebender Button zur Zentrierung der Karte auf die Nutzerposition.
  */
 function MyLocationButton({ onPress, loading = false, style }: MyLocationButtonProps) {
+  const { t } = useTranslation();
+
   return (
     <Pressable
       onPress={onPress}
       disabled={loading}
-      accessibilityLabel="Mi ubicación"
+      accessibilityLabel={t('map.my_location')}
       accessibilityRole="button"
       android_ripple={{ color: colors.rippleLight, borderless: true }}
       style={({ pressed }) => [styles.button, style, pressed && !loading && styles.pressed]}

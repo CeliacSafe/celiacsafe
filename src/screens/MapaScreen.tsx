@@ -3,6 +3,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import MapView, { PROVIDER_DEFAULT } from 'react-native-maps';
 import type { Region } from 'react-native-maps';
 
@@ -29,6 +30,7 @@ const MY_LOCATION_ZOOM = {
 type MapaNavigationProp = NativeStackNavigationProp<MapaStackParamList, 'MapaMain'>;
 
 export function MapaScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<MapaNavigationProp>();
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
@@ -110,9 +112,9 @@ export function MapaScreen() {
         1000
       );
     } else {
-      Alert.alert('Sin acceso', lastErrorRef.current ?? 'No se pudo obtener tu ubicación.');
+      Alert.alert(t('map.location_denied_title'), lastErrorRef.current ?? t('map.location_denied_message'));
     }
-  }, [lastErrorRef, requestLocation]);
+  }, [lastErrorRef, requestLocation, t]);
 
   const handleQuickJump = useCallback((region: Region) => {
     mapRef.current?.animateToRegion(region, QUICK_JUMP_ANIMATION_MS);
@@ -149,7 +151,7 @@ export function MapaScreen() {
       </MapView>
 
       <View style={[styles.quickJumpOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
-        <RegionQuickJumps onJumpTo={handleQuickJump} language="es" />
+        <RegionQuickJumps onJumpTo={handleQuickJump} />
       </View>
 
       <MyLocationButton
@@ -187,3 +189,5 @@ const styles = StyleSheet.create({
     right: 16,
   },
 });
+
+// i18n-migrated

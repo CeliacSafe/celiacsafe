@@ -1,24 +1,20 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
 import { RADIUS_INPUT } from '../theme/radii';
 import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
 import type { Restaurant, VerificationMethod } from '../types/Restaurant';
+import { useFormatDate } from '../utils/formatDate';
 
 interface VerificationSectionProps {
   restaurant: Restaurant;
-  language?: AppLanguage;
 }
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
-
-const SECTION_TITLES: Record<AppLanguage, string> = {
-  es: 'Verificación',
-  en: 'Verification',
-  de: 'Verifizierung',
-};
 
 const VERIFICATION_LABELS: Record<
   VerificationMethod,
@@ -68,42 +64,11 @@ const VERIFICATION_LABELS: Record<
   },
 };
 
-const CERTIFIED_BY: Record<AppLanguage, string> = {
-  es: 'Certificado por:',
-  en: 'Certified by:',
-  de: 'Zertifiziert durch:',
-};
-
-const VERIFIED_ON: Record<AppLanguage, string> = {
-  es: 'Verificado el',
-  en: 'Verified on',
-  de: 'Verifiziert am',
-};
-
-const OLD_VERIFICATION_WARNING: Record<AppLanguage, string> = {
-  es: 'Verificación antigua, confirme antes de visitar',
-  en: 'Old verification — please confirm before visiting',
-  de: 'Alte Verifizierung — bitte vor dem Besuch bestätigen',
-};
-
 const ENDORSED_BY: Record<AppLanguage, string> = {
   es: 'Avalado por:',
   en: 'Endorsed by:',
   de: 'Empfohlen von:',
 };
-
-function formatDisplayDate(isoDate: string, language: AppLanguage): string {
-  const date = new Date(isoDate);
-  if (Number.isNaN(date.getTime())) {
-    return isoDate;
-  }
-  const locale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-GB' : 'es-ES';
-  return date.toLocaleDateString(locale, {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
 
 function isOlderThanMonths(isoDate: string, months: number): boolean {
   const date = new Date(isoDate);
@@ -118,7 +83,10 @@ function isOlderThanMonths(isoDate: string, months: number): boolean {
 /**
  * Erklaert transparent, wie ein Restaurant verifiziert wurde.
  */
-function VerificationSection({ restaurant, language = 'es' }: VerificationSectionProps) {
+function VerificationSection({ restaurant }: VerificationSectionProps) {
+  const { t } = useTranslation();
+  const language = useAppLanguage();
+  const fmt = useFormatDate();
   const methods = restaurant.verification_methods ?? [];
   const showFace = restaurant.face_program === true;
   const showAoecs = restaurant.aoecs_certified === true;
@@ -142,7 +110,7 @@ function VerificationSection({ restaurant, language = 'es' }: VerificationSectio
       <View style={styles.container}>
         <View style={styles.titleRow}>
           <MaterialCommunityIcons name="shield-check" size={18} color={colors.primary} />
-          <Text style={styles.title}>{SECTION_TITLES[language]}</Text>
+          <Text style={styles.title}>{t('detail.verification')}</Text>
         </View>
 
         {methods.map((method) => {
@@ -162,7 +130,7 @@ function VerificationSection({ restaurant, language = 'es' }: VerificationSectio
           <View style={styles.methodRow}>
             <MaterialCommunityIcons name="medal" size={18} color={colors.primary} />
             <Text style={styles.methodLabel}>
-              {CERTIFIED_BY[language]} {certificateParts.join(' / ')}
+              {t('detail.certified_by', { authority: certificateParts.join(' / ') })}
             </Text>
           </View>
         ) : null}
@@ -170,10 +138,12 @@ function VerificationSection({ restaurant, language = 'es' }: VerificationSectio
         {restaurant.last_verified_at ? (
           <View style={styles.dateBlock}>
             <Text style={styles.dateText}>
-              {VERIFIED_ON[language]} {formatDisplayDate(restaurant.last_verified_at, language)}
+              {t('detail.verified_on', {
+                date: fmt(restaurant.last_verified_at),
+              })}
             </Text>
             {isStale ? (
-              <Text style={styles.warningText}>{OLD_VERIFICATION_WARNING[language]}</Text>
+              <Text style={styles.warningText}>{t('detail.verification_outdated')}</Text>
             ) : null}
           </View>
         ) : null}

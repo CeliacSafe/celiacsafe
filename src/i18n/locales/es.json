@@ -1,0 +1,120 @@
+{
+  "common": {
+    "accept": "Aceptar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "loading": "Cargando...",
+    "error": "Error",
+    "retry": "Reintentar",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "tabs": {
+    "search": "Buscar",
+    "community": "Comunidad",
+    "map": "Mapa",
+    "favorites": "Favoritos",
+    "profile": "Perfil"
+  },
+  "search": {
+    "placeholder": "Buscar restaurantes, cafés o lugares...",
+    "subtitle": "Guía esencial sin gluten",
+    "no_restaurants_title": "Aún no hay restaurantes",
+    "results_found_one": "{{count}} resultado encontrado",
+    "results_found_other": "{{count}} resultados encontrados",
+    "no_results_title": "Sin resultados",
+    "no_results_description": "Prueba a quitar algunos filtros",
+    "clear_filters": "Limpiar filtros",
+    "sort_by": "Ordenar por",
+    "sort_name_asc": "Nombre A-Z",
+    "sort_name_desc": "Nombre Z-A",
+    "sort_recently_verified": "Verificados recientemente"
+  },
+  "filter": {
+    "title": "Filtros",
+    "region": "Región",
+    "price": "Precio",
+    "verification": "Verificación",
+    "only_face": "Solo FACE certificados",
+    "only_aoecs": "Solo AOECS certificados",
+    "reset": "Limpiar",
+    "apply_one": "Aplicar {{count}} resultado",
+    "apply_other": "Aplicar {{count}} resultados",
+    "all": "Todos",
+    "more_filters": "Más filtros"
+  },
+  "detail": {
+    "verification": "Verificación",
+    "verified_on": "Verificado el {{date}}",
+    "verification_outdated": "Verificación antigua, confirme antes de visitar",
+    "certified_by": "Certificado por: {{authority}}",
+    "address": "Dirección",
+    "directions": "Cómo llegar",
+    "about": "Sobre el restaurante",
+    "cuisine": "Cocina",
+    "opening_hours": "Horario",
+    "opening_hours_unavailable": "Horario no disponible",
+    "seasonal_closure": "Cierre estacional: {{period}}",
+    "delivery": "Pedidos a domicilio",
+    "reservation": "Reservas",
+    "reservation_phone": "Por teléfono",
+    "reservation_walk_in": "Sin reserva",
+    "contact": "Contacto",
+    "call": "Llamar",
+    "whatsapp": "WhatsApp",
+    "website": "Web",
+    "route": "Ruta",
+    "read_more": "Leer más",
+    "read_less": "Leer menos",
+    "not_found_title": "Restaurante no encontrado",
+    "not_found_description": "Este restaurante ya no está disponible."
+  },
+  "card": {
+    "badge_sin_gluten": "100% SIN GLUTEN",
+    "badge_verified": "VERIFICACIÓN OFICIAL"
+  },
+  "map": {
+    "view_detail": "Detalle",
+    "location_denied_title": "Sin acceso",
+    "location_denied_message": "No se pudo obtener tu ubicación.",
+    "my_location": "Mi ubicación"
+  },
+  "community": {
+    "coming_soon": "Próximamente"
+  },
+  "favorites": {
+    "title": "Favoritos",
+    "count_one": "{{count}} restaurante guardado",
+    "count_other": "{{count}} restaurantes guardados",
+    "empty_title": "Aún no hay favoritos",
+    "empty_description": "Toca el corazón en cualquier restaurante para guardarlo",
+    "add": "Añadir a favoritos",
+    "remove": "Eliminar"
+  },
+  "profile": {
+    "title": "Perfil",
+    "language": "Idioma",
+    "about": "Sobre la app",
+    "legal": "Legal",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de uso",
+    "version": "Versión {{version}}",
+    "contact": "Contacto",
+    "submit_restaurant": "Sugerir un restaurante",
+    "rate_app": "Valorar la app",
+    "crash_reports": "Informes de errores anónimos"
+  },
+  "errors": {
+    "cannot_open": "No se puede abrir",
+    "cannot_open_url": "No se puede abrir: {{url}}",
+    "link_open_failed": "No se pudo abrir el enlace",
+    "network_error": "Error de conexión",
+    "location_denied": "Acceso a ubicación denegado",
+    "generic": "Algo salió mal"
+  },
+  "disclaimer": {
+    "short": "Información orientativa. Confirme siempre con el restaurante.",
+    "full": "Esta app proporciona información orientativa sobre restaurantes que se autodeclaran 100% sin gluten o están certificados por asociaciones de celíacos. Los responsables de la app no garantizan la exactitud, actualidad o seguridad alimentaria de cada establecimiento. Se recomienda confirmar siempre con el establecimiento antes de consumir."
+  }
+}

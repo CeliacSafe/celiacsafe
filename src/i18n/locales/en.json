@@ -1,0 +1,120 @@
+{
+  "common": {
+    "accept": "Accept",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "tabs": {
+    "search": "Search",
+    "community": "Community",
+    "map": "Map",
+    "favorites": "Favourites",
+    "profile": "Profile"
+  },
+  "search": {
+    "placeholder": "Search restaurants, cafés or places...",
+    "subtitle": "Essential gluten-free guide",
+    "no_restaurants_title": "No restaurants yet",
+    "results_found_one": "{{count}} result found",
+    "results_found_other": "{{count}} results found",
+    "no_results_title": "No results",
+    "no_results_description": "Try removing some filters",
+    "clear_filters": "Clear filters",
+    "sort_by": "Sort by",
+    "sort_name_asc": "Name A–Z",
+    "sort_name_desc": "Name Z–A",
+    "sort_recently_verified": "Recently verified"
+  },
+  "filter": {
+    "title": "Filters",
+    "region": "Region",
+    "price": "Price",
+    "verification": "Verification",
+    "only_face": "FACE certified only",
+    "only_aoecs": "AOECS certified only",
+    "reset": "Clear",
+    "apply_one": "Apply {{count}} result",
+    "apply_other": "Apply {{count}} results",
+    "all": "All",
+    "more_filters": "More filters"
+  },
+  "detail": {
+    "verification": "Verification",
+    "verified_on": "Verified on {{date}}",
+    "verification_outdated": "Outdated verification — please confirm before visiting",
+    "certified_by": "Certified by: {{authority}}",
+    "address": "Address",
+    "directions": "Get directions",
+    "about": "About the restaurant",
+    "cuisine": "Cuisine",
+    "opening_hours": "Opening hours",
+    "opening_hours_unavailable": "Opening hours not available",
+    "seasonal_closure": "Seasonal closure: {{period}}",
+    "delivery": "Delivery",
+    "reservation": "Reservations",
+    "reservation_phone": "By phone",
+    "reservation_walk_in": "Walk-in only",
+    "contact": "Contact",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "website": "Website",
+    "route": "Route",
+    "read_more": "Read more",
+    "read_less": "Read less",
+    "not_found_title": "Restaurant not found",
+    "not_found_description": "This restaurant is no longer available."
+  },
+  "card": {
+    "badge_sin_gluten": "100% GLUTEN FREE",
+    "badge_verified": "OFFICIAL VERIFICATION"
+  },
+  "map": {
+    "view_detail": "Details",
+    "location_denied_title": "No access",
+    "location_denied_message": "Could not get your location.",
+    "my_location": "My location"
+  },
+  "community": {
+    "coming_soon": "Coming soon"
+  },
+  "favorites": {
+    "title": "Favourites",
+    "count_one": "{{count}} saved restaurant",
+    "count_other": "{{count}} saved restaurants",
+    "empty_title": "No favourites yet",
+    "empty_description": "Tap the heart on any restaurant to save it",
+    "add": "Add to favourites",
+    "remove": "Remove"
+  },
+  "profile": {
+    "title": "Profile",
+    "language": "Language",
+    "about": "About the app",
+    "legal": "Legal",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use",
+    "version": "Version {{version}}",
+    "contact": "Contact",
+    "submit_restaurant": "Suggest a restaurant",
+    "rate_app": "Rate the app",
+    "crash_reports": "Anonymous crash reports"
+  },
+  "errors": {
+    "cannot_open": "Cannot open",
+    "cannot_open_url": "Cannot open: {{url}}",
+    "link_open_failed": "Could not open the link",
+    "network_error": "Connection error",
+    "location_denied": "Location access denied",
+    "generic": "Something went wrong"
+  },
+  "disclaimer": {
+    "short": "Indicative information only. Always confirm with the restaurant.",
+    "full": "This app provides indicative information about restaurants that self-declare as 100% gluten-free or are certified by coeliac associations. The app operators do not guarantee the accuracy, timeliness or food safety of each establishment. We recommend always confirming with the restaurant before eating."
+  }
+}

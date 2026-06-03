@@ -6,209 +6,185 @@
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ALL_REGIONS, PRICE_RANGES, SORT_OPTIONS } from '../data/filterOptions';
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import { REGION_NAMES } from '../i18n/regions';
 import { useRestaurants } from '../hooks/useRestaurants';
 import { useFilterStore } from '../store/filterStore';
 import { colors } from '../theme/colors';
 import { RADIUS_BUTTON, RADIUS_INPUT, RADIUS_PILL } from '../theme/radii';
 import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
-import { formatResultCount } from '../utils/pluralize';
 import { applyFilters } from '../utils/searchAndFilter';
-
-interface FilterBottomSheetProps {
-  language?: 'es' | 'en' | 'de';
-}
 
 export interface FilterBottomSheetRef {
   expand: () => void;
   close: () => void;
 }
 
-const texts = {
-  title: { es: 'Filtros', en: 'Filters', de: 'Filter' },
-  clear: { es: 'Limpiar', en: 'Clear', de: 'Zuruecksetzen' },
-  region: { es: 'Region', en: 'Region', de: 'Region' },
-  price: { es: 'Precio', en: 'Price', de: 'Preis' },
-  verification: { es: 'Verificacion', en: 'Verification', de: 'Verifizierung' },
-  onlyFace: {
-    es: 'Solo FACE certificados',
-    en: 'Only FACE certified',
-    de: 'Nur FACE-zertifiziert',
-  },
-  onlyAoecs: {
-    es: 'Solo AOECS certificados',
-    en: 'Only AOECS certified',
-    de: 'Nur AOECS-zertifiziert',
-  },
-  sortBy: { es: 'Ordenar por', en: 'Sort by', de: 'Sortieren nach' },
-  apply: { es: 'Aplicar', en: 'Apply', de: 'Anwenden' },
+const SORT_LABEL_KEYS = {
+  name_asc: 'search.sort_name_asc',
+  name_desc: 'search.sort_name_desc',
+  recently_verified: 'search.sort_recently_verified',
 } as const;
 
-const chipLabelsByLanguage = {
-  es: 'es',
-  en: 'en',
-  de: 'de',
-} as const;
+const FilterBottomSheet = forwardRef<FilterBottomSheetRef>((_props, ref) => {
+  const { t } = useTranslation();
+  const language = useAppLanguage();
+  const sheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ['85%'], []);
 
-const FilterBottomSheet = forwardRef<FilterBottomSheetRef, FilterBottomSheetProps>(
-  ({ language = 'es' }, ref) => {
-    const sheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['85%'], []);
+  const { restaurants } = useRestaurants();
+  const searchQuery = useFilterStore((state) => state.searchQuery);
+  const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
+  const selectedRegions = useFilterStore((state) => state.selectedRegions);
+  const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
+  const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
+  const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
+  const sortBy = useFilterStore((state) => state.sortBy);
 
-    const { restaurants } = useRestaurants();
-    const searchQuery = useFilterStore((state) => state.searchQuery);
-    const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
-    const selectedRegions = useFilterStore((state) => state.selectedRegions);
-    const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
-    const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
-    const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
-    const sortBy = useFilterStore((state) => state.sortBy);
+  const toggleRegion = useFilterStore((state) => state.toggleRegion);
+  const togglePriceRange = useFilterStore((state) => state.togglePriceRange);
+  const setFaceFilter = useFilterStore((state) => state.setFaceFilter);
+  const setAoecsFilter = useFilterStore((state) => state.setAoecsFilter);
+  const setSortBy = useFilterStore((state) => state.setSortBy);
+  const resetFilters = useFilterStore((state) => state.resetFilters);
+  const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
 
-    const toggleRegion = useFilterStore((state) => state.toggleRegion);
-    const togglePriceRange = useFilterStore((state) => state.togglePriceRange);
-    const setFaceFilter = useFilterStore((state) => state.setFaceFilter);
-    const setAoecsFilter = useFilterStore((state) => state.setAoecsFilter);
-    const setSortBy = useFilterStore((state) => state.setSortBy);
-    const resetFilters = useFilterStore((state) => state.resetFilters);
-    const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
+  const filterCriteria = useMemo(
+    () => ({
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+    }),
+    [
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+    ]
+  );
 
-    const filterCriteria = useMemo(
-      () => ({
-        selectedVenueTypes,
-        selectedRegions,
-        selectedPriceRanges,
-        onlyFaceCertified,
-        onlyAoecsCertified,
-      }),
-      [
-        selectedVenueTypes,
-        selectedRegions,
-        selectedPriceRanges,
-        onlyFaceCertified,
-        onlyAoecsCertified,
-      ]
-    );
+  const resultCount = useMemo(
+    () => applyFilters(restaurants, searchQuery, filterCriteria, sortBy).length,
+    [restaurants, searchQuery, filterCriteria, sortBy]
+  );
 
-    const resultCount = useMemo(
-      () => applyFilters(restaurants, searchQuery, filterCriteria, sortBy).length,
-      [restaurants, searchQuery, filterCriteria, sortBy]
-    );
+  useImperativeHandle(ref, () => ({
+    expand: () => sheetRef.current?.expand(),
+    close: () => sheetRef.current?.close(),
+  }));
 
-    useImperativeHandle(ref, () => ({
-      expand: () => sheetRef.current?.expand(),
-      close: () => sheetRef.current?.close(),
-    }));
+  return (
+    <BottomSheet
+      ref={sheetRef}
+      index={-1}
+      snapPoints={snapPoints}
+      enablePanDownToClose
+      backgroundStyle={styles.sheetBackground}
+      handleIndicatorStyle={styles.handleIndicator}
+    >
+      <BottomSheetScrollView contentContainerStyle={styles.content}>
+        <View style={styles.headerRow}>
+          <Text style={styles.title}>{t('filter.title')}</Text>
+          {hasActiveFilters() ? (
+            <Pressable onPress={resetFilters}>
+              <Text style={styles.clearText}>{t('filter.reset')}</Text>
+            </Pressable>
+          ) : null}
+        </View>
 
-    return (
-      <BottomSheet
-        ref={sheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose
-        backgroundStyle={styles.sheetBackground}
-        handleIndicatorStyle={styles.handleIndicator}
-      >
-        <BottomSheetScrollView contentContainerStyle={styles.content}>
-          <View style={styles.headerRow}>
-            <Text style={styles.title}>{texts.title[language]}</Text>
-            {hasActiveFilters() ? (
-              <Pressable onPress={resetFilters}>
-                <Text style={styles.clearText}>{texts.clear[language]}</Text>
+        <Text style={styles.sectionTitle}>{t('filter.region')}</Text>
+        <View style={styles.chipsWrap}>
+          {ALL_REGIONS.map((regionCode) => {
+            const active = selectedRegions.includes(regionCode);
+            return (
+              <Pressable
+                key={regionCode}
+                onPress={() => toggleRegion(regionCode)}
+                style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
+              >
+                <Text
+                  style={[
+                    styles.chipLabel,
+                    active ? styles.chipLabelActive : styles.chipLabelInactive,
+                  ]}
+                >
+                  {REGION_NAMES[regionCode][language]}
+                </Text>
               </Pressable>
-            ) : null}
-          </View>
+            );
+          })}
+        </View>
 
-          <Text style={styles.sectionTitle}>{texts.region[language]}</Text>
-          <View style={styles.chipsWrap}>
-            {ALL_REGIONS.map((regionCode) => {
-              const active = selectedRegions.includes(regionCode);
-              return (
-                <Pressable
-                  key={regionCode}
-                  onPress={() => toggleRegion(regionCode)}
-                  style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
+        <Text style={styles.sectionTitle}>{t('filter.price')}</Text>
+        <View style={styles.chipsWrap}>
+          {PRICE_RANGES.map((range) => {
+            const active = selectedPriceRanges.includes(range);
+            return (
+              <Pressable
+                key={range}
+                onPress={() => togglePriceRange(range)}
+                style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
+              >
+                <Text
+                  style={[
+                    styles.chipLabel,
+                    active ? styles.chipLabelActive : styles.chipLabelInactive,
+                  ]}
                 >
-                  <Text
-                    style={[
-                      styles.chipLabel,
-                      active ? styles.chipLabelActive : styles.chipLabelInactive,
-                    ]}
-                  >
-                    {REGION_NAMES[regionCode][chipLabelsByLanguage[language]]}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                  {range}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
-          <Text style={styles.sectionTitle}>{texts.price[language]}</Text>
-          <View style={styles.chipsWrap}>
-            {PRICE_RANGES.map((range) => {
-              const active = selectedPriceRanges.includes(range);
-              return (
-                <Pressable
-                  key={range}
-                  onPress={() => togglePriceRange(range)}
-                  style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
+        <Text style={styles.sectionTitle}>{t('filter.verification')}</Text>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t('filter.only_face')}</Text>
+          <Switch value={onlyFaceCertified} onValueChange={setFaceFilter} />
+        </View>
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t('filter.only_aoecs')}</Text>
+          <Switch value={onlyAoecsCertified} onValueChange={setAoecsFilter} />
+        </View>
+
+        <Text style={styles.sectionTitle}>{t('search.sort_by')}</Text>
+        <View style={styles.chipsWrap}>
+          {SORT_OPTIONS.map((option) => {
+            const active = sortBy === option.code;
+            const labelKey = SORT_LABEL_KEYS[option.code];
+            return (
+              <Pressable
+                key={option.code}
+                onPress={() => setSortBy(option.code)}
+                style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
+              >
+                <Text
+                  style={[
+                    styles.chipLabel,
+                    active ? styles.chipLabelActive : styles.chipLabelInactive,
+                  ]}
                 >
-                  <Text
-                    style={[
-                      styles.chipLabel,
-                      active ? styles.chipLabelActive : styles.chipLabelInactive,
-                    ]}
-                  >
-                    {range}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                  {t(labelKey)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
-          <Text style={styles.sectionTitle}>{texts.verification[language]}</Text>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>{texts.onlyFace[language]}</Text>
-            <Switch value={onlyFaceCertified} onValueChange={setFaceFilter} />
-          </View>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>{texts.onlyAoecs[language]}</Text>
-            <Switch value={onlyAoecsCertified} onValueChange={setAoecsFilter} />
-          </View>
-
-          <Text style={styles.sectionTitle}>{texts.sortBy[language]}</Text>
-          <View style={styles.chipsWrap}>
-            {SORT_OPTIONS.map((option) => {
-              const active = sortBy === option.code;
-              return (
-                <Pressable
-                  key={option.code}
-                  onPress={() => setSortBy(option.code)}
-                  style={[styles.chip, active ? styles.chipActive : styles.chipInactive]}
-                >
-                  <Text
-                    style={[
-                      styles.chipLabel,
-                      active ? styles.chipLabelActive : styles.chipLabelInactive,
-                    ]}
-                  >
-                    {option.labels[chipLabelsByLanguage[language]]}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          <Pressable style={styles.applyButton} onPress={() => sheetRef.current?.close()}>
-            <Text style={styles.applyText}>
-              {texts.apply[language]} {formatResultCount(resultCount, language)}
-            </Text>
-          </Pressable>
-        </BottomSheetScrollView>
-      </BottomSheet>
-    );
-  }
-);
+        <Pressable style={styles.applyButton} onPress={() => sheetRef.current?.close()}>
+          <Text style={styles.applyText}>{t('filter.apply', { count: resultCount })}</Text>
+        </Pressable>
+      </BottomSheetScrollView>
+    </BottomSheet>
+  );
+});
 
 const styles = StyleSheet.create({
   sheetBackground: {
@@ -305,3 +281,5 @@ const styles = StyleSheet.create({
 FilterBottomSheet.displayName = 'FilterBottomSheet';
 
 export default FilterBottomSheet;
+
+// i18n-migrated

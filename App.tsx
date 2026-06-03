@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+import './src/i18n';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { StatusBar } from 'expo-status-bar';
@@ -11,21 +12,24 @@ import { StyleSheet } from 'react-native';
 
 import { RootTabs } from './src/navigation/RootTabs';
 import { useFavoritesStore } from './src/store/favoritesStore';
+import { useLanguageStore } from './src/store/languageStore';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
   /* Beim Hot-Reload kann der Splash bereits ausgeblendet sein */
 });
 
 export default function App() {
-  const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
+  const favoritesHydrated = useFavoritesStore((state) => state.hasHydrated);
+  const languageHydrated = useLanguageStore((state) => state.hasHydrated);
+  const isReady = favoritesHydrated && languageHydrated;
 
   useEffect(() => {
-    if (hasHydrated) {
+    if (isReady) {
       SplashScreen.hideAsync().catch(() => undefined);
     }
-  }, [hasHydrated]);
+  }, [isReady]);
 
-  if (!hasHydrated) {
+  if (!isReady) {
     return null;
   }
 
