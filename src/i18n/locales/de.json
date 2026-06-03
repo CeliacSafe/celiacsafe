@@ -95,15 +95,142 @@
   "profile": {
     "title": "Profil",
     "language": "Sprache",
+    "section_contribute": "Mitwirken",
+    "section_about": "Über die App",
+    "section_legal": "Rechtliches",
+    "section_rate_share": "Bewerten & teilen",
     "about": "Über die App",
+    "about_nav": "Mission & Konzept",
     "legal": "Rechtliches",
     "privacy": "Datenschutzerklärung",
+    "impressum": "Impressum",
     "terms": "Nutzungsbedingungen",
     "version": "Version {{version}}",
     "contact": "Kontakt",
     "submit_restaurant": "Restaurant vorschlagen",
+    "report_error": "Fehler melden",
     "rate_app": "App bewerten",
-    "crash_reports": "Anonyme Fehlerberichte"
+    "share_app": "App teilen",
+    "share_message": "Entdecke Celiac Safe — 100 % glutenfreie Restaurants in Spanien: {{url}}",
+    "crash_reports": "Anonyme Fehlerberichte",
+    "mail_not_available": "Auf diesem Gerät ist kein E-Mail-Programm eingerichtet.",
+    "rate_not_available": "Store-Bewertung ist auf diesem Gerät nicht verfügbar.",
+    "report_email_subject": "Fehlerbericht — Celiac Safe",
+    "report_email_body": "Beschreiben Sie das Problem hier:\n\n\n---\nApp-Version: {{version}}"
+  },
+  "about": {
+    "title": "Über Celiac Safe",
+    "share_message": "Schau dir diese App für 100 % glutenfreie Restaurants in Spanien an: {{url}}",
+    "mission_title": "Unsere Mission",
+    "mission_body": "Celiac Safe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, Restaurants in Spanien zu finden, die zu 100 % glutenfrei kochen — sicher und ohne Rätselraten.",
+    "concept_title": "Das Konzept",
+    "concept_body": "Wir erfassen Betriebe, die sich als vollständig glutenfrei deklarieren oder von Zöliakie-Verbänden zertifiziert sind. Die Angaben sind nur Orientierung: bitte immer beim Restaurant nachfragen.",
+    "maker_title": "Wer wir sind",
+    "maker_body": "Celiac Safe ist ein unabhängiges Projekt für die Zöliakie-Community. Die Daten werden manuell gepflegt; Ihre Restaurant-Vorschläge helfen uns zu wachsen."
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "last_updated": "Stand: Januar 2026",
+    "translation_notice": "Deutsche Übersetzung — rechtliche Prüfung durch den Datenschutzbeauftragten läuft. Maßgeblich ist bis zur Freigabe die spanische Fassung.",
+    "sections": [
+      {
+        "title": "Verantwortlicher",
+        "body": "Verantwortlicher im Sinne von Art. 4 Nr. 7 DSGVO: Stephan [Nachname], natürliche Person mit Wohnsitz in der Europäischen Union (Deutschland), als Verantwortlicher des Projekts «Celiac Safe».\n\nAllgemeiner Kontakt: contact@celiacsafe.app\n\nEs gibt kein Benutzerkonto und keine Registrierung auf eigenen Servern der App."
+      },
+      {
+        "title": "Datenschutzbeauftragter (DSB)",
+        "body": "Für datenschutzrechtliche Anliegen wenden Sie sich an unseren zertifizierten Datenschutzbeauftragten gemäß Art. 37 DSGVO:\n\nStephan [Nachname] — DSB für Celiac Safe\nE-Mail: privacidad@celiacsafe.app\n\nDer DSB berät den Verantwortlichen und kann Anfragen betroffener Personen entgegennehmen."
+      },
+      {
+        "title": "Welche Daten wir verarbeiten",
+        "body": "Die App ist auf Datenminimierung ausgelegt:\n\n• Gerätestandort: nur wenn Sie auf der Karte «Mein Standort» tippen, um die Karte zu zentrieren. Kein Hintergrund-Tracking, keine Übermittlung an unsere Server.\n\n• Favoriten: nur im lokalen Gerätespeicher (AsyncStorage). Keine Cloud-Synchronisation.\n\n• Sprache der Oberfläche: Präferenz nur lokal auf dem Gerät.\n\n• Restaurant-Vorschläge, Kontakt oder Fehlermeldungen: nur wenn Sie freiwillig eine E-Mail aus Ihrem Mail-Programm senden. Wir erhalten den von Ihnen geschriebenen Inhalt (z. B. Name des Restaurants, Stadt, Ihr Name oder Ihre E-Mail, falls angegeben). Kein automatischer Versand im Hintergrund.\n\n• In der App angezeigte Restaurantdaten: öffentliche oder von Dritten bereitgestellte Informationen; keine Gesundheitsdaten von Ihnen."
+      },
+      {
+        "title": "Speicherort und Speicherdauer",
+        "body": "Daten auf dem Gerät (Favoriten, Sprache): bis zur Deinstallation der App oder Löschung der App-Daten in den Systemeinstellungen.\n\nE-Mails an uns: Verarbeitung im Postfach des Verantwortlichen, so lange wie für die Bearbeitung Ihres Anliegens und ggf. die Dokumentation der Aufnahme eines Restaurants erforderlich; anschließend Löschung oder Anonymisierung nach interner Aufbewahrungsrichtlinie, sofern keine gesetzliche Aufbewahrungspflicht besteht.\n\nWir betreiben keine Cloud-Datenbanken mit Nutzerprofilen."
+      },
+      {
+        "title": "Rechtsgrundlagen (Art. 6 DSGVO)",
+        "body": "• Nutzung der App, Anzeige von Inhalten und lokale Favoriten: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem Informationsangebot für die Zöliakie-Community), unbeschadet Ihres Widerspruchsrechts.\n\n• Standort auf Anforderung: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung bei Systemberechtigung und Tipp auf die Schaltfläche).\n\n• Verarbeitung von E-Mails an uns: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung beim Senden) und ggf. lit. b (vorvertragliche Maßnahmen) oder lit. f (berechtigtes Interesse an Pflege des Verzeichnisses)."
+      },
+      {
+        "title": "Drittanbieter und Dienste",
+        "body": "Bei bestimmten Funktionen können unabhängige Anbieter unter eigenen Bedingungen eingeschaltet werden:\n\n• Eingebettete Karten (react-native-maps): unter iOS typischerweise Apple Maps, unter Android Google Maps. Beim Anzeigen der Karte oder Öffnen der Navigation («Route») können Koordinaten an diese Anbieter übermittelt werden. Bitte deren Datenschutzhinweise beachten.\n\n• Externe Links: Telefon, WhatsApp, Websites, Instagram, Facebook oder andere Apps, die Sie freiwillig öffnen.\n\n• System-Mail-Client: beim Senden von Vorschlägen oder Kontakt erfolgt der Versand über Ihren E-Mail-Anbieter (z. B. Gmail, iCloud Mail).\n\n• App-Stores (Apple App Store, Google Play): bei Bewertung oder Teilen gelten die Bedingungen von Apple bzw. Google.\n\nWir verkaufen keine personenbezogenen Daten und betreiben kein profilbasiertes Werbetracking."
+      },
+      {
+        "title": "Ihre Rechte",
+        "body": "Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Widerspruch und Datenübertragbarkeit, soweit die DSGVO dies vorsieht.\n\nFür nur auf dem Gerät gespeicherte Daten können Sie diese Rechte durch Löschen der App-Daten oder Deinstallation ausüben.\n\nFür E-Mails an uns: privacidad@celiacsafe.app oder contact@celiacsafe.app. Wir antworten innerhalb der gesetzlichen Fristen (in der Regel einen Monat, Verlängerung gemäß Art. 12 DSGVO möglich)."
+      },
+      {
+        "title": "Beschwerde bei einer Aufsichtsbehörde",
+        "body": "Wenn Sie eine Verletzung der DSGVO annehmen, können Sie Beschwerde bei einer Aufsichtsbehörde einlegen, z. B.:\n\n• Spanien: Agencia Española de Protección de Datos (AEPD), www.aepd.es\n\n• Deutschland: die Aufsichtsbehörde des Bundeslandes Ihres Wohnsitzes (z. B. BayLDA, LfDI u. a.)\n\nWir bitten zuvor um Kontakt unter privacidad@celiacsafe.app."
+      },
+      {
+        "title": "Änderungen dieser Erklärung",
+        "body": "Wir können diese Erklärung bei Änderungen der App-Funktionen oder rechtlicher Anforderungen anpassen. Das Datum steht oben. Die gültige Fassung wird zusätzlich als URL für die App-Stores bereitgestellt (geplant in einer späteren Projektphase, M12)."
+      }
+    ]
+  },
+  "impressum": {
+    "title": "Impressum",
+    "last_updated": "Januar 2026",
+    "sections": [
+      {
+        "title": "Verantwortliche Person",
+        "body": "Stephan [Nachname]\nVerantwortlich für das Projekt «Celiac Safe» (mobile App mit Orientierungshinweisen zu glutenfreien Betrieben)."
+      },
+      {
+        "title": "Postanschrift",
+        "body": "Natürliche Person mit Wohnsitz in Deutschland (Europäische Union).\nVollständige Anschrift auf angemessene Anfrage unter contact@celiacsafe.app (§ 5 TMG / Art. 13 DSGVO).\n\nBitte [Nachname] und ggf. die Anschrift vor Store-Veröffentlichung durch Ihre endgültigen Angaben ersetzen."
+      },
+      {
+        "title": "Elektronische Kontaktaufnahme",
+        "body": "E-Mail: contact@celiacsafe.app\nRestaurant-Vorschläge: submissions@celiacsafe.app\nDatenschutz: privacidad@celiacsafe.app"
+      },
+      {
+        "title": "Verantwortlich für den Inhalt (§ 55 Abs. 2 RStV)",
+        "body": "Stephan [Nachname]\n(gleiche Person und Kontakt wie oben; Postanschrift auf Anfrage)."
+      },
+      {
+        "title": "Haftungsausschluss",
+        "body": "Die Inhalte werden mit Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Angaben zu Betrieben (Öffnungszeiten, Speisekarten, Zertifizierungen) übernehmen wir keine Gewähr. Die Informationen dienen nur der Orientierung.\n\nDie App ersetzt keine medizinische Beratung und keine direkte Rückfrage beim jeweiligen Restaurant vor dem Verzehr.\n\nExterne Links: Für fremde Inhalte sind die jeweiligen Anbieter verantwortlich.\n\nMarken und Namen Dritter gehören den jeweiligen Inhabern."
+      },
+      {
+        "title": "Art des Projekts",
+        "body": "Celiac Safe ist ein nicht-kommerzielles, unabhängiges Projekt für die Zöliakie-Community. Es stellt keine medizinische Beratung und kein Vertragsverhältnis mit gelisteten Betrieben dar, sofern nicht ausdrücklich anders angegeben."
+      }
+    ],
+    "dsb_notice": "Für Datenschutzangelegenheiten wenden Sie sich bitte direkt an unseren DSB unter privacidad@celiacsafe.app."
+  },
+  "submit": {
+    "title": "Restaurant vorschlagen",
+    "hint": "Ihr Vorschlag erreicht uns per E-Mail. Wir prüfen persönlich, bevor das Restaurant aufgenommen wird.",
+    "section_required": "Pflichtangaben",
+    "section_optional": "Optional",
+    "section_submitter": "Über mich (optional)",
+    "restaurant_name_label": "Name des Restaurants",
+    "restaurant_name_placeholder": "z. B. La Mesa Sin Gluten",
+    "city_label": "Stadt",
+    "city_placeholder": "z. B. Cala Ratjada",
+    "address_label": "Adresse",
+    "address_placeholder": "Straße und Hausnummer",
+    "website_label": "Webseite",
+    "website_placeholder": "https:// oder www.",
+    "contact_label": "Kontakt",
+    "contact_placeholder": "Telefon, WhatsApp, E-Mail oder Instagram",
+    "notes_label": "Anmerkungen",
+    "notes_placeholder": "Öffnungszeiten, Zertifikate, Hinweise…",
+    "submitter_name_label": "Mein Name",
+    "submitter_name_placeholder": "Optional",
+    "submitter_email_label": "Meine E-Mail (für Rückfragen)",
+    "submitter_email_placeholder": "du@email.com",
+    "submit_button": "Per E-Mail senden",
+    "success_title": "Danke!",
+    "success_message": "Die Mail-App wurde geöffnet. Senden Sie die Nachricht, um den Vorschlag abzuschließen.",
+    "validation_min_length": "Mindestens 2 Zeichen",
+    "validation_email": "Gültige E-Mail eingeben",
+    "validation_website": "Muss mit http, https oder www beginnen",
+    "mail_error": "E-Mail-Programm konnte nicht geöffnet werden"
   },
   "errors": {
     "cannot_open": "Kann nicht geöffnet werden",

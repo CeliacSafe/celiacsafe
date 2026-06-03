@@ -8,9 +8,9 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
-**M08 abgeschlossen — Internationalisierung**
+**M09 abgeschlossen — Profil-Tab & Restaurant-Submission**
 
-Die App unterstützt Spanisch, Englisch und Deutsch. Beim ersten Start wird die Gerätesprache erkannt; im Profil-Tab kann die Sprache manuell gewählt und persistent gespeichert werden. UI-Texte, Region-/Cuisine-Namen, Beschreibungen und Datumsformate reagieren live auf den Sprachwechsel.
+Vollständiger Profil-Tab mit Navigation zu Über die App, Datenschutz, Impressum und Restaurant-Vorschlag. Submissions und Fehlerberichte laufen per vorausgefüllter E-Mail (kein Backend). App-Version aus `expo-application`, Store-Bewertung via `expo-store-review`.
 
 ---
 
@@ -26,6 +26,9 @@ Die App unterstützt Spanisch, Englisch und Deutsch. Beim ersten Start wird die 
 | **expo-haptics**              | Haptisches Feedback (Heart-Toggle, Sprachwechsel)  |
 | **i18next + react-i18next**   | UI-Internationalisierung (es/en/de)                |
 | **expo-localization**         | Geräte-Spracherkennung beim ersten Start             |
+| **expo-mail-composer**        | Restaurant-Vorschläge & Kontakt per E-Mail         |
+| **expo-application**          | App-Version im Profil                              |
+| **expo-store-review**         | Native Store-Bewertung                             |
 
 Weitere Tools: ESLint, Prettier, Jest (`jest-expo`), Zustand, `@react-native-async-storage/async-storage`, `@gorhom/bottom-sheet`, `@expo/vector-icons`, `expo-linear-gradient`, `expo-image`, `react-native-reanimated`
 
@@ -149,6 +152,20 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - `DeliveryButtons`, `ReservationSection`, `ContactDetailsSection`, `Disclaimer` - Aktionen & Rechtliches
 - `HeartButton`, `SwipeableRestaurantCard` - Favoriten-Interaktion (M07)
 - `LanguageSwitcher` - Sprachauswahl compact/full (M08)
+- `ProfileMenuRow`, `ProfileMenuCard` - Profil-Menüzeilen (M09)
+
+---
+
+## Features (M09 — Profil & Submission)
+
+- **`PerfilStack`** — About, Privacy, Impressum, SubmitRestaurant
+- **Restaurant vorschlagen** — Formular → `submitViaEmail` → `submissions@celiacsafe.app`
+- **Fehler melden / Kontakt** — vorausgefüllte E-Mails an `info@celiacsafe.app`
+- **App bewerten** — `expo-store-review`
+- **App teilen** — System-Share-Dialog
+- **Rechtliches in-app** — Datenschutz & Impressum (i18n-Texte)
+
+E-Mail-Adressen konfigurierbar in `src/constants/appContact.ts`.
 
 ---
 
@@ -283,6 +300,7 @@ graph TD
 | **M06** | ✅     | Volle Detail-Ansicht                             |
 | **M07** | ✅     | Favoriten & Persistenz                           |
 | **M08** | ✅     | Mehrsprachigkeit (es/en/de)                      |
+| **M09** | ✅     | Profil-Tab, E-Mail-Submission, Store-Review      |
 
 ---
 

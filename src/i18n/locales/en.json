@@ -95,15 +95,142 @@
   "profile": {
     "title": "Profile",
     "language": "Language",
+    "section_contribute": "Contribute",
+    "section_about": "About the app",
+    "section_legal": "Legal",
+    "section_rate_share": "Rate & share",
     "about": "About the app",
+    "about_nav": "Mission & concept",
     "legal": "Legal",
     "privacy": "Privacy policy",
+    "impressum": "Legal notice",
     "terms": "Terms of use",
     "version": "Version {{version}}",
     "contact": "Contact",
     "submit_restaurant": "Suggest a restaurant",
+    "report_error": "Report an issue",
     "rate_app": "Rate the app",
-    "crash_reports": "Anonymous crash reports"
+    "share_app": "Share the app",
+    "share_message": "Discover Celiac Safe — 100% gluten-free restaurants in Spain: {{url}}",
+    "crash_reports": "Anonymous crash reports",
+    "mail_not_available": "No mail app is configured on this device.",
+    "rate_not_available": "Store review is not available on this device.",
+    "report_email_subject": "Bug report — Celiac Safe",
+    "report_email_body": "Describe the issue here:\n\n\n---\nApp version: {{version}}"
+  },
+  "about": {
+    "title": "About Celiac Safe",
+    "share_message": "Check out this app for 100% gluten-free restaurants in Spain: {{url}}",
+    "mission_title": "Our mission",
+    "mission_body": "Celiac Safe helps people with coeliac disease and gluten sensitivity find restaurants in Spain that cook 100% gluten-free — with confidence and without guesswork.",
+    "concept_title": "The concept",
+    "concept_body": "We list venues that self-declare as fully gluten-free or are certified by coeliac associations. Information is indicative only: always confirm with the restaurant before eating.",
+    "maker_title": "Who we are",
+    "maker_body": "Celiac Safe is an independent project for the coeliac community. Data is updated manually; your restaurant suggestions help us grow."
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "last_updated": "Last updated: January 2026",
+    "translation_notice": "English translation — legal review by the data protection officer is in progress. The Spanish version is authoritative until final approval.",
+    "sections": [
+      {
+        "title": "Who is responsible",
+        "body": "Data controller (Art. 4(7) GDPR): Stephan [Surname], natural person based in the European Union (Germany), as operator of the «Celiac Safe» project.\n\nGeneral contact: contact@celiacsafe.app\n\nThere is no user account or registration on our own servers."
+      },
+      {
+        "title": "Data protection officer (DPO)",
+        "body": "For data protection matters you may contact our certified Data Protection Officer (DPO) pursuant to Art. 37 GDPR:\n\nStephan [Surname] — DPO for Celiac Safe\nEmail: privacidad@celiacsafe.app\n\nThe DPO advises the controller and can handle privacy enquiries from data subjects."
+      },
+      {
+        "title": "What data we process",
+        "body": "The app is designed to minimise personal data:\n\n• Device location: only when you tap «My location» on the map to centre the map. No background tracking and no transmission to our servers.\n\n• Favourites: stored only in local device storage (AsyncStorage). Not synced to the cloud.\n\n• Interface language: preference stored locally on the device.\n\n• Restaurant suggestions, contact or bug reports: only if you voluntarily send an email from your mail client. We receive what you write (e.g. venue name, city, your name or email if provided). No automatic background sending.\n\n• Restaurant listings shown in the app: public or third-party information; not your health data."
+      },
+      {
+        "title": "Where data is stored and retention",
+        "body": "On-device data (favourites, language): until you uninstall the app or clear app data in system settings.\n\nEmails you send us: processed in our mailbox for as long as needed to handle your request and, where relevant, document adding a venue; then deleted or anonymised per our internal retention policy unless law requires longer storage.\n\nWe do not operate cloud user profile databases."
+      },
+      {
+        "title": "Legal basis (Art. 6 GDPR)",
+        "body": "• Use of the app, viewing content and local favourites: Art. 6(1)(f) GDPR (legitimate interest in providing an informational tool for the coeliac community), subject to your right to object.\n\n• Location on demand: Art. 6(1)(a) GDPR (consent when granting system permission and tapping the button).\n\n• Processing emails you send: Art. 6(1)(a) GDPR (consent when sending) and, where applicable, (b) pre-contractual steps or (f) legitimate interest in maintaining the directory."
+      },
+      {
+        "title": "Third-party providers",
+        "body": "Certain features may involve independent providers under their own terms:\n\n• Embedded maps (react-native-maps): Apple Maps on iOS and Google Maps on Android typically. Showing the map or opening directions may communicate coordinates to those providers. See their privacy policies.\n\n• External links: phone, WhatsApp, websites, Instagram, Facebook or other apps you open voluntarily.\n\n• System mail client: when you send suggestions or contact us, you send from your email provider (e.g. Gmail, iCloud Mail).\n\n• App stores (Apple App Store, Google Play): if you rate or share the app, Apple or Google terms apply.\n\nWe do not sell personal data or run profile-based advertising."
+      },
+      {
+        "title": "Your rights",
+        "body": "You may request access, rectification, erasure, restriction, objection and portability where the GDPR provides.\n\nFor data stored only on your device, you can exercise these by clearing app data or uninstalling.\n\nFor emails you sent us, contact privacidad@celiacsafe.app or contact@celiacsafe.app. We respond within statutory time limits (usually one month, extendable under Art. 12 GDPR)."
+      },
+      {
+        "title": "Complaints to a supervisory authority",
+        "body": "If you believe processing infringes the GDPR, you may lodge a complaint with a supervisory authority, e.g.:\n\n• Spain: Spanish Data Protection Agency (AEPD), www.aepd.es\n\n• Germany: the supervisory authority of your federal state (e.g. BayLDA, LfDI, etc.)\n\nWe encourage you to contact us first at privacidad@celiacsafe.app."
+      },
+      {
+        "title": "Changes to this policy",
+        "body": "We may update this policy when app features or legal requirements change. The date appears at the top. The current version will also be published as a URL for app stores (planned in a later project phase)."
+      }
+    ]
+  },
+  "impressum": {
+    "title": "Legal notice",
+    "last_updated": "January 2026",
+    "sections": [
+      {
+        "title": "Responsible person",
+        "body": "Stephan [Surname]\nOperator of the «Celiac Safe» project (mobile app with indicative information on gluten-free venues)."
+      },
+      {
+        "title": "Postal address",
+        "body": "Natural person based in Germany (European Union).\nFull postal address available on reasonable request at contact@celiacsafe.app (Sec. 5 TMG / Art. 13 GDPR).\n\nReplace [Surname] and address wording with your final details before store publication."
+      },
+      {
+        "title": "Electronic contact",
+        "body": "Email: contact@celiacsafe.app\nRestaurant suggestions: submissions@celiacsafe.app\nData protection: privacidad@celiacsafe.app"
+      },
+      {
+        "title": "Content responsibility (Sec. 55 (2) RStV)",
+        "body": "Stephan [Surname]\n(same person and contact as above; postal address on request)."
+      },
+      {
+        "title": "Disclaimer",
+        "body": "Content is prepared with care. We do not warrant accuracy, completeness or timeliness of venue information (hours, menus, certifications). Information is indicative only.\n\nThe app does not replace medical advice or direct confirmation with each restaurant before eating.\n\nExternal links: we do not control third-party content; the respective page provider is responsible.\n\nThird-party trademarks belong to their owners."
+      },
+      {
+        "title": "Nature of the project",
+        "body": "Celiac Safe is a non-commercial, independent project for the coeliac community. It does not constitute medical advice or a contractual relationship with listed venues unless expressly stated otherwise."
+      }
+    ],
+    "dsb_notice": "For data protection matters, contact our DPO directly at privacidad@celiacsafe.app."
+  },
+  "submit": {
+    "title": "Suggest a restaurant",
+    "hint": "Your suggestion will arrive by email. We verify personally before adding the restaurant.",
+    "section_required": "Required",
+    "section_optional": "Optional",
+    "section_submitter": "About you (optional)",
+    "restaurant_name_label": "Restaurant name",
+    "restaurant_name_placeholder": "e.g. La Mesa Sin Gluten",
+    "city_label": "City",
+    "city_placeholder": "e.g. Cala Ratjada",
+    "address_label": "Address",
+    "address_placeholder": "Street and number",
+    "website_label": "Website",
+    "website_placeholder": "https:// or www.",
+    "contact_label": "Contact",
+    "contact_placeholder": "Phone, WhatsApp, email or Instagram",
+    "notes_label": "Notes",
+    "notes_placeholder": "Opening hours, certifications, comments…",
+    "submitter_name_label": "My name",
+    "submitter_name_placeholder": "Optional",
+    "submitter_email_label": "My email (for follow-up)",
+    "submitter_email_placeholder": "you@email.com",
+    "submit_button": "Send by email",
+    "success_title": "Thank you!",
+    "success_message": "Your mail app opened. Send the message to complete your suggestion.",
+    "validation_min_length": "At least 2 characters",
+    "validation_email": "Enter a valid email",
+    "validation_website": "Must start with http, https or www",
+    "mail_error": "Could not open the mail client"
   },
   "errors": {
     "cannot_open": "Cannot open",

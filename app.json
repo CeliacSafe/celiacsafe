@@ -39,7 +39,8 @@
     "plugins": [
       "expo-font",
       "expo-asset",
-      "expo-localization"
+      "expo-localization",
+      "expo-mail-composer"
     ]
   }
 }

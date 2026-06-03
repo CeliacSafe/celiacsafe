@@ -276,8 +276,31 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 
 ### Nächster Schritt
 
-**Modul M09 — Profil vervollständigen**
+## 2026-06-02 — M09 abgeschlossen
 
-- Kontakt, Datenschutz, weitere Profil-Inhalte aktivieren
+**Heute geschafft:**
+
+- `expo-mail-composer`, `expo-application`, `expo-store-review` installiert
+- `submitViaEmail`-Utility mit strukturiertem E-Mail-Format
+- `SubmitRestaurantScreen` mit Formular und Validierung
+- `AboutScreen` mit Mission, Konzept, „Wer dahinter steht“
+- `PrivacyScreen` mit strukturierter Datenschutzerklärung (Locale-Arrays)
+- `ImpressumScreen` mit Pflichtangaben
+- `RateAppButton` und `ShareAppButton`
+- `PerfilScreen` final mit 5 Sektionen
+- `PerfilStack` für Sub-Navigation
+- i18n: 151 Keys × 3 Sprachen (es/en/de), Kontakt-Adressen vereinheitlicht
+
+**Gelernt:**
+
+- E-Mail-basierte Submission ohne Backend
+- `expo-application` für Versions-Info
+- `expo-store-review` für In-App-Bewertung (systemseitige Quoten beachten)
+- Strukturierte Datenschutzerklärung als Locale-Array
+
+**Architektur:** E-Mail statt Backend — Vorschläge landen im Posteingang, keine Server-DSGVO-Komplexität.
+
+**Aufwand insgesamt:** ~10 Std über 7 Tage (Modul M09)  
+**Stimmung:** Zwei Drittel des Kurses — ein Modul mehr, vor Polish
 
 ---

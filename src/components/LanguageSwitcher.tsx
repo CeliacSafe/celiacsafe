@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLanguageStore } from '../store/languageStore';
 import { colors } from '../theme/colors';
 import type { SupportedLanguage } from '../i18n';
-import { SPACE_MD, SPACE_XL } from '../theme/spacing';
+import { SPACE_LG, SPACE_MD } from '../theme/spacing';
 
 interface LanguageSwitcherProps {
   variant?: 'compact' | 'full';
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
-    paddingHorizontal: SPACE_XL,
+    paddingHorizontal: SPACE_LG,
     gap: SPACE_MD,
   },
   fullRowBorder: {
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   fullLabel: {
     flex: 1,
     color: colors.textPrimary,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
   },
   checkSpacer: {

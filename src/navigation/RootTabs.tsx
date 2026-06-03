@@ -8,7 +8,7 @@ import BuscarStack from './BuscarStack';
 import FavoritosStack from './FavoritosStack';
 import MapaStack from './MapaStack';
 import { ComunidadScreen } from '../screens/ComunidadScreen';
-import PerfilScreen from '../screens/PerfilScreen';
+import PerfilStack from './PerfilStack';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { colors } from '../theme/colors';
 
@@ -111,8 +111,9 @@ export function RootTabs() {
       />
       <Tab.Screen
         name="Perfil"
-        component={PerfilScreen}
+        component={PerfilStack}
         options={{
+          headerShown: false,
           tabBarLabel: t('tabs.profile').toUpperCase(),
           tabBarIcon: createTabBarIcon('Perfil'),
         }}
