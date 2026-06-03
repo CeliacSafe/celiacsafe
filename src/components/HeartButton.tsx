@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import { hapticLight, hapticSuccess } from '../utils/haptics';
 import { Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, {
@@ -62,7 +62,11 @@ function HeartButton({
       );
     }
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+    if (activating) {
+      hapticSuccess();
+    } else {
+      hapticLight();
+    }
     toggleFavorite(restaurantId);
     onPressed?.();
   };

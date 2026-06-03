@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { WHATSAPP_DEFAULT_MESSAGES } from '../i18n/contact';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { colors } from '../theme/colors';
-import { RADIUS_BUTTON } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 import { openMapsRouting, openPhone, openUrl, openWhatsApp } from '../utils/openExternalUrl';
 
@@ -101,33 +102,33 @@ function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingVertical: SPACE_MD,
+    paddingVertical: spacing.cardPadding,
   },
   scrollContent: {
-    paddingHorizontal: SPACE_XL,
-    gap: SPACE_MD,
-    paddingBottom: SPACE_LG,
+    paddingHorizontal: spacing.screenPadding,
+    gap: spacing.cardPadding,
+    paddingBottom: spacing.md,
   },
   actionButton: {
     width: 72,
     height: 64,
-    borderRadius: RADIUS_BUTTON,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: spacing.xs,
     overflow: 'hidden',
   },
   actionPressed: {
     opacity: 0.9,
   },
   actionLabel: {
-    color: colors.textPrimary,
-    fontSize: 12,
+    ...typography.caption,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   trailingSpacer: {
-    width: SPACE_MD,
+    width: spacing.cardPadding,
   },
 });
 

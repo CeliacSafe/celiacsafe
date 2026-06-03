@@ -1,4 +1,5 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 
@@ -33,13 +34,14 @@ export default function DetailScreen({ route, navigation }: Props) {
 
   if (!restaurant) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <EmptyState
+          illustration="default"
           iconName="food-off"
           title={t('detail.not_found_title')}
           description={t('detail.not_found_description')}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 

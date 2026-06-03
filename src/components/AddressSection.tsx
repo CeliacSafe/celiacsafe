@@ -6,8 +6,9 @@ import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import CustomMarker from './CustomMarker';
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
-import { RADIUS_INPUT } from '../theme/radii';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 import { openMapsRouting } from '../utils/openExternalUrl';
 
@@ -110,39 +111,38 @@ function AddressSection({ restaurant }: AddressSectionProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.cardPadding,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   title: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.h4,
     fontWeight: '700',
+    color: colors.primary,
   },
   addressText: {
+    ...typography.body,
     color: colors.textPrimary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: SPACE_MD,
+    marginBottom: spacing.cardPadding,
   },
   mapPressable: {
-    borderRadius: RADIUS_INPUT,
+    borderRadius: radius.lg,
     overflow: 'hidden',
-    marginBottom: SPACE_MD,
+    marginBottom: spacing.cardPadding,
   },
   miniMap: {
     width: '100%',
     height: 180,
   },
   routeButton: {
-    borderRadius: RADIUS_INPUT,
+    borderRadius: radius.lg,
     backgroundColor: colors.primary,
-    paddingVertical: SPACE_MD + 2,
+    paddingVertical: spacing.md,
     alignItems: 'center',
     overflow: 'hidden',
   },
@@ -150,9 +150,9 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   routeLabel: {
-    color: colors.background,
-    fontSize: 15,
+    ...typography.button,
     fontWeight: '700',
+    color: colors.background,
   },
 });
 

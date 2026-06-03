@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import DetailScreen from '../screens/DetailScreen';
 import { FavoritosScreen } from '../screens/FavoritosScreen';
-import { colors } from '../theme/colors';
+import { stackScreenOptions } from './stackScreenOptions';
 
 export type FavoritosStackParamList = {
   FavoritosList: undefined;
@@ -13,14 +13,7 @@ const Stack = createNativeStackNavigator<FavoritosStackParamList>();
 
 export default function FavoritosStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.background },
-        headerTintColor: colors.primary,
-        headerTitleStyle: { color: colors.textPrimary },
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    >
+    <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen
         name="FavoritosList"
         component={FavoritosScreen}

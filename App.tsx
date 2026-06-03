@@ -8,9 +8,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import LoadingSpinner from './src/components/LoadingSpinner';
+import { navigationTheme } from './src/navigation/theme';
 import { RootTabs } from './src/navigation/RootTabs';
+import { colors } from './src/theme/colors';
 import { useFavoritesStore } from './src/store/favoritesStore';
 import { useLanguageStore } from './src/store/languageStore';
 
@@ -30,16 +33,21 @@ export default function App() {
   }, [isReady]);
 
   if (!isReady) {
-    return null;
+    return (
+      <View style={styles.boot}>
+        <LoadingSpinner fullscreen />
+        <StatusBar style="light" backgroundColor={colors.background} />
+      </View>
+    );
   }
 
   return (
     <GestureHandlerRootView style={styles.root}>
       <BottomSheetModalProvider>
         <SafeAreaProvider>
-          <NavigationContainer>
+          <NavigationContainer theme={navigationTheme}>
+            <StatusBar style="light" backgroundColor={colors.background} />
             <RootTabs />
-            <StatusBar style="light" />
           </NavigationContainer>
         </SafeAreaProvider>
       </BottomSheetModalProvider>
@@ -50,5 +58,10 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  boot: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
 });

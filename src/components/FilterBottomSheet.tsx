@@ -14,8 +14,10 @@ import { REGION_NAMES } from '../i18n/regions';
 import { useRestaurants } from '../hooks/useRestaurants';
 import { useFilterStore } from '../store/filterStore';
 import { colors } from '../theme/colors';
-import { RADIUS_BUTTON, RADIUS_INPUT, RADIUS_PILL } from '../theme/radii';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
+import { hapticMedium } from '../utils/haptics';
 import { applyFilters } from '../utils/searchAndFilter';
 
 export interface FilterBottomSheetRef {
@@ -92,7 +94,12 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef>((_props, ref) => {
         <View style={styles.headerRow}>
           <Text style={styles.title}>{t('filter.title')}</Text>
           {hasActiveFilters() ? (
-            <Pressable onPress={resetFilters}>
+            <Pressable
+              onPress={() => {
+                hapticMedium();
+                resetFilters();
+              }}
+            >
               <Text style={styles.clearText}>{t('filter.reset')}</Text>
             </Pressable>
           ) : null}
@@ -194,43 +201,39 @@ const styles = StyleSheet.create({
     backgroundColor: colors.textSecondary,
   },
   content: {
-    paddingHorizontal: SPACE_XL,
-    paddingBottom: SPACE_XL + SPACE_MD,
-    gap: SPACE_MD - 2,
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.xl,
+    gap: spacing.sm,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SPACE_SM,
+    marginBottom: spacing.sm,
   },
   title: {
+    ...typography.h2,
     color: colors.textPrimary,
-    fontSize: 22,
-    fontWeight: '700',
   },
   clearText: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.bodySmall,
     fontWeight: '600',
+    color: colors.primary,
   },
   sectionTitle: {
-    marginTop: SPACE_MD - 2,
+    ...typography.overline,
+    marginTop: spacing.sm,
     color: colors.primary,
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
   },
   chipsWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACE_SM,
+    gap: spacing.sm,
   },
   chip: {
-    borderRadius: RADIUS_PILL,
-    minHeight: 36,
-    paddingHorizontal: SPACE_MD + 2,
+    borderRadius: radius.pill,
+    minHeight: spacing.xl + spacing.xs,
+    paddingHorizontal: spacing.md,
     justifyContent: 'center',
   },
   chipActive: {
@@ -240,7 +243,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   chipLabel: {
-    fontSize: 13,
+    ...typography.bodySmall,
     fontWeight: '600',
   },
   chipLabelActive: {
@@ -251,30 +254,30 @@ const styles = StyleSheet.create({
   },
   switchRow: {
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_INPUT,
-    paddingHorizontal: SPACE_MD,
-    paddingVertical: SPACE_MD - 2,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.cardPadding,
+    paddingVertical: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   switchLabel: {
-    color: colors.textPrimary,
-    fontSize: 14,
+    ...typography.bodySmall,
     flex: 1,
-    marginRight: SPACE_MD - 2,
+    color: colors.textPrimary,
+    marginRight: spacing.sm,
   },
   applyButton: {
-    marginTop: SPACE_XL,
-    borderRadius: RADIUS_BUTTON,
+    marginTop: spacing.screenPadding,
+    borderRadius: radius.lg,
     backgroundColor: colors.primary,
-    paddingVertical: SPACE_MD + 2,
+    paddingVertical: spacing.md,
     alignItems: 'center',
   },
   applyText: {
-    color: colors.background,
-    fontSize: 15,
+    ...typography.body,
     fontWeight: '700',
+    color: colors.background,
   },
 });
 

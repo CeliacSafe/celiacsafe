@@ -7,7 +7,9 @@ import { useTranslation } from 'react-i18next';
 import RestaurantCard from './RestaurantCard';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { colors } from '../theme/colors';
-import { SPACE_SM } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface SwipeableRestaurantCardProps {
@@ -66,10 +68,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteLabel: {
-    marginTop: SPACE_SM - 4,
-    color: colors.white,
-    fontSize: 12,
+    ...typography.caption,
+    marginTop: spacing.xs,
     fontWeight: '600',
+    color: colors.white,
   },
 });
 

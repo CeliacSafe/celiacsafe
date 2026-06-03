@@ -9,8 +9,9 @@ import {
   profileMenuStyles,
 } from './profileMenuStyles';
 import { colors } from '../theme/colors';
-import { RADIUS_BUTTON } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import { requestAppStoreReview } from '../utils/rateApp';
 
 interface RateAppButtonProps {
@@ -79,27 +80,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: SPACE_MD,
+    gap: spacing.cardPadding,
     backgroundColor: colors.primary,
-    borderRadius: RADIUS_BUTTON,
-    paddingVertical: 14,
-    paddingHorizontal: SPACE_XL,
-    marginHorizontal: SPACE_LG,
-    marginVertical: SPACE_SM,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.sm + spacing.xs,
+    paddingHorizontal: spacing.screenPadding,
+    marginHorizontal: spacing.md,
+    marginVertical: spacing.sm,
   },
   primaryLabel: {
-    color: colors.white,
-    fontSize: 16,
+    ...typography.button,
     fontWeight: '700',
+    color: colors.white,
   },
   disabled: {
     opacity: 0.6,
   },
   plainSpinner: {
-    marginVertical: 4,
+    marginVertical: spacing.xs,
   },
   primarySpinner: {
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
   },
 });
 

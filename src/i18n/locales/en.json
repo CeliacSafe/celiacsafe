@@ -18,6 +18,7 @@
     "profile": "Profile"
   },
   "search": {
+    "brand_title": "Celiac Safe",
     "placeholder": "Search restaurants, cafés or places...",
     "subtitle": "Essential gluten-free guide",
     "no_restaurants_title": "No restaurants yet",
@@ -78,7 +79,10 @@
     "view_detail": "Details",
     "location_denied_title": "No access",
     "location_denied_message": "Could not get your location.",
-    "my_location": "My location"
+    "my_location": "My location",
+    "locating": "Getting your location…",
+    "no_pins_title": "No restaurants on the map",
+    "no_pins_description": "Adjust your filters to show venues with map coordinates."
   },
   "community": {
     "coming_soon": "Coming soon"
@@ -120,13 +124,25 @@
   },
   "about": {
     "title": "About Celiac Safe",
+    "brand_name": "Celiac Safe",
+    "hero_subtitle": "100% gluten-free restaurant guide in Spain",
     "share_message": "Check out this app for 100% gluten-free restaurants in Spain: {{url}}",
     "mission_title": "Our mission",
     "mission_body": "Celiac Safe helps people with coeliac disease and gluten sensitivity find restaurants in Spain that cook 100% gluten-free — with confidence and without guesswork.",
-    "concept_title": "The concept",
-    "concept_body": "We list venues that self-declare as fully gluten-free or are certified by coeliac associations. Information is indicative only: always confirm with the restaurant before eating.",
-    "maker_title": "Who we are",
-    "maker_body": "Celiac Safe is an independent project for the coeliac community. Data is updated manually; your restaurant suggestions help us grow."
+    "verification_title": "How we verify",
+    "verification_body": "We list venues that self-declare as fully gluten-free or are certified by coeliac associations (e.g. FACE, AOECS). We review listings manually and refresh information regularly. Data is indicative only: always confirm with the restaurant before eating.",
+    "noncommercial_title": "Non-commercial project",
+    "noncommercial_body": "Celiac Safe is an independent, non-commercial project for the coeliac community. We do not sell personal data, there is no profile-based advertising, and restaurants are not charged to appear in the guide.",
+    "maker_title": "Who is behind it",
+    "maker_body": "A small team from the coeliac community in the EU, supported by people living gluten-free in Spain. Data updates and replies to suggestions are handled personally and manually.",
+    "help_title": "How you can help",
+    "help_link_suggest": "Suggest a restaurant",
+    "help_link_report": "Report an error",
+    "help_link_contact": "Contact us",
+    "help_link_privacy": "Privacy policy",
+    "help_link_rate": "Rate the app",
+    "help_link_share": "Share the app",
+    "version_label": "Version {{version}}"
   },
   "privacy": {
     "title": "Privacy policy",

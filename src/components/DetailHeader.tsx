@@ -7,10 +7,12 @@ import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
+import RestaurantImagePlaceholder from './RestaurantImagePlaceholder';
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
-import { RADIUS_BUTTON } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface DetailHeaderProps {
@@ -44,16 +46,7 @@ function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
             transition={200}
           />
         ) : (
-          <LinearGradient
-            colors={[colors.surface, colors.background]}
-            style={styles.placeholderGradient}
-          >
-            <MaterialCommunityIcons
-              name="silverware-fork-knife"
-              size={96}
-              color={colors.textSecondary}
-            />
-          </LinearGradient>
+          <RestaurantImagePlaceholder restaurantId={restaurant.id} iconSize={96} />
         )}
 
         <LinearGradient
@@ -62,7 +55,7 @@ function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
           pointerEvents="none"
         />
 
-        <View style={[styles.topControls, { top: insets.top + SPACE_MD }]}>
+        <View style={[styles.topControls, { top: insets.top + spacing.cardPadding }]}>
           {onBack ? (
             <Pressable
               onPress={onBack}
@@ -124,12 +117,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  placeholderGradient: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   bottomGradient: {
     position: 'absolute',
     left: 0,
@@ -139,8 +126,8 @@ const styles = StyleSheet.create({
   },
   topControls: {
     position: 'absolute',
-    left: SPACE_XL,
-    right: SPACE_XL,
+    left: spacing.screenPadding,
+    right: spacing.screenPadding,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -148,7 +135,7 @@ const styles = StyleSheet.create({
   iconButton: {
     width: 40,
     height: 40,
-    borderRadius: RADIUS_BUTTON,
+    borderRadius: radius.lg,
     backgroundColor: colors.overlayDark,
     alignItems: 'center',
     justifyContent: 'center',
@@ -162,32 +149,31 @@ const styles = StyleSheet.create({
   },
   badgeOverlay: {
     position: 'absolute',
-    left: SPACE_XL,
-    right: SPACE_XL,
-    bottom: SPACE_MD,
+    left: spacing.screenPadding,
+    right: spacing.screenPadding,
+    bottom: spacing.cardPadding,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACE_SM - 2,
+    gap: spacing.xs,
   },
   textBlock: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_LG,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.md,
   },
   name: {
+    ...typography.h1,
     color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '700',
   },
   locationRow: {
-    marginTop: SPACE_SM,
+    marginTop: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM - 2,
+    gap: spacing.xs,
   },
   locationText: {
+    ...typography.bodyLarge,
     flex: 1,
     color: colors.textSecondary,
-    fontSize: 16,
   },
 });
 

@@ -6,7 +6,9 @@ import { WHATSAPP_DEFAULT_MESSAGES } from '../i18n/contact';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 import {
   openEmail,
@@ -170,25 +172,25 @@ function ContactDetailsSection({ restaurant }: ContactDetailsSectionProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.cardPadding,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   title: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.h4,
     fontWeight: '700',
+    color: colors.primary,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_MD,
-    paddingVertical: 14,
+    gap: spacing.cardPadding,
+    paddingVertical: spacing.sm + spacing.xs,
     overflow: 'hidden',
   },
   rowBorder: {
@@ -199,14 +201,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rowLabel: {
-    color: colors.textPrimary,
-    fontSize: 15,
+    ...typography.body,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   rowValue: {
+    ...typography.caption,
     marginTop: 2,
     color: colors.textSecondary,
-    fontSize: 12,
   },
   pressed: {
     opacity: 0.9,

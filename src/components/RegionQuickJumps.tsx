@@ -4,8 +4,9 @@ import type { Region } from 'react-native-maps';
 import { QUICK_JUMPS } from '../data/quickJumps';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { colors } from '../theme/colors';
-import { RADIUS_PILL } from '../theme/radii';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 
 interface RegionQuickJumpsProps {
   onJumpTo: (region: Region) => void;
@@ -44,15 +45,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(18, 18, 18, 0.88)',
   },
   scrollContent: {
-    paddingVertical: SPACE_SM,
-    paddingHorizontal: SPACE_XL,
-    gap: SPACE_SM,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.screenPadding,
+    gap: spacing.sm,
     alignItems: 'center',
   },
   pill: {
-    height: 32,
-    borderRadius: RADIUS_PILL,
-    paddingHorizontal: 12,
+    height: spacing.xl,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm + spacing.xs,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
@@ -62,12 +63,12 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   label: {
-    color: colors.textPrimary,
-    fontSize: 12,
+    ...typography.caption,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   trailingSpacer: {
-    width: SPACE_MD,
+    width: spacing.cardPadding,
   },
 });
 

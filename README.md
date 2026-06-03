@@ -8,6 +8,10 @@ CeliacSafe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, sicher und
 
 ## Status
 
+**M10 abgeschlossen — UI-Polish**
+
+Design-Tokens (Typography, Spacing, Radius, Shadows), einheitliche `EmptyState`/`LoadingSpinner`, Stack-Slide-Transitions, strategischer Haptik-Einsatz, Status-Bar (light), Bild-Platzhalter mit ID-basiertem Gradient. **Branding:** `docs/M10-ICON-DESIGN.md`, `docs/M10-SPLASH-DESIGN.md` — PNGs in `assets/` (`icon.png` 1024×1024, `splash.png`, `adaptive-icon-fg.png` / `adaptive-icon-bg.png`), Prüfung: `.\scripts\validate-icon-assets.ps1`.
+
 **M09 abgeschlossen — Profil-Tab & Restaurant-Submission**
 
 Vollständiger Profil-Tab mit Navigation zu Über die App, Datenschutz, Impressum und Restaurant-Vorschlag. Submissions und Fehlerberichte laufen per vorausgefüllter E-Mail (kein Backend). App-Version aus `expo-application`, Store-Bewertung via `expo-store-review`.
@@ -23,9 +27,10 @@ Vollständiger Profil-Tab mit Navigation zu Über die App, Datenschutz, Impressu
 | **React Navigation 7**        | Bottom-Tab-Navigation zwischen den Hauptbereichen  |
 | **react-native-maps**         | Karte (Apple Maps / Google Maps je nach Plattform) |
 | **expo-location**             | Standort nur on-demand (My-Location-Button)        |
-| **expo-haptics**              | Haptisches Feedback (Heart-Toggle, Sprachwechsel)  |
+| **expo-haptics**              | Haptisches Feedback (Favorit, Tabs, Filter, Submit) |
+| **expo-splash-screen**        | Native Splash beim App-Start                       |
 | **i18next + react-i18next**   | UI-Internationalisierung (es/en/de)                |
-| **expo-localization**         | Geräte-Spracherkennung beim ersten Start             |
+| **expo-localization**         | Geräte-Spracherkennung beim ersten Start           |
 | **expo-mail-composer**        | Restaurant-Vorschläge & Kontakt per E-Mail         |
 | **expo-application**          | App-Version im Profil                              |
 | **expo-store-review**         | Native Store-Bewertung                             |
@@ -113,7 +118,7 @@ celiacsafe/
 │   ├── screens/            # Bildschirme der App (Buscar, Mapa, Favoritos, …)
 │   ├── components/         # Wiederverwendbare UI-Bausteine
 │   ├── navigation/         # React-Navigation-Konfiguration (Bottom Tabs)
-│   ├── theme/              # Farben, Schriften, Abstände
+│   ├── theme/              # Design-System (siehe unten)
 │   ├── types/              # TypeScript-Typen und Interfaces
 │   ├── data/               # Statische Daten (JSON, quickJumps, filterOptions)
 │   ├── hooks/              # Eigene React-Hooks
@@ -126,14 +131,43 @@ celiacsafe/
 
 ---
 
+## Design-System
+
+Zentrale Tokens in `src/theme/` — Änderungen wirken app-weit:
+
+| Token | Datei | Inhalt |
+| ----- | ----- | ------ |
+| **Colors** | `colors.ts` | Dunkles Theme (M01): `background`, `primary`, `surface`, … |
+| **Typography** | `typography.ts` | Skala: `display`, `h1`–`h4`, `body`, `button`, `caption`, `overline`, `badge`, `tabLabel` |
+| **Spacing** | `spacing.ts` | 4-Punkt-Grid (`xs`–`xxl`), `screenPadding`, `cardPadding`, `sectionGap` |
+| **Radius** | `spacing.ts` → `radius` | `sm`–`xxl`, `pill`, `icon` |
+| **Shadows** | `spacing.ts` → `shadows` | `small` / `medium` / `large` (iOS + Android `elevation`) |
+
+Barrel-Export: `src/theme/index.ts`. Legacy-Aliase `SPACE_*` / `RADIUS_*` sind deprecated.
+
+---
+
+## Assets
+
+| Datei | Zweck |
+| ----- | ----- |
+| `assets/icon.png` | App-Icon (1024×1024) |
+| `assets/splash.png` | Splash-Screen |
+| `assets/adaptive-icon-fg.png` | Android Adaptive Icon — Vordergrund |
+| `assets/adaptive-icon-bg.png` | Android Adaptive Icon — Hintergrund (#2E7D32) |
+
+Siehe `assets/README.md` und `docs/M10-BRANDING.md`.
+
+---
+
 ## Datenspeicherung
 
-| Daten        | Speicherort            | Persistenz        | Modul |
-| ------------ | ---------------------- | ----------------- | ----- |
-| Restaurants  | read-only JSON-Asset   | App-Bundle (M02)  | M02   |
-| Favoriten    | AsyncStorage           | Gerät, persistent | M07   |
-| Filter/Suche | Zustand in-memory      | Nur App-Laufzeit  | M04   |
-| Sprache      | AsyncStorage           | Gerät, persistent | M08   |
+| Daten        | Speicherort          | Persistenz        | Modul |
+| ------------ | -------------------- | ----------------- | ----- |
+| Restaurants  | read-only JSON-Asset | App-Bundle (M02)  | M02   |
+| Favoriten    | AsyncStorage         | Gerät, persistent | M07   |
+| Filter/Suche | Zustand in-memory    | Nur App-Laufzeit  | M04   |
+| Sprache      | AsyncStorage         | Gerät, persistent | M08   |
 
 ---
 
@@ -153,6 +187,22 @@ Wiederverwendbare UI-Bausteine in `src/components/`:
 - `HeartButton`, `SwipeableRestaurantCard` - Favoriten-Interaktion (M07)
 - `LanguageSwitcher` - Sprachauswahl compact/full (M08)
 - `ProfileMenuRow`, `ProfileMenuCard` - Profil-Menüzeilen (M09)
+- `EmptyState`, `LoadingSpinner` - Leerzustände & Lade-Overlay (M10)
+- `RestaurantImagePlaceholder` - Gradient-Platzhalter ohne Bild (M10)
+- `TabBarButton`, `stackScreenOptions` - Tab-Haptik & Stack-Transitions (M10)
+
+---
+
+## Features (M10 — UI-Polish)
+
+- **Design-Tokens** — Typography-, Spacing-, Radius- und Shadow-Skala; Migration aller Screens/Komponenten
+- **EmptyState** — einheitlich mit `illustration` (search / favorites / map)
+- **LoadingSpinner** — inline & fullscreen (Hydration, Standort, Submit)
+- **Haptik** — Light (Tabs, Filter, Heart), Medium (Filter-Reset), Success/Error (Submit, Standort, Mail)
+- **Navigation** — `slide_from_right`, horizontale Zurück-Geste
+- **Status-Bar** — `style="light"` auf dunklem Hintergrund
+- **Bild-Platzhalter** — deterministischer Grün-Gradient pro `restaurant.id`
+- **Safe Area** — `react-native-safe-area-context`; Mapa full-bleed, Detail-Header mit Insets
 
 ---
 
@@ -183,14 +233,14 @@ E-Mail-Adressen konfigurierbar in `src/constants/appContact.ts`.
 
 ## Internationalisierung
 
-| Thema | Details |
-| ----- | ------- |
-| **Tech-Stack** | i18next, react-i18next, expo-localization |
-| **Locale-Dateien** | `src/i18n/locales/es.json`, `en.json`, `de.json` |
-| **Initialisierung** | `src/i18n/index.ts` (Fallback `es`, `compatibilityJSON: 'v4'`) |
-| **Sprach-Store** | `src/store/languageStore.ts` — Override vs. Gerätesprache |
-| **Lookup-Daten** | `src/data/lookups.ts` → Region/Venue/Cuisine (M02) |
-| **Key-Struktur** | `tabs`, `search`, `filter`, `detail`, `favorites`, `profile`, `errors`, `disclaimer`, `map`, `card`, `community` |
+| Thema               | Details                                                                                                          |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Tech-Stack**      | i18next, react-i18next, expo-localization                                                                        |
+| **Locale-Dateien**  | `src/i18n/locales/es.json`, `en.json`, `de.json`                                                                 |
+| **Initialisierung** | `src/i18n/index.ts` (Fallback `es`, `compatibilityJSON: 'v4'`)                                                   |
+| **Sprach-Store**    | `src/store/languageStore.ts` — Override vs. Gerätesprache                                                        |
+| **Lookup-Daten**    | `src/data/lookups.ts` → Region/Venue/Cuisine (M02)                                                               |
+| **Key-Struktur**    | `tabs`, `search`, `filter`, `detail`, `favorites`, `profile`, `errors`, `disclaimer`, `map`, `card`, `community` |
 
 ---
 
@@ -301,6 +351,7 @@ graph TD
 | **M07** | ✅     | Favoriten & Persistenz                           |
 | **M08** | ✅     | Mehrsprachigkeit (es/en/de)                      |
 | **M09** | ✅     | Profil-Tab, E-Mail-Submission, Store-Review      |
+| **M10** | ✅     | UI-Polish, Design-System, Icon/Splash, Haptik    |
 
 ---
 

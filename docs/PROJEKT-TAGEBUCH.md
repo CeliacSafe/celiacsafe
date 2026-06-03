@@ -304,3 +304,38 @@ Chronologische Dokumentation der Entwicklung. Jeder Eintrag beschreibt, was gema
 **Stimmung:** Zwei Drittel des Kurses — ein Modul mehr, vor Polish
 
 ---
+
+## 2026-06-03 — M10 abgeschlossen
+
+**Heute geschafft:**
+
+- App-Icon entworfen (1024×1024) und Android Adaptive Icon vorbereitet
+- Splash-Screen (`expo-splash-screen`, `app.json`)
+- `typography.ts` mit Display/Heading/Body/UI-Skala
+- `spacing.ts` mit 4-Punkt-Grid + `radius` + `shadows`
+- Migration aller Komponenten auf Typography/Spacing
+- `EmptyState` einheitlich (Illustration-Varianten)
+- `LoadingSpinner` (inline + fullscreen)
+- Strategischer Haptik-Einsatz (`hapticLight` / `Medium` / `Success` / `Error`)
+- Slide-Animation zwischen Screens (`stackScreenOptions`)
+- Status-Bar `style="light"`
+- Bild-Platzhalter mit deterministischem Gradient (`RestaurantImagePlaceholder`)
+- README & Design-System-Dokumentation aktualisiert
+
+**Gelernt:**
+
+- App-Icon-Design (Vereinfachung für kleine Größen)
+- Adaptive Icons für Android
+- Design-Tokens (Typography, Spacing, Radius)
+- Plattform-spezifische Schatten (iOS `shadow*` vs. Android `elevation`)
+- Reanimated-Übergänge und Native-Stack-Animationen
+- `react-native-safe-area-context` vs. veraltetes RN-`SafeAreaView`
+
+**Aufwand insgesamt:** ~12 Std über 7 Tage (Modul M10)  
+**Stimmung:** Die App sieht jetzt richtig professionell aus — Tokens zahlen sich beim Feintuning sofort aus.
+
+### Nächster Schritt
+
+Manueller Geräte-Audit (Screenshots), Performance-Stresstest auf echtem Handy, dann nächstes Kursmodul.
+
+---

@@ -2,8 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
-import { RADIUS_PILL } from '../theme/radii';
-import { SPACE_MD, SPACE_SM, SPACE_XS } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 
 type BadgeVariant = 'sinGluten' | 'verified' | 'priceRange' | 'cuisine' | 'neutral';
 
@@ -70,18 +71,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    borderRadius: RADIUS_PILL,
-    paddingVertical: SPACE_SM - 2,
-    paddingHorizontal: SPACE_MD,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.cardPadding,
   },
   icon: {
-    marginRight: SPACE_XS,
+    marginRight: spacing.xs,
   },
   label: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
+    ...typography.badge,
   },
 });
 

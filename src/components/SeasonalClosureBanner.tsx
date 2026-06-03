@@ -3,8 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { colors } from '../theme/colors';
-import { RADIUS_INPUT } from '../theme/radii';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface SeasonalClosureBannerProps {
@@ -31,23 +32,22 @@ function SeasonalClosureBanner({ restaurant }: SeasonalClosureBannerProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_SM,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.sm,
   },
   container: {
     backgroundColor: colors.warning,
-    borderRadius: RADIUS_INPUT,
-    padding: SPACE_MD,
+    borderRadius: radius.lg,
+    padding: spacing.cardPadding,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: SPACE_SM,
+    gap: spacing.sm,
   },
   text: {
+    ...typography.bodySmall,
     flex: 1,
-    color: colors.background,
-    fontSize: 13,
     fontWeight: '600',
-    lineHeight: 18,
+    color: colors.background,
   },
 });
 

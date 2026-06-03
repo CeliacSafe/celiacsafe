@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import DetailScreen from '../screens/DetailScreen';
 import { MapaScreen } from '../screens/MapaScreen';
-import { colors } from '../theme/colors';
+import { stackScreenOptions } from './stackScreenOptions';
 
 export type MapaStackParamList = {
   MapaMain: undefined;
@@ -13,14 +13,7 @@ const Stack = createNativeStackNavigator<MapaStackParamList>();
 
 export default function MapaStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.background },
-        headerTintColor: colors.primary,
-        headerTitleStyle: { color: colors.textPrimary },
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    >
+    <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen name="MapaMain" component={MapaScreen} options={{ headerShown: false }} />
       <Stack.Screen
         name="RestaurantDetail"

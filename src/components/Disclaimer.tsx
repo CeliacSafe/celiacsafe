@@ -3,8 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { colors } from '../theme/colors';
-import { RADIUS_SUB } from '../theme/radii';
-import { SPACE_LG, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 
 interface DisclaimerProps {
   variant?: 'full' | 'short';
@@ -41,29 +42,28 @@ function Disclaimer({ variant = 'full', embedded = false }: DisclaimerProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_XL,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.screenPadding,
   },
   container: {
     backgroundColor: colors.surface,
-    padding: SPACE_LG,
-    borderRadius: RADIUS_SUB,
+    padding: spacing.md,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.warning,
   },
   embeddedContainer: {
     backgroundColor: colors.surface,
-    padding: SPACE_LG,
-    borderRadius: 12,
+    padding: spacing.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.warning,
   },
   icon: {
-    marginBottom: SPACE_LG,
+    marginBottom: spacing.md,
   },
   text: {
-    fontSize: 12,
-    lineHeight: 18,
+    ...typography.caption,
     color: colors.textSecondary,
   },
 });

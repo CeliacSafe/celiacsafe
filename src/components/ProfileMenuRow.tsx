@@ -1,9 +1,12 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { PROFILE_MENU_CHEVRON_SIZE, PROFILE_MENU_ICON_SIZE, profileMenuStyles } from './profileMenuStyles';
+import {
+  PROFILE_MENU_CHEVRON_SIZE,
+  PROFILE_MENU_ICON_SIZE,
+  profileMenuStyles,
+} from './profileMenuStyles';
 import { colors } from '../theme/colors';
-
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
 interface ProfileMenuRowProps {

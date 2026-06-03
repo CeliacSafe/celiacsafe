@@ -11,7 +11,9 @@ import { useRestaurants } from '../hooks/useRestaurants';
 import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { colors } from '../theme/colors';
-import { SPACE_LG, SPACE_MD, SPACE_XL } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 type FavoritosNavigationProp = NativeStackNavigationProp<FavoritosStackParamList, 'FavoritosList'>;
@@ -53,6 +55,7 @@ export function FavoritosScreen() {
           <Text style={styles.title}>{t('favorites.title')}</Text>
         </View>
         <EmptyState
+          illustration="favorites"
           iconName="heart-outline"
           title={t('favorites.empty_title')}
           description={t('favorites.empty_description')}
@@ -88,23 +91,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    paddingHorizontal: SPACE_XL,
-    paddingTop: SPACE_MD,
-    paddingBottom: SPACE_LG,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.cardPadding,
+    paddingBottom: spacing.md,
   },
   title: {
+    ...typography.h1,
     color: colors.textPrimary,
-    fontSize: 28,
-    fontWeight: '700',
   },
   subtitle: {
-    marginTop: SPACE_MD - 4,
+    ...typography.bodySmall,
+    marginTop: spacing.sm,
     color: colors.textSecondary,
-    fontSize: 14,
   },
   listContent: {
-    paddingHorizontal: SPACE_XL,
-    paddingBottom: SPACE_XL,
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.screenPadding,
   },
 });
 

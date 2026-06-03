@@ -9,8 +9,11 @@ import FavoritosStack from './FavoritosStack';
 import MapaStack from './MapaStack';
 import { ComunidadScreen } from '../screens/ComunidadScreen';
 import PerfilStack from './PerfilStack';
+import TabBarButton from './TabBarButton';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
+import { typography } from '../theme/typography';
 
 type RootTabParamList = {
   Buscar: undefined;
@@ -56,17 +59,17 @@ export function RootTabs() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
+        tabBarButton: TabBarButton,
         tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '700',
+          ...typography.tabLabel,
         },
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.primaryDark,
           borderTopWidth: 1,
           height: 56 + insets.bottom,
-          paddingBottom: insets.bottom + 4,
-          paddingTop: 6,
+          paddingBottom: insets.bottom + spacing.xs,
+          paddingTop: spacing.sm,
         },
       }}
     >

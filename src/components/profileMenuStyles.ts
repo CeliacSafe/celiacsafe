@@ -1,31 +1,33 @@
 import { StyleSheet } from 'react-native';
 
 import { colors } from '../theme/colors';
-import { SPACE_LG, SPACE_MD } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 
 /** Gemeinsames Item-Layout fuer Profil-Menuezeilen und plain Action-Buttons. */
 export const profileMenuStyles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_MD,
-    paddingVertical: 14,
-    paddingHorizontal: SPACE_LG,
+    gap: spacing.cardPadding,
+    paddingVertical: spacing.sm + spacing.xs,
+    paddingHorizontal: spacing.md,
   },
   rowPressed: {
     opacity: 0.85,
   },
   label: {
+    ...typography.body,
     flex: 1,
-    color: colors.textPrimary,
-    fontSize: 15,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   labelMuted: {
+    ...typography.body,
     flex: 1,
-    color: colors.textSecondary,
-    fontSize: 15,
     fontWeight: '600',
+    color: colors.textSecondary,
   },
   chevronSpacer: {
     width: 22,

@@ -15,7 +15,9 @@ import ShareAppButton from '../components/ShareAppButton';
 import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../constants/appContact';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
 import { colors } from '../theme/colors';
-import { SPACE_SM, SPACE_XL, SPACE_XXL } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import { openEmail } from '../utils/openExternalUrl';
 
 type PerfilNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'PerfilMain'>;
@@ -111,30 +113,29 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    paddingHorizontal: SPACE_XL,
+    paddingHorizontal: spacing.screenPadding,
     paddingTop: 12,
     paddingBottom: 16,
     backgroundColor: colors.background,
   },
   title: {
+    ...typography.display,
     color: colors.primary,
-    fontSize: 32,
-    fontWeight: '700',
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: SPACE_XXL,
+    paddingBottom: spacing.sectionGap,
   },
   languageCardWrap: {
-    marginHorizontal: SPACE_XL,
-    marginVertical: SPACE_SM,
+    marginHorizontal: spacing.screenPadding,
+    marginVertical: spacing.sm,
   },
   disclaimerWrap: {
-    marginHorizontal: SPACE_XL,
-    marginTop: SPACE_SM,
-    marginBottom: SPACE_SM,
+    marginHorizontal: spacing.screenPadding,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
   },
 });
 

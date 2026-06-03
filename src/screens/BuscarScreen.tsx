@@ -10,6 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
+import { hapticMedium } from '../utils/haptics';
 import FilterBottomSheet, { type FilterBottomSheetRef } from '../components/FilterBottomSheet';
 import FilterPills from '../components/FilterPills';
 import RestaurantCard from '../components/RestaurantCard';
@@ -20,7 +21,9 @@ import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import { useFilterStore } from '../store/filterStore';
 import type { Restaurant } from '../types/Restaurant';
 import { colors } from '../theme/colors';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XS, SPACE_XXL } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import { formatResultCount } from '../utils/pluralize';
 import { applyFilters } from '../utils/searchAndFilter';
 
@@ -43,6 +46,11 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const [refreshing, setRefreshing] = useState(false);
+
+  const handleClearFilters = useCallback(() => {
+    hapticMedium();
+    resetFilters();
+  }, [resetFilters]);
 
   const filterCriteria = useMemo(
     () => ({
@@ -93,7 +101,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     () => (
       <View style={styles.stickyHeader}>
         <View style={styles.header}>
-          <Text style={styles.title}>Celiac Safe</Text>
+          <Text style={styles.title}>{t('search.brand_title')}</Text>
           <Text style={styles.subtitle}>{t('search.subtitle')}</Text>
         </View>
 
@@ -132,14 +140,18 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           ListEmptyComponent={
             hasActiveFilters() ? (
               <EmptyState
+                inline
+                illustration="search"
                 iconName="filter-off-outline"
                 title={t('search.no_results_title')}
                 description={t('search.no_results_description')}
                 actionLabel={t('search.clear_filters')}
-                onAction={resetFilters}
+                onAction={handleClearFilters}
               />
             ) : (
               <EmptyState
+                inline
+                illustration="default"
                 iconName="food-off"
                 title={t('search.no_restaurants_title')}
                 description={error ?? undefined}
@@ -148,7 +160,10 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           }
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[
+            styles.listContent,
+            filteredRestaurants.length === 0 && styles.listContentEmpty,
+          ]}
           refreshing={refreshing}
           onRefresh={onRefresh}
           initialNumToRender={8}
@@ -177,39 +192,39 @@ const styles = StyleSheet.create({
   },
   stickyHeader: {
     backgroundColor: colors.background,
-    paddingTop: SPACE_SM,
-    paddingBottom: SPACE_MD,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.cardPadding,
   },
   header: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_LG,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.md,
   },
   title: {
+    ...typography.display,
     color: colors.primary,
-    fontSize: 32,
-    fontWeight: '700',
   },
   subtitle: {
-    marginTop: SPACE_XS,
+    ...typography.bodySmall,
+    marginTop: spacing.xs,
     color: colors.textSecondary,
-    fontSize: 14,
   },
   counterRow: {
-    marginTop: SPACE_MD,
-    marginHorizontal: SPACE_XL,
+    marginTop: spacing.cardPadding,
+    marginHorizontal: spacing.screenPadding,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM - 2,
+    gap: spacing.xs,
   },
   counterText: {
+    ...typography.overline,
     color: colors.primary,
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.6,
   },
   listContent: {
-    paddingHorizontal: SPACE_XL,
-    paddingBottom: SPACE_XXL,
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.sectionGap,
+  },
+  listContentEmpty: {
+    flexGrow: 1,
   },
 });
 

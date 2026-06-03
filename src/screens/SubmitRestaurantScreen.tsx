@@ -3,7 +3,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -17,10 +16,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
+import LoadingSpinner from '../components/LoadingSpinner';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
 import { colors } from '../theme/colors';
-import { RADIUS_BUTTON, RADIUS_INPUT, RADIUS_SUB } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XXL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
+import { hapticSuccess } from '../utils/haptics';
 import { submitRestaurantViaEmail } from '../utils/submitViaEmail';
 
 type SubmitNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'SubmitRestaurant'>;
@@ -42,9 +44,7 @@ function isValidWebsite(value: string): boolean {
     return true;
   }
   return (
-    trimmed.startsWith('http://') ||
-    trimmed.startsWith('https://') ||
-    trimmed.startsWith('www.')
+    trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('www.')
   );
 }
 
@@ -91,6 +91,7 @@ function SubmitRestaurantScreen() {
       });
 
       if (sent) {
+        hapticSuccess();
         Alert.alert(t('submit.success_title'), t('submit.success_message'), [
           { text: t('common.accept'), onPress: () => navigation.goBack() },
         ]);
@@ -102,6 +103,7 @@ function SubmitRestaurantScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      {submitting ? <LoadingSpinner fullscreen message={t('common.loading')} /> : null}
       <View style={styles.header}>
         <Pressable
           onPress={() => navigation.goBack()}
@@ -127,11 +129,7 @@ function SubmitRestaurantScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.hintBanner}>
-            <MaterialCommunityIcons
-              name="information-outline"
-              size={22}
-              color={colors.primary}
-            />
+            <MaterialCommunityIcons name="information-outline" size={22} color={colors.primary} />
             <Text style={styles.hintText}>{t('submit.hint')}</Text>
           </View>
 
@@ -213,11 +211,7 @@ function SubmitRestaurantScreen() {
               pressed && canSubmit && styles.submitPressed,
             ]}
           >
-            {submitting ? (
-              <ActivityIndicator color={colors.background} />
-            ) : (
-              <Text style={styles.submitLabel}>{t('submit.submit_button')}</Text>
-            )}
+            <Text style={styles.submitLabel}>{t('submit.submit_button')}</Text>
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -281,9 +275,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: SPACE_XL,
-    paddingBottom: SPACE_MD,
-    gap: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.cardPadding,
+    gap: spacing.cardPadding,
   },
   backButton: {
     width: 40,
@@ -295,10 +289,10 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   headerTitle: {
+    ...typography.h3,
     flex: 1,
-    color: colors.textPrimary,
-    fontSize: 20,
     fontWeight: '700',
+    color: colors.textPrimary,
     textAlign: 'center',
   },
   headerSpacer: {
@@ -308,50 +302,45 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: SPACE_XL,
-    paddingBottom: SPACE_XXL,
-    gap: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.sectionGap,
+    gap: spacing.cardPadding,
   },
   hintBanner: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: SPACE_MD,
+    gap: spacing.cardPadding,
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_SUB,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.primary,
-    padding: SPACE_MD,
-    marginBottom: SPACE_SM,
+    padding: spacing.cardPadding,
+    marginBottom: spacing.sm,
   },
   hintText: {
+    ...typography.bodySmall,
     flex: 1,
     color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
   },
   sectionLabel: {
-    marginTop: SPACE_SM,
+    ...typography.overline,
+    marginTop: spacing.sm,
     color: colors.primary,
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
   },
   field: {
-    gap: SPACE_SM,
+    gap: spacing.sm,
   },
   label: {
+    ...typography.h4,
     color: colors.textPrimary,
-    fontSize: 14,
-    fontWeight: '600',
   },
   input: {
+    ...typography.body,
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_INPUT,
-    paddingHorizontal: SPACE_MD + 2,
-    paddingVertical: SPACE_MD,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.cardPadding,
     color: colors.textPrimary,
-    fontSize: 15,
     borderWidth: 1,
     borderColor: 'transparent',
   },
@@ -363,14 +352,14 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   errorText: {
+    ...typography.caption,
     color: colors.error,
-    fontSize: 12,
   },
   submitButton: {
-    marginTop: SPACE_LG,
+    marginTop: spacing.md,
     backgroundColor: colors.primary,
-    borderRadius: RADIUS_BUTTON,
-    paddingVertical: SPACE_MD + 2,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
     alignItems: 'center',
   },
   submitDisabled: {
@@ -380,9 +369,9 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   submitLabel: {
-    color: colors.background,
-    fontSize: 16,
+    ...typography.button,
     fontWeight: '700',
+    color: colors.background,
   },
 });
 

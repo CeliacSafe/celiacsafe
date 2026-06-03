@@ -1,11 +1,12 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useLanguageStore } from '../store/languageStore';
 import { colors } from '../theme/colors';
+import { spacing, radius } from '../theme/spacing';
+
 import type { SupportedLanguage } from '../i18n';
-import { SPACE_LG, SPACE_MD } from '../theme/spacing';
+import { typography } from '../theme/typography';
 
 interface LanguageSwitcherProps {
   variant?: 'compact' | 'full';
@@ -22,7 +23,6 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
   const handleSelect = (code: SupportedLanguage) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
     setLanguage(code);
   };
 
@@ -57,10 +57,7 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
             onPress={() => handleSelect(option.code)}
             accessibilityRole="button"
             accessibilityLabel={option.label}
-            style={[
-              styles.fullRow,
-              index < LANGUAGE_OPTIONS.length - 1 && styles.fullRowBorder,
-            ]}
+            style={[styles.fullRow, index < LANGUAGE_OPTIONS.length - 1 && styles.fullRowBorder]}
           >
             <Text style={styles.flag}>{option.flag}</Text>
             <Text style={styles.fullLabel}>{option.label}</Text>
@@ -79,12 +76,12 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
 const styles = StyleSheet.create({
   compactRow: {
     flexDirection: 'row',
-    gap: SPACE_MD,
+    gap: spacing.cardPadding,
   },
   compactButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: radius.icon,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
@@ -99,25 +96,25 @@ const styles = StyleSheet.create({
   },
   fullList: {
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     overflow: 'hidden',
   },
   fullRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: SPACE_LG,
-    gap: SPACE_MD,
+    paddingVertical: spacing.sm + spacing.xs,
+    paddingHorizontal: spacing.md,
+    gap: spacing.cardPadding,
   },
   fullRowBorder: {
     borderBottomWidth: 1,
     borderBottomColor: colors.background,
   },
   fullLabel: {
+    ...typography.body,
+    fontWeight: '600',
     flex: 1,
     color: colors.textPrimary,
-    fontSize: 15,
-    fontWeight: '600',
   },
   checkSpacer: {
     width: 22,

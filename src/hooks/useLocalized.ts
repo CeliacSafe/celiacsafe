@@ -1,9 +1,5 @@
 import { useLanguageStore } from '../store/languageStore';
-import {
-  REGION_NAMES,
-  VENUE_TYPE_NAMES,
-  CUISINE_TYPE_NAMES,
-} from '../data/lookups';
+import { REGION_NAMES, VENUE_TYPE_NAMES, CUISINE_TYPE_NAMES } from '../data/lookups';
 import type { RegionCode, Restaurant, VenueType } from '../types/Restaurant';
 
 /**
@@ -15,16 +11,14 @@ export function useLocalized() {
 
   return {
     /** Lokalisierter Region-Name */
-    regionName: (code: string): string =>
-      REGION_NAMES[code as RegionCode]?.[language] ?? code,
+    regionName: (code: string): string => REGION_NAMES[code as RegionCode]?.[language] ?? code,
 
     /** Lokalisierter Venue-Type */
     venueTypeName: (code: string): string =>
       VENUE_TYPE_NAMES[code as VenueType]?.[language] ?? code,
 
     /** Lokalisierter Cuisine-Type */
-    cuisineName: (code: string): string =>
-      CUISINE_TYPE_NAMES[code]?.[language] ?? code,
+    cuisineName: (code: string): string => CUISINE_TYPE_NAMES[code]?.[language] ?? code,
 
     /** Lokalisierte Restaurant-Beschreibung mit Fallback */
     description: (restaurant: Restaurant): string => {

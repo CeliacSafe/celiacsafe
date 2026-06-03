@@ -18,6 +18,7 @@
     "profile": "Profil"
   },
   "search": {
+    "brand_title": "Celiac Safe",
     "placeholder": "Restaurants, Cafés oder Orte suchen...",
     "subtitle": "Essentieller glutenfreier Reiseführer",
     "no_restaurants_title": "Noch keine Restaurants",
@@ -78,7 +79,10 @@
     "view_detail": "Details",
     "location_denied_title": "Kein Zugriff",
     "location_denied_message": "Standort konnte nicht ermittelt werden.",
-    "my_location": "Mein Standort"
+    "my_location": "Mein Standort",
+    "locating": "Standort wird ermittelt…",
+    "no_pins_title": "Keine Restaurants auf der Karte",
+    "no_pins_description": "Passen Sie die Filter an, um Treffer mit Koordinaten anzuzeigen."
   },
   "community": {
     "coming_soon": "Demnächst verfügbar"
@@ -120,13 +124,25 @@
   },
   "about": {
     "title": "Über Celiac Safe",
+    "brand_name": "Celiac Safe",
+    "hero_subtitle": "100 % glutenfreie Restaurants in Spanien",
     "share_message": "Schau dir diese App für 100 % glutenfreie Restaurants in Spanien an: {{url}}",
     "mission_title": "Unsere Mission",
     "mission_body": "Celiac Safe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, Restaurants in Spanien zu finden, die zu 100 % glutenfrei kochen — sicher und ohne Rätselraten.",
-    "concept_title": "Das Konzept",
-    "concept_body": "Wir erfassen Betriebe, die sich als vollständig glutenfrei deklarieren oder von Zöliakie-Verbänden zertifiziert sind. Die Angaben sind nur Orientierung: bitte immer beim Restaurant nachfragen.",
-    "maker_title": "Wer wir sind",
-    "maker_body": "Celiac Safe ist ein unabhängiges Projekt für die Zöliakie-Community. Die Daten werden manuell gepflegt; Ihre Restaurant-Vorschläge helfen uns zu wachsen."
+    "verification_title": "Wie wir prüfen",
+    "verification_body": "Wir listen Betriebe, die sich als vollständig glutenfrei deklarieren oder von Zöliakie-Verbänden zertifiziert sind (z. B. FACE, AOECS). Einträge werden manuell geprüft und regelmäßig aktualisiert. Die Angaben sind nur Orientierung: bitte immer beim Restaurant nachfragen.",
+    "noncommercial_title": "Nicht-kommerzielles Projekt",
+    "noncommercial_body": "Celiac Safe ist ein unabhängiges, nicht-kommerzielles Projekt für die Zöliakie-Community. Wir verkaufen keine personenbezogenen Daten, es gibt kein profilbasiertes Werbetracking, und Restaurants zahlen nicht für einen Eintrag.",
+    "maker_title": "Wer dahinter steht",
+    "maker_body": "Ein kleines Team aus der Zöliakie-Community in der EU, mit Unterstützung von Menschen, die glutenfrei in Spanien leben. Datenpflege und Antworten auf Vorschläge erfolgen persönlich und manuell.",
+    "help_title": "So können Sie helfen",
+    "help_link_suggest": "Restaurant vorschlagen",
+    "help_link_report": "Fehler melden",
+    "help_link_contact": "Kontakt aufnehmen",
+    "help_link_privacy": "Datenschutzerklärung",
+    "help_link_rate": "App bewerten",
+    "help_link_share": "App teilen",
+    "version_label": "Version {{version}}"
   },
   "privacy": {
     "title": "Datenschutzerklärung",

@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import type { ReactElement } from 'react';
 
 import { colors } from '../theme/colors';
-import { SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
 
 interface ProfileMenuCardProps {
   children: ReactElement | ReactElement[];
@@ -26,10 +26,10 @@ function ProfileMenuCard({ children }: ProfileMenuCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     overflow: 'hidden',
-    marginHorizontal: SPACE_XL,
-    marginVertical: SPACE_SM,
+    marginHorizontal: spacing.screenPadding,
+    marginVertical: spacing.sm,
   },
   divider: {
     height: 1,

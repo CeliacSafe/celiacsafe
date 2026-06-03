@@ -1,7 +1,18 @@
-/** Einheitliche Eckenradien fuer Pills, Cards und Controls. */
-export const RADIUS_PILL = 999;
-export const RADIUS_CARD = 16;
-export const RADIUS_INPUT = 12;
-export const RADIUS_SUB = 8;
-export const RADIUS_BUTTON = 12;
-export const RADIUS_HEART = 20;
+import { radius } from './spacing';
+
+/**
+ * @deprecated Import { radius } from './spacing'.
+ */
+export const RADIUS_PILL = radius.pill;
+/** @deprecated */
+export const RADIUS_CARD = radius.xl;
+/** @deprecated */
+export const RADIUS_INPUT = radius.lg;
+/** @deprecated */
+export const RADIUS_SUB = radius.md;
+/** @deprecated */
+export const RADIUS_BUTTON = radius.lg;
+/** @deprecated */
+export const RADIUS_HEART = radius.icon;
+
+export { radius };

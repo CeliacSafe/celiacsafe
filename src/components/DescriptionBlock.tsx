@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface DescriptionBlockProps {
@@ -26,9 +28,7 @@ function DescriptionBlock({ restaurant }: DescriptionBlockProps) {
 
   const isLong = descriptionText.length > COLLAPSED_LENGTH;
   const displayText =
-    isLong && !expanded
-      ? `${descriptionText.slice(0, COLLAPSED_LENGTH).trim()}…`
-      : descriptionText;
+    isLong && !expanded ? `${descriptionText.slice(0, COLLAPSED_LENGTH).trim()}…` : descriptionText;
 
   return (
     <View style={styles.wrapper}>
@@ -50,30 +50,29 @@ function DescriptionBlock({ restaurant }: DescriptionBlockProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.cardPadding,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   title: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.h4,
     fontWeight: '700',
+    color: colors.primary,
   },
   body: {
+    ...typography.body,
     color: colors.textPrimary,
-    fontSize: 15,
-    lineHeight: 22.5,
   },
   toggle: {
-    marginTop: SPACE_SM,
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.bodySmall,
+    marginTop: spacing.sm,
     fontWeight: '600',
+    color: colors.primary,
   },
 });
 

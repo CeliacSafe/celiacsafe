@@ -9,8 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { colors } from '../theme/colors';
-import { RADIUS_CARD, RADIUS_PILL } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
 
 // Nur kurz beim ersten Laden sichtbar; bei statischem JSON-Asset reicht es,
 // 3–5 Skeleton-Cards fuer ca. 200 ms zu zeigen.
@@ -51,54 +50,54 @@ function SkeletonCard() {
 const styles = StyleSheet.create({
   card: {
     height: 280,
-    borderRadius: RADIUS_CARD,
+    borderRadius: radius.xl,
     overflow: 'hidden',
     backgroundColor: colors.surface,
   },
   imageArea: {
     height: 200,
     backgroundColor: colors.surface,
-    padding: SPACE_MD,
+    padding: spacing.cardPadding,
     justifyContent: 'flex-end',
   },
   badgeRow: {
     flexDirection: 'row',
-    gap: SPACE_SM,
+    gap: spacing.sm,
   },
   badgePlaceholder: {
     width: 72,
     height: 24,
-    borderRadius: RADIUS_PILL,
+    borderRadius: radius.pill,
     backgroundColor: colors.skeletonMuted,
   },
   badgePlaceholderWide: {
     width: 100,
     height: 24,
-    borderRadius: RADIUS_PILL,
+    borderRadius: radius.pill,
     backgroundColor: colors.skeletonMuted,
   },
   body: {
     flex: 1,
-    paddingHorizontal: SPACE_LG,
-    paddingVertical: SPACE_MD,
-    gap: SPACE_SM,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.cardPadding,
+    gap: spacing.sm,
   },
   titlePlaceholder: {
     height: 18,
     width: '70%',
-    borderRadius: 4,
+    borderRadius: radius.sm,
     backgroundColor: colors.skeletonStrong,
   },
   linePlaceholder: {
     height: 14,
     width: '90%',
-    borderRadius: 4,
+    borderRadius: radius.sm,
     backgroundColor: colors.skeletonMuted,
   },
   linePlaceholderShort: {
     height: 14,
     width: '55%',
-    borderRadius: 4,
+    borderRadius: radius.sm,
     backgroundColor: colors.skeletonMuted,
   },
 });

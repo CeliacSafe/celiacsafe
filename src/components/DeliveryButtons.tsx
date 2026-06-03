@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
-import { RADIUS_SUB } from '../theme/radii';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { DeliveryLink, Restaurant } from '../types/Restaurant';
 import { openUrl } from '../utils/openExternalUrl';
 
@@ -124,57 +125,56 @@ function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.cardPadding,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   title: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.h4,
     fontWeight: '700',
+    color: colors.primary,
   },
   platformButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_MD,
+    gap: spacing.cardPadding,
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_SUB,
-    padding: SPACE_MD,
-    marginBottom: SPACE_SM,
+    borderRadius: radius.md,
+    padding: spacing.cardPadding,
+    marginBottom: spacing.sm,
     overflow: 'hidden',
   },
   iconBadge: {
     width: 32,
     height: 32,
-    borderRadius: RADIUS_SUB,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   platformLabel: {
+    ...typography.body,
+    fontWeight: '600',
     flex: 1,
     color: colors.textPrimary,
-    fontSize: 15,
-    fontWeight: '600',
   },
   hintBanner: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: SPACE_SM,
+    gap: spacing.sm,
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_SUB,
-    padding: SPACE_MD,
-    marginBottom: SPACE_SM,
+    borderRadius: radius.md,
+    padding: spacing.cardPadding,
+    marginBottom: spacing.sm,
   },
   hintText: {
+    ...typography.bodySmall,
     flex: 1,
     color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
   },
   pressed: {
     opacity: 0.9,

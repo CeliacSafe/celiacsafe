@@ -3,8 +3,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { colors } from '../theme/colors';
-import { RADIUS_INPUT, RADIUS_SUB } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { ReservationLink, Restaurant } from '../types/Restaurant';
 import { openPhone, openUrl } from '../utils/openExternalUrl';
 
@@ -192,78 +193,78 @@ function ReservationSection({ restaurant }: ReservationSectionProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.cardPadding,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   title: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.h4,
     fontWeight: '700',
+    color: colors.primary,
   },
   primaryButton: {
     height: 56,
-    borderRadius: RADIUS_INPUT,
+    borderRadius: radius.lg,
     backgroundColor: colors.primary,
-    paddingHorizontal: SPACE_LG,
+    paddingHorizontal: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_MD,
+    gap: spacing.cardPadding,
     overflow: 'hidden',
   },
   secondaryButton: {
     minHeight: 44,
-    borderRadius: RADIUS_SUB,
+    borderRadius: radius.md,
     backgroundColor: colors.surface,
-    paddingHorizontal: SPACE_LG,
-    paddingVertical: SPACE_SM,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_MD,
-    marginBottom: SPACE_SM,
+    gap: spacing.cardPadding,
+    marginBottom: spacing.sm,
     overflow: 'hidden',
   },
   buttonTextBlock: {
     flex: 1,
   },
   primaryLabel: {
-    color: colors.background,
-    fontSize: 16,
+    ...typography.button,
     fontWeight: '700',
+    color: colors.background,
   },
   primarySubtitle: {
+    ...typography.caption,
     marginTop: 2,
     color: colors.background,
-    fontSize: 12,
     opacity: 0.9,
   },
   secondaryLabel: {
-    color: colors.textPrimary,
-    fontSize: 15,
+    ...typography.body,
     fontWeight: '600',
+    color: colors.textPrimary,
   },
   secondarySubtitle: {
+    ...typography.caption,
     marginTop: 2,
     color: colors.textSecondary,
-    fontSize: 12,
   },
   hintBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
+    gap: spacing.sm,
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_SUB,
-    padding: SPACE_MD,
+    borderRadius: radius.md,
+    padding: spacing.cardPadding,
   },
   hintText: {
+    ...typography.bodySmall,
     flex: 1,
     color: colors.textSecondary,
-    fontSize: 14,
   },
   pressed: {
     opacity: 0.9,

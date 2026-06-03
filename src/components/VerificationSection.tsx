@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
-import { RADIUS_INPUT } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant, VerificationMethod } from '../types/Restaurant';
 import { useFormatDate } from '../utils/formatDate';
 
@@ -160,54 +161,53 @@ function VerificationSection({ restaurant }: VerificationSectionProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.cardPadding,
   },
   container: {
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_INPUT,
-    padding: SPACE_LG,
+    borderRadius: radius.lg,
+    padding: spacing.md,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   title: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.h4,
     fontWeight: '700',
+    color: colors.primary,
   },
   methodRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_SM,
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
   methodLabel: {
+    ...typography.bodySmall,
     flex: 1,
     color: colors.textPrimary,
-    fontSize: 14,
-    lineHeight: 20,
   },
   dateBlock: {
-    marginTop: SPACE_SM,
+    marginTop: spacing.sm,
   },
   dateText: {
+    ...typography.bodySmall,
     color: colors.textSecondary,
-    fontSize: 13,
   },
   warningText: {
-    marginTop: SPACE_SM,
-    color: colors.warning,
-    fontSize: 13,
+    ...typography.bodySmall,
+    marginTop: spacing.sm,
     fontWeight: '600',
+    color: colors.warning,
   },
   authorityText: {
-    marginTop: SPACE_MD,
+    ...typography.caption,
+    marginTop: spacing.cardPadding,
     color: colors.textSecondary,
-    fontSize: 12,
     fontStyle: 'italic',
   },
 });

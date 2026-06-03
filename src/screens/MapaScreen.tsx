@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import MapView, { PROVIDER_DEFAULT } from 'react-native-maps';
 import type { Region } from 'react-native-maps';
 
+import EmptyState from '../components/EmptyState';
+import LoadingSpinner from '../components/LoadingSpinner';
 import MyLocationButton from '../components/MyLocationButton';
 import RegionQuickJumps from '../components/RegionQuickJumps';
 import RestaurantBottomSheet from '../components/RestaurantBottomSheet';
@@ -16,7 +18,9 @@ import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
 import type { MapaStackParamList } from '../navigation/MapaStack';
 import { useFilterStore } from '../store/filterStore';
+import { spacing } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
+import { hapticError, hapticMedium } from '../utils/haptics';
 import { applyFilters } from '../utils/searchAndFilter';
 
 const INITIAL_REGION = QUICK_JUMPS[0].region;
@@ -29,6 +33,10 @@ const MY_LOCATION_ZOOM = {
 
 type MapaNavigationProp = NativeStackNavigationProp<MapaStackParamList, 'MapaMain'>;
 
+/**
+ * Karte full-bleed unter der Status-Bar; nur Overlays (Quick-Jumps, leerer Zustand)
+ * nutzen `insets.top` — kein SafeAreaView um die MapView.
+ */
 export function MapaScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<MapaNavigationProp>();
@@ -43,6 +51,8 @@ export function MapaScreen() {
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const sortBy = useFilterStore((state) => state.sortBy);
+  const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
+  const resetFilters = useFilterStore((state) => state.resetFilters);
 
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const selectedRestaurantId = selectedRestaurant?.id ?? null;
@@ -76,6 +86,13 @@ export function MapaScreen() {
       ),
     [filteredRestaurants]
   );
+
+  const showNoPinsEmpty = hasActiveFilters() && mappableRestaurants.length === 0;
+
+  const handleClearFilters = useCallback(() => {
+    hapticMedium();
+    resetFilters();
+  }, [resetFilters]);
 
   const restaurantById = useMemo(
     () => new Map(mappableRestaurants.map((restaurant) => [restaurant.id, restaurant])),
@@ -112,7 +129,11 @@ export function MapaScreen() {
         1000
       );
     } else {
-      Alert.alert(t('map.location_denied_title'), lastErrorRef.current ?? t('map.location_denied_message'));
+      hapticError();
+      Alert.alert(
+        t('map.location_denied_title'),
+        lastErrorRef.current ?? t('map.location_denied_message')
+      );
     }
   }, [lastErrorRef, requestLocation, t]);
 
@@ -150,6 +171,20 @@ export function MapaScreen() {
         {mapMarkers}
       </MapView>
 
+      {showNoPinsEmpty ? (
+        <View style={[styles.emptyOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
+          <EmptyState
+            illustration="map"
+            iconName="map-marker-off-outline"
+            title={t('map.no_pins_title')}
+            description={t('map.no_pins_description')}
+            actionLabel={t('search.clear_filters')}
+            onAction={handleClearFilters}
+            style={styles.emptyState}
+          />
+        </View>
+      ) : null}
+
       <View style={[styles.quickJumpOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
         <RegionQuickJumps onJumpTo={handleQuickJump} />
       </View>
@@ -159,6 +194,8 @@ export function MapaScreen() {
         loading={locationLoading}
         style={styles.myLocationButton}
       />
+
+      {locationLoading ? <LoadingSpinner fullscreen message={t('map.locating')} /> : null}
 
       <RestaurantBottomSheet
         restaurant={selectedRestaurant}
@@ -175,6 +212,19 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  emptyOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(18, 18, 18, 0.55)',
+    zIndex: 2,
+    paddingHorizontal: spacing.lg,
+  },
+  emptyState: {
+    flex: undefined,
+    minHeight: 0,
+    paddingVertical: 0,
   },
   quickJumpOverlay: {
     position: 'absolute',

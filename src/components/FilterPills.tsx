@@ -7,8 +7,10 @@ import { useAppLanguage } from '../i18n/useAppLanguage';
 import { VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { useFilterStore } from '../store/filterStore';
 import { colors } from '../theme/colors';
-import { RADIUS_PILL } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XS } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
+import { hapticLight } from '../utils/haptics';
 
 interface FilterPillsProps {
   onMoreFiltersPress?: () => void;
@@ -39,7 +41,10 @@ function FilterPills({ onMoreFiltersPress }: FilterPillsProps) {
     >
       <Pressable
         android_ripple={{ color: colors.rippleLight, borderless: false }}
-        onPress={() => useFilterStore.setState({ selectedVenueTypes: [] })}
+        onPress={() => {
+          hapticLight();
+          useFilterStore.setState({ selectedVenueTypes: [] });
+        }}
         style={({ pressed }) => [
           styles.pill,
           isAllActive ? styles.pillActive : styles.pillInactive,
@@ -57,7 +62,10 @@ function FilterPills({ onMoreFiltersPress }: FilterPillsProps) {
           <Pressable
             key={item.code}
             android_ripple={{ color: colors.rippleLight, borderless: false }}
-            onPress={() => toggleVenueType(item.code)}
+            onPress={() => {
+              hapticLight();
+              toggleVenueType(item.code);
+            }}
             style={({ pressed }) => [
               styles.pill,
               active ? styles.pillActive : styles.pillInactive,
@@ -78,7 +86,10 @@ function FilterPills({ onMoreFiltersPress }: FilterPillsProps) {
 
       <Pressable
         android_ripple={{ color: colors.rippleLight, borderless: false }}
-        onPress={onMoreFiltersPress}
+        onPress={() => {
+          hapticLight();
+          onMoreFiltersPress?.();
+        }}
         style={({ pressed }) => [
           styles.pill,
           activeAdvancedFilters > 0 ? styles.pillActive : styles.pillInactive,
@@ -111,18 +122,18 @@ function FilterPills({ onMoreFiltersPress }: FilterPillsProps) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: SPACE_MD,
-    paddingHorizontal: SPACE_XL,
-    gap: SPACE_SM,
+    paddingVertical: spacing.cardPadding,
+    paddingHorizontal: spacing.screenPadding,
+    gap: spacing.sm,
     alignItems: 'center',
   },
   pill: {
-    height: 36,
-    borderRadius: RADIUS_PILL,
-    paddingHorizontal: SPACE_LG,
+    height: spacing.xl + spacing.xs,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM - 2,
+    gap: spacing.xs,
     overflow: 'hidden',
   },
   pillActive: {
@@ -135,8 +146,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.95 }],
   },
   label: {
-    fontSize: 13,
-    fontWeight: '600',
+    ...typography.h4,
   },
   labelActive: {
     color: colors.background,
@@ -145,21 +155,20 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   trailingSpacing: {
-    width: SPACE_XS,
+    width: spacing.xs,
   },
   countBadge: {
     minWidth: 18,
     height: 18,
-    borderRadius: RADIUS_PILL,
-    paddingHorizontal: SPACE_XS,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.xs,
     backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
   countBadgeText: {
+    ...typography.badge,
     color: colors.primaryDark,
-    fontSize: 11,
-    fontWeight: '700',
   },
 });
 

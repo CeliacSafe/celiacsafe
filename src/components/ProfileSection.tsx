@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
-import { SPACE_SM, SPACE_XXL } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
 
+import { typography } from '../theme/typography';
 interface ProfileSectionProps {
   title: string;
   children: ReactNode;
@@ -20,16 +21,14 @@ function ProfileSection({ title, children }: ProfileSectionProps) {
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: SPACE_SM,
+    marginBottom: spacing.sm,
   },
   sectionTitle: {
+    ...typography.overline,
     color: colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    paddingHorizontal: SPACE_XXL,
-    paddingTop: SPACE_XXL,
-    paddingBottom: SPACE_SM,
+    paddingHorizontal: spacing.sectionGap,
+    paddingTop: spacing.sectionGap,
+    paddingBottom: spacing.sm,
   },
 });
 

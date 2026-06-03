@@ -11,8 +11,9 @@ import { useTranslation } from 'react-i18next';
 import BadgePill from './BadgePill';
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
-import { RADIUS_BUTTON } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XS, SPACE_XXL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface RestaurantBottomSheetProps {
@@ -116,7 +117,11 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
             </View>
 
             <View style={styles.badgeRow}>
-              <BadgePill label={t('card.badge_sin_gluten')} variant="sinGluten" iconName="check-circle" />
+              <BadgePill
+                label={t('card.badge_sin_gluten')}
+                variant="sinGluten"
+                iconName="check-circle"
+              />
               {showVerificationBadge ? (
                 <BadgePill
                   label={t('card.badge_verified')}
@@ -200,65 +205,64 @@ const styles = StyleSheet.create({
     backgroundColor: colors.textSecondary,
   },
   content: {
-    paddingHorizontal: SPACE_XL,
-    paddingBottom: SPACE_XXL,
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.sectionGap,
   },
   header: {
-    paddingBottom: SPACE_LG,
+    paddingBottom: spacing.md,
   },
   name: {
+    ...typography.h2,
     color: colors.textPrimary,
-    fontSize: 22,
-    fontWeight: '700',
   },
   location: {
-    marginTop: SPACE_XS,
+    ...typography.bodySmall,
+    marginTop: spacing.xs,
     color: colors.textSecondary,
-    fontSize: 14,
   },
   badgeRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACE_SM - 2,
-    marginBottom: SPACE_MD,
+    gap: spacing.xs,
+    marginBottom: spacing.cardPadding,
   },
   addressRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   addressText: {
+    ...typography.bodySmall,
     flex: 1,
     color: colors.textSecondary,
-    fontSize: 13,
   },
   cuisineRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACE_SM - 2,
-    marginBottom: SPACE_LG,
+    gap: spacing.xs,
+    marginBottom: spacing.md,
   },
   actionsRow: {
-    gap: SPACE_MD,
-    paddingTop: SPACE_SM,
+    gap: spacing.cardPadding,
+    paddingTop: spacing.sm,
   },
   actionButton: {
     width: 60,
     height: 60,
-    borderRadius: RADIUS_BUTTON,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: SPACE_XS,
+    gap: spacing.xs,
   },
   actionPressed: {
     opacity: 0.85,
   },
   actionLabel: {
-    color: colors.textSecondary,
-    fontSize: 10,
+    ...typography.tabLabel,
     fontWeight: '600',
+    color: colors.textSecondary,
   },
 });
 

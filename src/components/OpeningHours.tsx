@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
-import { SPACE_MD, SPACE_SM, SPACE_XL } from '../theme/spacing';
+import { spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface OpeningHoursProps {
@@ -84,27 +86,26 @@ function OpeningHours({ restaurant }: OpeningHoursProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: SPACE_XL,
-    paddingVertical: SPACE_MD,
+    paddingHorizontal: spacing.screenPadding,
+    paddingVertical: spacing.cardPadding,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
-    marginBottom: SPACE_MD,
+    gap: spacing.sm,
+    marginBottom: spacing.cardPadding,
   },
   title: {
-    color: colors.primary,
-    fontSize: 14,
+    ...typography.h4,
     fontWeight: '700',
+    color: colors.primary,
   },
   lines: {
-    gap: SPACE_SM,
+    gap: spacing.sm,
   },
   line: {
+    ...typography.body,
     color: colors.textPrimary,
-    fontSize: 15,
-    lineHeight: 22,
   },
   lineToday: {
     fontWeight: '700',
@@ -114,8 +115,8 @@ const styles = StyleSheet.create({
     color: colors.heart,
   },
   unavailable: {
+    ...typography.bodySmall,
     color: colors.textSecondary,
-    fontSize: 14,
     fontStyle: 'italic',
   },
 });

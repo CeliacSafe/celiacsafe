@@ -6,8 +6,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { colors } from '../theme/colors';
-import { RADIUS_SUB } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XL, SPACE_XXL } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 
 interface LegalSubScreenLayoutProps {
   title: string;
@@ -91,23 +92,23 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: SPACE_MD,
-    paddingVertical: SPACE_SM,
+    paddingHorizontal: spacing.cardPadding,
+    paddingVertical: spacing.sm,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.overlayWhite15,
   },
   backButton: {
-    padding: SPACE_SM,
+    padding: spacing.sm,
   },
   backPressed: {
     opacity: 0.6,
   },
   headerTitle: {
+    ...typography.h4,
     flex: 1,
     textAlign: 'center',
-    color: colors.textPrimary,
-    fontSize: 17,
     fontWeight: '700',
+    color: colors.textPrimary,
   },
   headerSpacer: {
     width: 40,
@@ -116,57 +117,54 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: SPACE_XL,
-    paddingTop: SPACE_LG,
-    paddingBottom: SPACE_XXL,
-    gap: SPACE_XL,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sectionGap,
+    gap: spacing.screenPadding,
   },
   updated: {
+    ...typography.bodySmall,
     color: colors.textSecondary,
-    fontSize: 13,
     fontStyle: 'italic',
   },
   translationNoticeBox: {
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_SUB,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.warning,
-    padding: SPACE_LG,
+    padding: spacing.md,
   },
   translationNoticeText: {
+    ...typography.bodySmall,
     color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
   },
   block: {
-    gap: SPACE_LG,
+    gap: spacing.md,
   },
   heading: {
-    color: colors.primary,
-    fontSize: 17,
+    ...typography.h3,
     fontWeight: '700',
+    color: colors.primary,
   },
   body: {
+    ...typography.body,
     color: colors.textPrimary,
-    fontSize: 15,
-    lineHeight: 22,
   },
   noticeBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: SPACE_MD,
+    gap: spacing.cardPadding,
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_SUB,
-    padding: SPACE_LG,
-    marginTop: SPACE_SM,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginTop: spacing.sm,
   },
   noticeIcon: {
     marginTop: 2,
   },
   noticeText: {
+    ...typography.bodySmall,
     flex: 1,
     color: colors.textPrimary,
-    fontSize: 14,
-    lineHeight: 20,
   },
 });

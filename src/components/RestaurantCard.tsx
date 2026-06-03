@@ -1,14 +1,15 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
+import RestaurantImagePlaceholder from './RestaurantImagePlaceholder';
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
-import { RADIUS_CARD } from '../theme/radii';
-import { SPACE_LG, SPACE_MD, SPACE_SM, SPACE_XS } from '../theme/spacing';
+import { radius, shadows, spacing } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface RestaurantCardProps {
@@ -49,13 +50,7 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
               transition={200}
             />
           ) : (
-            <View style={styles.imagePlaceholder}>
-              <MaterialCommunityIcons
-                name="silverware-fork-knife"
-                size={48}
-                color={colors.textSecondary}
-              />
-            </View>
+            <RestaurantImagePlaceholder restaurantId={restaurant.id} iconSize={64} />
           )}
 
           <View style={styles.badgeStack}>
@@ -107,17 +102,13 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
 const styles = StyleSheet.create({
   cardWrapper: {
     position: 'relative',
-    marginBottom: SPACE_LG,
+    marginBottom: spacing.md,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: RADIUS_CARD,
+    borderRadius: radius.xl,
     overflow: 'hidden',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    ...shadows.medium,
   },
   cardPressed: {
     opacity: 0.85,
@@ -131,46 +122,39 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  imagePlaceholder: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
   badgeStack: {
     position: 'absolute',
-    top: SPACE_MD,
-    left: SPACE_MD,
-    gap: SPACE_SM - 2,
+    top: spacing.cardPadding,
+    left: spacing.cardPadding,
+    gap: spacing.xs,
   },
   heartButton: {
     position: 'absolute',
-    top: SPACE_MD,
-    right: SPACE_MD,
+    top: spacing.cardPadding,
+    right: spacing.cardPadding,
     zIndex: 2,
   },
   textContainer: {
-    padding: SPACE_LG,
+    padding: spacing.md,
   },
   name: {
-    color: colors.textPrimary,
-    fontSize: 18,
+    ...typography.h3,
     fontWeight: '700',
-    fontFamily: Platform.select({ ios: 'Helvetica Neue', android: 'sans-serif-medium' }),
+    color: colors.textPrimary,
   },
   location: {
-    marginTop: SPACE_XS,
+    ...typography.body,
+    marginTop: spacing.xs,
     color: colors.textSecondary,
-    fontSize: 14,
   },
   tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACE_SM - 2,
-    marginTop: SPACE_SM,
+    gap: spacing.xs,
+    marginTop: spacing.sm,
   },
   priceRow: {
-    marginTop: SPACE_SM,
+    marginTop: spacing.sm,
     flexDirection: 'row',
   },
 });

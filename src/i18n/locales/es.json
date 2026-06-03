@@ -18,6 +18,7 @@
     "profile": "Perfil"
   },
   "search": {
+    "brand_title": "Celiac Safe",
     "placeholder": "Buscar restaurantes, cafés o lugares...",
     "subtitle": "Guía esencial sin gluten",
     "no_restaurants_title": "Aún no hay restaurantes",
@@ -78,7 +79,10 @@
     "view_detail": "Detalle",
     "location_denied_title": "Sin acceso",
     "location_denied_message": "No se pudo obtener tu ubicación.",
-    "my_location": "Mi ubicación"
+    "my_location": "Mi ubicación",
+    "locating": "Obteniendo ubicación…",
+    "no_pins_title": "Ningún restaurante en el mapa",
+    "no_pins_description": "Ajusta los filtros para ver locales con coordenadas."
   },
   "community": {
     "coming_soon": "Próximamente"
@@ -120,13 +124,25 @@
   },
   "about": {
     "title": "Sobre Celiac Safe",
+    "brand_name": "Celiac Safe",
+    "hero_subtitle": "Guía de restaurantes 100 % sin gluten en España",
     "share_message": "Mira esta app de restaurantes 100 % sin gluten en España: {{url}}",
     "mission_title": "Nuestra misión",
-    "mission_body": "Celiac Safe ayuda a personas con celiaquía y sensibilidad al gluten a encontrar restaurantes en España que cocinan 100% sin gluten — con confianza y sin improvisar.",
-    "concept_title": "El concepto",
-    "concept_body": "Recopilamos establecimientos que se autodeclaran totalmente sin gluten o están certificados por asociaciones de celíacos. La información es orientativa: siempre confirme con el restaurante antes de consumir.",
-    "maker_title": "Quién lo hace",
-    "maker_body": "Celiac Safe es un proyecto independiente para la comunidad celíaca. Los datos se actualizan manualmente; tu sugerencia de nuevos restaurantes nos ayuda a crecer."
+    "mission_body": "Celiac Safe ayuda a personas con celiaquía y sensibilidad al gluten a encontrar restaurantes en España que cocinan 100 % sin gluten — con confianza y sin improvisar.",
+    "verification_title": "Cómo verificamos",
+    "verification_body": "Listamos establecimientos que se autodeclaran totalmente sin gluten o están certificados por asociaciones de celíacos (p. ej. FACE, AOECS). Revisamos las fichas manualmente y actualizamos la información con regularidad. Los datos son orientativos: confirme siempre con el restaurante antes de consumir.",
+    "noncommercial_title": "Proyecto sin ánimo de lucro",
+    "noncommercial_body": "Celiac Safe es un proyecto independiente y no comercial para la comunidad celíaca. No vendemos datos, no hay publicidad basada en perfiles y no cobramos a los restaurantes por aparecer en la guía.",
+    "maker_title": "Quién está detrás",
+    "maker_body": "Un pequeño equipo de la comunidad celíaca en la UE, con apoyo de personas que viven sin gluten en España. Las actualizaciones de datos y las respuestas a sugerencias se hacen de forma personal y manual.",
+    "help_title": "Cómo puedes ayudar",
+    "help_link_suggest": "Sugerir un restaurante",
+    "help_link_report": "Informar de un error",
+    "help_link_contact": "Escribirnos",
+    "help_link_privacy": "Política de privacidad",
+    "help_link_rate": "Valorar la app",
+    "help_link_share": "Compartir la app",
+    "version_label": "Versión {{version}}"
   },
   "privacy": {
     "title": "Política de privacidad",

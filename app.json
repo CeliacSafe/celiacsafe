@@ -1,34 +1,32 @@
 {
   "expo": {
-    "name": "celiacsafe",
+    "name": "Celiac Safe",
     "slug": "celiacsafe",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#121212"
     },
+    "backgroundColor": "#121212",
     "updates": {
       "enabled": false
     },
     "ios": {
+      "icon": "./assets/icon.png",
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrar los restaurantes sin gluten cercanos."
       }
     },
     "android": {
-      "permissions": [
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
-      ],
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
+        "foregroundImage": "./assets/adaptive-icon-fg.png",
+        "backgroundColor": "#2E7D32",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
@@ -40,7 +38,15 @@
       "expo-font",
       "expo-asset",
       "expo-localization",
-      "expo-mail-composer"
+      "expo-mail-composer",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#121212"
+        }
+      ]
     ]
   }
 }

@@ -4,6 +4,7 @@ import { Alert, Linking } from 'react-native';
 
 import { ERRORS_EMAIL, SUBMISSION_EMAIL } from '../constants/appContact';
 import i18n from '../i18n';
+import { hapticError } from './haptics';
 
 export interface SubmissionData {
   restaurantName: string;
@@ -73,17 +74,17 @@ export async function submitRestaurantViaEmail(
     return true;
   } catch (error) {
     console.error('Submission error:', error);
+    hapticError();
     Alert.alert(i18n.t('common.error'), i18n.t('submit.mail_error'));
     return false;
   }
 }
 
 /** Oeffnet E-Mail fuer Fehlerbericht mit App-Version im Text. */
-export async function reportErrorViaEmail(
-  recipient: string = ERRORS_EMAIL
-): Promise<void> {
+export async function reportErrorViaEmail(recipient: string = ERRORS_EMAIL): Promise<void> {
   const available = await MailComposer.isAvailableAsync();
   if (!available) {
+    hapticError();
     Alert.alert(i18n.t('common.error'), i18n.t('profile.mail_not_available'));
     return;
   }

@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 import { useFilterStore } from '../store/filterStore';
 import { colors } from '../theme/colors';
-import { RADIUS_INPUT } from '../theme/radii';
-import { SPACE_MD, SPACE_SM } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
+
+import { typography } from '../theme/typography';
 
 interface SearchBarProps {
   onSearchChange?: (query: string) => void;
@@ -52,18 +53,18 @@ function SearchBar({ onSearchChange }: SearchBarProps) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 48,
-    borderRadius: RADIUS_INPUT,
+    height: spacing.xxl,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
-    paddingHorizontal: SPACE_MD + 2,
+    paddingHorizontal: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACE_SM,
+    gap: spacing.sm,
   },
   input: {
+    ...typography.body,
     flex: 1,
     color: colors.textPrimary,
-    fontSize: 15,
   },
   clearButton: {
     alignItems: 'center',
