@@ -307,6 +307,7 @@
     "submit_button": "Enviar por correo",
     "success_title": "¡Gracias!",
     "success_message": "Se abrió tu cliente de correo. Envía el mensaje para completar la sugerencia.",
+    "success_message_supabase": "Tu sugerencia se ha guardado y la revisaremos. ¡Gracias!",
     "validation_min_length": "Al menos 2 caracteres",
     "validation_email": "Introduce un e-mail válido",
     "validation_website": "Debe empezar por http, https o www",

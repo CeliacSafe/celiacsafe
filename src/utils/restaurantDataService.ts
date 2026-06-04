@@ -1,6 +1,11 @@
 import data from '../data/restaurants.json';
-import type { Restaurant } from '../types/Restaurant';
+import {
+  getRemoteRestaurants,
+  getRestaurantSyncState,
+  type RestaurantDataSource,
+} from '../services/restaurantSync';
 import { useAdminStore } from '../store/adminStore';
+import type { Restaurant } from '../types/Restaurant';
 
 let bundledCache: Restaurant[] | null = null;
 
@@ -12,13 +17,17 @@ export function loadBundledRestaurants(): Restaurant[] {
   return bundledCache;
 }
 
-/** Bundled JSON + Admin-Overrides, neue Einträge, ausgeblendete IDs */
+function getBaseRestaurants(): Restaurant[] {
+  return getRemoteRestaurants() ?? loadBundledRestaurants();
+}
+
+/** Supabase/Cache/Bundled + Admin-Overrides */
 export function getMergedRestaurants(): Restaurant[] {
   const { overrides, addedRestaurants, removedIds } = useAdminStore.getState();
   const removed = new Set(removedIds);
   const byId = new Map<string, Restaurant>();
 
-  for (const restaurant of loadBundledRestaurants()) {
+  for (const restaurant of getBaseRestaurants()) {
     if (!removed.has(restaurant.id)) {
       byId.set(restaurant.id, { ...restaurant });
     }
@@ -45,6 +54,13 @@ export function getMergedRestaurants(): Restaurant[] {
 
 export function getMergedRestaurantById(id: string): Restaurant | undefined {
   return getMergedRestaurants().find((restaurant) => restaurant.id === id);
+}
+
+export function getRestaurantDataSource(): RestaurantDataSource {
+  if (!getRemoteRestaurants()) {
+    return 'bundle';
+  }
+  return getRestaurantSyncState().source;
 }
 
 export function invalidateBundledCache(): void {

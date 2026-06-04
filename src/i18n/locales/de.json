@@ -307,6 +307,7 @@
     "submit_button": "Per E-Mail senden",
     "success_title": "Danke!",
     "success_message": "Die Mail-App wurde geöffnet. Senden Sie die Nachricht, um den Vorschlag abzuschließen.",
+    "success_message_supabase": "Ihr Vorschlag wurde gespeichert und wird von uns geprüft. Vielen Dank!",
     "validation_min_length": "Mindestens 2 Zeichen",
     "validation_email": "Gültige E-Mail eingeben",
     "validation_website": "Muss mit http, https oder www beginnen",

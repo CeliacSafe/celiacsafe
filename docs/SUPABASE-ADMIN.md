@@ -29,8 +29,8 @@ Zentrale Datenbank in **Supabase Region EU (Frankfurt)** + **Web-Admin am PC** +
                     └────────────────────────┘
 ```
 
-**Phase 1 (jetzt):** DB + Web-Admin + JSON-Export für die App  
-**Phase 2 (später):** App liest direkt von Supabase (Sync + Offline-Cache)
+**Phase 1:** DB + Web-Admin + JSON-Export (Fallback / Build ohne Netz)  
+**Phase 2 (aktiv):** App synchronisiert von Supabase + AsyncStorage-Cache; Vorschläge → `submissions`
 
 ---
 
@@ -82,11 +82,14 @@ npm run data:export-supabase
 npm run start:lan
 ```
 
-### Später (Phase 2)
+### Phase 2 (App, erledigt)
 
-- App liest live von Supabase (`useRestaurants` + Cache)
-- Vorschläge aus der App → `submissions`-Tabelle
-- In-App-PIN-Admin entfernen
+- `useRestaurants` lädt von Supabase (`syncRestaurantsFromSupabase`), Cache in AsyncStorage
+- Offline: letzter Cache oder `src/data/restaurants.json`
+- Pull-to-refresh in der Suche → erneuter Sync
+- Restaurant-Vorschläge → `submissions` (E-Mail nur noch Fallback)
+
+**Optional später:** In-App-PIN-Admin entfernen (nur Web-Admin)
 
 ---
 

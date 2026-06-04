@@ -11,12 +11,13 @@ import DescriptionBlock from '../components/DescriptionBlock';
 import DetailHeader from '../components/DetailHeader';
 import Disclaimer from '../components/Disclaimer';
 import EmptyState from '../components/EmptyState';
+import LoadingSpinner from '../components/LoadingSpinner';
 import OpeningHours from '../components/OpeningHours';
 import QuickActionsBar from '../components/QuickActionsBar';
 import ReservationSection from '../components/ReservationSection';
 import SeasonalClosureBanner from '../components/SeasonalClosureBanner';
 import VerificationSection from '../components/VerificationSection';
-import { getRestaurantById } from '../hooks/useRestaurants';
+import { useRestaurantById } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
 import type { MapaStackParamList } from '../navigation/MapaStack';
@@ -30,7 +31,15 @@ type Props = NativeStackScreenProps<
 export default function DetailScreen({ route, navigation }: Props) {
   const { t } = useTranslation();
   const { restaurantId } = route.params;
-  const restaurant = getRestaurantById(restaurantId);
+  const { restaurant, loading } = useRestaurantById(restaurantId);
+
+  if (loading && !restaurant) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <LoadingSpinner fullscreen message={t('common.loading')} />
+      </SafeAreaView>
+    );
+  }
 
   if (!restaurant) {
     return (

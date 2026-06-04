@@ -24,6 +24,7 @@ import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import { hapticSuccess } from '../utils/haptics';
+import { submitRestaurantToSupabase } from '../utils/submitToSupabase';
 import { submitRestaurantViaEmail } from '../utils/submitViaEmail';
 
 type SubmitNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'SubmitRestaurant'>;
@@ -94,6 +95,16 @@ function SubmitRestaurantScreen() {
     setSubmitting(true);
     try {
       addSubmissionFromApp(payload);
+      const savedRemote = await submitRestaurantToSupabase(payload);
+
+      if (savedRemote) {
+        hapticSuccess();
+        Alert.alert(t('submit.success_title'), t('submit.success_message_supabase'), [
+          { text: t('common.accept'), onPress: () => navigation.goBack() },
+        ]);
+        return;
+      }
+
       const sent = await submitRestaurantViaEmail(payload);
 
       if (sent) {

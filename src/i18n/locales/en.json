@@ -307,6 +307,7 @@
     "submit_button": "Send by email",
     "success_title": "Thank you!",
     "success_message": "Your mail app opened. Send the message to complete your suggestion.",
+    "success_message_supabase": "Your suggestion was saved and will be reviewed. Thank you!",
     "validation_min_length": "At least 2 characters",
     "validation_email": "Enter a valid email",
     "validation_website": "Must start with http, https or www",
