@@ -1,37 +1,40 @@
+import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
 import { create } from 'zustand';
 
 /**
- * Zentraler Filter-Store fuer Suche, Pill-Filter und Bottom-Sheet-Filter.
- * Der Zustand ist global in der App verfuegbar, aber nicht persistent
- * (bei App-Neustart wird auf Initialwerte zurueckgesetzt).
+ * Zentraler Filter-Store fuer Suche und Karte.
  */
 interface FilterState {
-  // Such-State
   searchQuery: string;
-
-  // Pill-Filter (schnell-erreichbare Hauptkategorien)
   selectedVenueTypes: string[];
-
-  // Erweiterte Filter (im Bottom-Sheet)
   selectedRegions: string[];
   selectedPriceRanges: string[];
   onlyFaceCertified: boolean;
   onlyAoecsCertified: boolean;
-
-  // Sortierung
   sortBy: 'name_asc' | 'name_desc' | 'recently_verified';
 
-  // Aktionen
+  selectedCity: string | null;
+  dietVegan: boolean;
+  dietVegetarian: boolean;
+  minRating: RatingChip;
+  categoryTab: SearchCategoryTab;
+
   setSearchQuery: (query: string) => void;
   toggleVenueType: (type: string) => void;
+  setVenueTypeSingle: (type: string | null) => void;
+  setRegionSingle: (region: string | null) => void;
   toggleRegion: (region: string) => void;
   togglePriceRange: (range: string) => void;
+  setPriceRangesAll: () => void;
   setFaceFilter: (value: boolean) => void;
   setAoecsFilter: (value: boolean) => void;
   setSortBy: (sort: FilterState['sortBy']) => void;
+  setSelectedCity: (city: string | null) => void;
+  setDietVegan: (value: boolean) => void;
+  setDietVegetarian: (value: boolean) => void;
+  setMinRating: (value: RatingChip) => void;
+  setCategoryTab: (tab: SearchCategoryTab) => void;
   resetFilters: () => void;
-
-  // Berechnete Eigenschaft
   hasActiveFilters: () => boolean;
 }
 
@@ -43,6 +46,11 @@ const initialState = {
   onlyFaceCertified: false,
   onlyAoecsCertified: false,
   sortBy: 'name_asc' as const,
+  selectedCity: null as string | null,
+  dietVegan: false,
+  dietVegetarian: false,
+  minRating: 'all' as RatingChip,
+  categoryTab: 'verified' as SearchCategoryTab,
 };
 
 function toggleInArray(items: string[], value: string): string[] {
@@ -57,11 +65,25 @@ export const useFilterStore = create<FilterState>((set, get) => ({
   toggleVenueType: (type) =>
     set((state) => ({
       selectedVenueTypes: toggleInArray(state.selectedVenueTypes, type),
+      categoryTab: 'all',
     })),
+
+  setVenueTypeSingle: (type) =>
+    set({
+      selectedVenueTypes: type ? [type] : [],
+      categoryTab: 'all',
+    }),
+
+  setRegionSingle: (region) =>
+    set({
+      selectedRegions: region ? [region] : [],
+      selectedCity: null,
+    }),
 
   toggleRegion: (region) =>
     set((state) => ({
       selectedRegions: toggleInArray(state.selectedRegions, region),
+      selectedCity: null,
     })),
 
   togglePriceRange: (range) =>
@@ -69,9 +91,33 @@ export const useFilterStore = create<FilterState>((set, get) => ({
       selectedPriceRanges: toggleInArray(state.selectedPriceRanges, range),
     })),
 
+  setPriceRangesAll: () => set({ selectedPriceRanges: [] }),
+
   setFaceFilter: (value) => set({ onlyFaceCertified: value }),
   setAoecsFilter: (value) => set({ onlyAoecsCertified: value }),
   setSortBy: (sort) => set({ sortBy: sort }),
+
+  setSelectedCity: (city) => set({ selectedCity: city }),
+
+  setDietVegan: (value) => set({ dietVegan: value }),
+
+  setDietVegetarian: (value) => set({ dietVegetarian: value }),
+
+  setMinRating: (value) => set({ minRating: value }),
+
+  setCategoryTab: (tab) =>
+    set((state) => {
+      if (tab === 'bakery') {
+        return { categoryTab: tab, selectedVenueTypes: ['bakery'] };
+      }
+      if (tab === 'all') {
+        return { categoryTab: tab, selectedVenueTypes: [] };
+      }
+      return {
+        categoryTab: tab,
+        selectedVenueTypes: state.categoryTab === 'bakery' ? [] : state.selectedVenueTypes,
+      };
+    }),
 
   resetFilters: () => set({ ...initialState }),
 
@@ -83,7 +129,12 @@ export const useFilterStore = create<FilterState>((set, get) => ({
       state.selectedRegions.length > 0 ||
       state.selectedPriceRanges.length > 0 ||
       state.onlyFaceCertified ||
-      state.onlyAoecsCertified
+      state.onlyAoecsCertified ||
+      state.selectedCity != null ||
+      state.dietVegan ||
+      state.dietVegetarian ||
+      state.minRating !== 'all' ||
+      state.categoryTab !== 'verified'
     );
   },
 }));

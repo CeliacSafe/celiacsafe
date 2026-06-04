@@ -48,6 +48,8 @@ lerna-debug.log*
 .env
 .env.local
 .env*.local
+docs/ADMIN-LOGIN.local.txt
+.tmp-cdp*.json
 
 # ─── TypeScript ──────────────────────────────────────────────────────────────
 *.tsbuildinfo

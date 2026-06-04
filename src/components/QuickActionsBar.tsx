@@ -9,6 +9,12 @@ import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
+import {
+  getActiveDeliveryLinks,
+  getActiveReservationLinks,
+  resolveDeliveryUrl,
+  resolveReservationUrl,
+} from '../utils/platformLinks';
 import { openMapsRouting, openPhone, openUrl, openWhatsApp } from '../utils/openExternalUrl';
 
 interface QuickActionsBarProps {
@@ -63,12 +69,46 @@ function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
     });
   }
 
+  if (restaurant.menu_url?.trim()) {
+    actions.push({
+      key: 'menu',
+      icon: 'book-open-page-variant',
+      label: t('detail.menu'),
+      onPress: () => {
+        openUrl(normalizeWebsiteUrl(restaurant.menu_url!.trim())).catch(() => undefined);
+      },
+    });
+  }
+
   if (restaurant.latitude != null && restaurant.longitude != null) {
     actions.push({
       key: 'route',
       icon: 'map-marker-radius',
       label: t('detail.route'),
       onPress: () => openMapsRouting(restaurant.latitude!, restaurant.longitude!, restaurant.name),
+    });
+  }
+
+  const theForkLink = getActiveReservationLinks(restaurant).find((l) => l.platform === 'thefork');
+  const theForkUrl = theForkLink ? resolveReservationUrl(restaurant, theForkLink) : null;
+  if (theForkUrl) {
+    actions.push({
+      key: 'thefork',
+      icon: 'silverware-fork-knife',
+      label: t('detail.reserve_thefork'),
+      onPress: () => openUrl(theForkUrl).catch(() => undefined),
+    });
+  }
+
+  for (const platform of ['glovo', 'uber_eats'] as const) {
+    const link = getActiveDeliveryLinks(restaurant).find((l) => l.platform === platform);
+    const url = link ? resolveDeliveryUrl(restaurant, link) : null;
+    if (!url) continue;
+    actions.push({
+      key: platform,
+      icon: platform === 'glovo' ? 'bike-fast' : 'food',
+      label: platform === 'glovo' ? t('detail.order_glovo') : t('detail.order_ubereats'),
+      onPress: () => openUrl(url).catch(() => undefined),
     });
   }
 

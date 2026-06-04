@@ -6,26 +6,22 @@
 
 | Frage                          | CeliacSafe — Vorschlag                                                                     |
 | ------------------------------ | ------------------------------------------------------------------------------------------ |
-| **Was kommuniziert das Icon?** | 100 % glutenfrei · Restaurants in Spanien · Vertrauen / geprüft                            |
-| **Welche Form?**               | **Quadrat 1024×1024** — iOS/Android runden automatisch ab                                  |
-| **Welche Farben?**             | Primär `#2E7D32` (primaryDark), Akzent `#A5D6A7` (primary), Text/Symbol **Weiß** `#FFFFFF` |
+| **Was kommuniziert das Icon?** | 100 % glutenfrei — klassisches **Glutenfrei-Zeichen** (Ähre + Durchstreichung) |
+| **Welche Form?**               | **Quadrat 1024×1024** — iOS/Android runden automatisch ab                      |
+| **Welche Farben?**             | Hintergrund `#2E7D32`, Symbol **Weiß** `#FFFFFF`; Splash-Akzent `#A5D6A7`      |
 
-## 1.2 Symbol-Konzepte (Ihre Wahl)
+## 1.2 Gewähltes Symbol (Glutenfrei-Zeichen)
 
-| Konzept                 | Kurz                     | Eignung                                               |
-| ----------------------- | ------------------------ | ----------------------------------------------------- |
-| Weizen + Verbotszeichen | Klassisch GF             | Sehr klar, etwas „medizinisch“                        |
-| Checkmark + Gabel       | Positiv, Essen           | Freundlich, weniger „Zertifikat“                      |
-| **Schild + GF**         | Vertrauen, Verifizierung | **Empfohlen** — passt zu „verifiziert / sicher essen“ |
-| Karten-Pin + Häkchen    | Karten-App               | Stark für Mapa-Tab, schwächer für GF-Kern             |
-| Stylisiertes „C“        | Marke Celiac Safe        | Gut für Branding, GF weniger sofort lesbar            |
+| Element            | Bedeutung                                      |
+| ------------------ | ---------------------------------------------- |
+| **Weizenähre**     | Gluten als Referenz                            |
+| **Kreis + Strich** | Verbot / ohne Gluten — international verständlich |
+| **Grün**           | Sicherheit, „frei von“ (App-Farbe primaryDark) |
 
-### Empfohlene Umsetzung (Schild + GF)
+### Technische Umsetzung im Repo
 
-- **Hintergrund:** Vollfläche `#2E7D32` (kein Verlauf nötig)
-- **Motiv:** Schild-Form (Canva-Element „shield“) in etwas hellerem Grün oder Weiß
-- **Text:** **GF** groß, weiß, **fett**, sans-serif (z. B. Montserrat Bold)
-- **Akzent:** kleines Häkchen neben/unter GF (optional, nur wenn bei 40×40 noch sichtbar)
+- SVG-Vorlagen: `assets/brand/gluten-free-icon.svg`, `gluten-free-adaptive-fg.svg`, `gluten-free-splash.svg`
+- PNG-Export: `npm run assets:generate` (Skript `scripts/generate-brand-assets.mjs`)
 
 **Vermeiden:** dünne Linien, langer Text („SIN GLUTEN“), viele Details, Schatten am Rand, selbst gezeichnete abgerundete Ecken.
 

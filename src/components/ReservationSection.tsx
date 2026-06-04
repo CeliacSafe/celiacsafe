@@ -7,6 +7,7 @@ import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import type { ReservationLink, Restaurant } from '../types/Restaurant';
+import { getActiveReservationLinks, resolveReservationUrl } from '../utils/platformLinks';
 import { openPhone, openUrl } from '../utils/openExternalUrl';
 
 interface ReservationSectionProps {
@@ -25,11 +26,6 @@ const RESERVATION_PLATFORMS: Record<string, { label: string; color: string; icon
   instagram_dm: { label: 'Instagram DM', color: '#E1306C', icon: 'instagram' },
 };
 
-function normalizeUrl(url: string): string {
-  const trimmed = url.trim();
-  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-}
-
 function getPlatformMeta(platform: string) {
   return (
     RESERVATION_PLATFORMS[platform] ?? {
@@ -38,10 +34,6 @@ function getPlatformMeta(platform: string) {
       icon: 'calendar' as IconName,
     }
   );
-}
-
-function filterReservationLinks(links: ReservationLink[] | undefined) {
-  return (links ?? []).filter((link) => link.is_active !== false);
 }
 
 interface ReservationAction {
@@ -53,7 +45,11 @@ interface ReservationAction {
   isHint?: boolean;
 }
 
-function buildActions(restaurant: Restaurant, links: ReservationLink[]): ReservationAction[] {
+function buildActions(
+  restaurant: Restaurant,
+  links: ReservationLink[],
+  t: (key: string) => string
+): ReservationAction[] {
   const actions: ReservationAction[] = [];
 
   for (const link of links) {
@@ -83,13 +79,15 @@ function buildActions(restaurant: Restaurant, links: ReservationLink[]): Reserva
       continue;
     }
 
-    if (link.url?.trim()) {
+    const targetUrl = resolveReservationUrl(restaurant, link);
+    if (targetUrl) {
       actions.push({
-        key: `${link.platform}-${link.url}`,
+        key: `${link.platform}-${targetUrl}`,
         label: meta.label,
-        subtitle: link.url,
+        subtitle:
+          link.platform === 'thefork' ? t('detail.reservation_thefork_hint') : undefined,
         icon: meta.icon,
-        onPress: () => openUrl(normalizeUrl(link.url)).catch(() => undefined),
+        onPress: () => openUrl(targetUrl).catch(() => undefined),
       });
     }
   }
@@ -102,8 +100,8 @@ function buildActions(restaurant: Restaurant, links: ReservationLink[]): Reserva
  */
 function ReservationSection({ restaurant }: ReservationSectionProps) {
   const { t } = useTranslation();
-  const activeLinks = filterReservationLinks(restaurant.reservation_links);
-  const actions = buildActions(restaurant, activeLinks);
+  const activeLinks = getActiveReservationLinks(restaurant);
+  const actions = buildActions(restaurant, activeLinks, t);
 
   if (actions.length === 0) {
     return null;

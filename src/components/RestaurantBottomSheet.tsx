@@ -15,6 +15,13 @@ import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
+import {
+  getActiveDeliveryLinks,
+  getActiveReservationLinks,
+  resolveDeliveryUrl,
+  resolveReservationUrl,
+} from '../utils/platformLinks';
+import { openUrl } from '../utils/openExternalUrl';
 
 interface RestaurantBottomSheetProps {
   restaurant: Restaurant | null;
@@ -66,8 +73,54 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
     const showVerificationBadge =
       restaurant?.face_program === true || restaurant?.aoecs_certified === true;
 
+    const theForkLink = restaurant
+      ? getActiveReservationLinks(restaurant).find((l) => l.platform === 'thefork')
+      : undefined;
+    const theForkUrl =
+      restaurant && theForkLink ? resolveReservationUrl(restaurant, theForkLink) : null;
+
+    const glovoLink = restaurant
+      ? getActiveDeliveryLinks(restaurant).find((l) => l.platform === 'glovo')
+      : undefined;
+    const glovoUrl = restaurant && glovoLink ? resolveDeliveryUrl(restaurant, glovoLink) : null;
+
+    const uberLink = restaurant
+      ? getActiveDeliveryLinks(restaurant).find((l) => l.platform === 'uber_eats')
+      : undefined;
+    const uberUrl = restaurant && uberLink ? resolveDeliveryUrl(restaurant, uberLink) : null;
+
     const actions: ActionItem[] = restaurant
       ? [
+          {
+            icon: 'silverware-fork-knife',
+            label: t('detail.reserve_thefork'),
+            visible: Boolean(theForkUrl),
+            onPress: () => {
+              if (theForkUrl) {
+                openUrl(theForkUrl).catch(() => undefined);
+              }
+            },
+          },
+          {
+            icon: 'bike-fast',
+            label: t('detail.order_glovo'),
+            visible: Boolean(glovoUrl),
+            onPress: () => {
+              if (glovoUrl) {
+                openUrl(glovoUrl).catch(() => undefined);
+              }
+            },
+          },
+          {
+            icon: 'food',
+            label: t('detail.order_ubereats'),
+            visible: Boolean(uberUrl),
+            onPress: () => {
+              if (uberUrl) {
+                openUrl(uberUrl).catch(() => undefined);
+              }
+            },
+          },
           {
             icon: 'phone',
             label: t('detail.call'),
@@ -78,7 +131,13 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
             icon: 'web',
             label: t('detail.website'),
             visible: Boolean(restaurant.website),
-            onPress: () => openUrl(restaurant.website!),
+            onPress: () => openExternalUrl(restaurant.website!),
+          },
+          {
+            icon: 'book-open-page-variant',
+            label: t('detail.menu'),
+            visible: Boolean(restaurant.menu_url),
+            onPress: () => openExternalUrl(restaurant.menu_url!),
           },
           {
             icon: 'map',
@@ -185,7 +244,7 @@ function openTel(phone: string): void {
   Linking.openURL(`tel:${normalized}`).catch(() => undefined);
 }
 
-function openUrl(url: string): void {
+function openExternalUrl(url: string): void {
   const trimmed = url.trim();
   const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
   Linking.openURL(withProtocol).catch(() => undefined);

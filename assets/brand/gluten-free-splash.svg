@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1284 2778" role="img" aria-label="Celiac Safe">
+  <rect width="1284" height="2778" fill="#121212"/>
+  <g transform="translate(642 1180)">
+    <circle r="220" fill="none" stroke="#A5D6A7" stroke-width="40"/>
+    <g fill="none" stroke="#A5D6A7" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 148 V-88"/>
+      <path d="M0 60 C-70 30 -88 -22 -52 -82"/>
+      <path d="M0 14 C-81 -8 -107 -72 -63 -130"/>
+      <path d="M0 -30 C-55 -52 -70 -110 -40 -162"/>
+      <path d="M0 60 C70 30 88 -22 52 -82"/>
+      <path d="M0 14 C81 -8 107 -72 63 -130"/>
+      <path d="M0 -30 C55 -52 70 -110 40 -162"/>
+    </g>
+    <line x1="-190" y1="-190" x2="190" y2="190" stroke="#A5D6A7" stroke-width="48" stroke-linecap="round"/>
+  </g>
+  <text
+    x="642"
+    y="1520"
+    text-anchor="middle"
+    fill="#A5D6A7"
+    font-family="system-ui, Segoe UI, sans-serif"
+    font-size="96"
+    font-weight="700"
+  >Celiac Safe</text>
+  <text
+    x="642"
+    y="1620"
+    text-anchor="middle"
+    fill="#B3B3B3"
+    font-family="system-ui, Segoe UI, sans-serif"
+    font-size="42"
+    font-weight="500"
+  >100 % glutenfrei</text>
+</svg>

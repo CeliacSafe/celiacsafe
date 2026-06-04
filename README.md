@@ -74,9 +74,14 @@ npm run start:lan      # nur LAN, wenn Tunnel Probleme macht
 
 ```bash
 npm run geocode      # v3.xlsx → v4.xlsx mit Koordinaten (Nominatim + Stadt-Fallback)
-npm run data:build   # v4.xlsx → src/data/restaurants.json
+npm run data:build   # v4.xlsx → src/data/restaurants.json (inkl. TheFork/Glovo/Uber-URLs)
+npm run data:enrich-excel        # leere url-Zellen in Excel ergänzen → *_enriched.xlsx
+npm run data:enrich-excel:inplace  # dieselben URLs direkt in v4.xlsx schreiben
+npm run data:test-scripts  # Python-Tests für URL-Erzeugung
 python scripts/verify-geo.py   # Koordinaten in JSON prüfen
 ```
+
+**Plattform-URLs:** In den Blättern `delivery_links` / `reservation_links` werden leere `url`-Zellen beim Export automatisch aus Name, Stadt und `slug` befüllt (TheFork, Glovo, Uber Eats, …). Exakte Partner-URLs aus der Recherche können in Excel eingetragen werden und haben Vorrang. Optional im Blatt `restaurants`: Spalten `thefork_url`, `glovo_url`, `uber_eats_url`.
 
 ### Code-Qualität
 

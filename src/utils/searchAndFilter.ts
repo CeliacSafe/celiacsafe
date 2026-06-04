@@ -6,12 +6,19 @@
 
 import type { Restaurant } from '../types/Restaurant';
 
+import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
+
 export interface FilterCriteria {
   selectedVenueTypes: string[];
   selectedRegions: string[];
   selectedPriceRanges: string[];
   onlyFaceCertified: boolean;
   onlyAoecsCertified: boolean;
+  selectedCity?: string | null;
+  dietVegan?: boolean;
+  dietVegetarian?: boolean;
+  minRating?: RatingChip;
+  categoryTab?: SearchCategoryTab;
 }
 
 export function normalize(s: string): string {
@@ -63,6 +70,27 @@ export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolea
     return false;
   }
   if (c.onlyAoecsCertified && !restaurant.aoecs_certified) {
+    return false;
+  }
+  if (c.selectedCity && restaurant.city !== c.selectedCity) {
+    return false;
+  }
+  if (c.dietVegan && !(restaurant.cuisine_types ?? []).includes('vegana')) {
+    return false;
+  }
+  if (c.dietVegetarian && !(restaurant.cuisine_types ?? []).includes('vegetariana')) {
+    return false;
+  }
+  if (c.categoryTab === 'verified' && restaurant.verification_status === 'rejected') {
+    return false;
+  }
+  if (
+    c.categoryTab === 'community' &&
+    !['pending_verification', 'in_verification'].includes(restaurant.verification_status)
+  ) {
+    return false;
+  }
+  if (c.categoryTab === 'bakery' && restaurant.venue_type !== 'bakery') {
     return false;
   }
   return true;

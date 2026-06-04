@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type {
@@ -10,12 +10,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
-import { hapticMedium } from '../utils/haptics';
-import FilterBottomSheet, { type FilterBottomSheetRef } from '../components/FilterBottomSheet';
-import FilterPills from '../components/FilterPills';
+import GlutenFreeLogo from '../components/GlutenFreeLogo';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
-import SearchBar from '../components/SearchBar';
+import SearchBarRow from '../components/SearchBarRow';
+import SearchCategoryTabs from '../components/SearchCategoryTabs';
+import SearchFilterPanel from '../components/SearchFilterPanel';
 import SkeletonCard from '../components/SkeletonCard';
+import { hapticMedium } from '../utils/haptics';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import { useFilterStore } from '../store/filterStore';
@@ -33,7 +35,6 @@ const ITEM_HEIGHT = 320;
 
 export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const { t } = useTranslation();
-  const filterSheetRef = useRef<FilterBottomSheetRef>(null);
   const navigation = useNavigation<BuscarNavigationProp>();
   const { restaurants, loading, error, refetch } = useRestaurants();
   const searchQuery = useFilterStore((state) => state.searchQuery);
@@ -42,10 +43,16 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
+  const selectedCity = useFilterStore((state) => state.selectedCity);
+  const dietVegan = useFilterStore((state) => state.dietVegan);
+  const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
+  const minRating = useFilterStore((state) => state.minRating);
+  const categoryTab = useFilterStore((state) => state.categoryTab);
   const sortBy = useFilterStore((state) => state.sortBy);
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const [refreshing, setRefreshing] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const handleClearFilters = useCallback(() => {
     hapticMedium();
@@ -59,6 +66,11 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCity,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
     }),
     [
       selectedVenueTypes,
@@ -66,6 +78,11 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCity,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
     ]
   );
 
@@ -101,12 +118,21 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     () => (
       <View style={styles.stickyHeader}>
         <View style={styles.header}>
-          <Text style={styles.title}>{t('search.brand_title')}</Text>
-          <Text style={styles.subtitle}>{t('search.subtitle')}</Text>
+          <GlutenFreeLogo size={44} style={styles.headerLogo} />
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{t('search.brand_title')}</Text>
+            <Text style={styles.subtitle}>{t('search.subtitle')}</Text>
+          </View>
+          <LanguageSwitcher variant="compact" />
         </View>
 
-        <SearchBar />
-        <FilterPills onMoreFiltersPress={() => filterSheetRef.current?.expand()} />
+        <SearchBarRow
+          filtersOpen={filtersOpen}
+          onToggleFilters={() => setFiltersOpen((open) => !open)}
+        />
+        {filtersOpen ? <SearchFilterPanel onClose={() => setFiltersOpen(false)} /> : null}
+
+        <SearchCategoryTabs />
 
         <View style={styles.counterRow}>
           <MaterialCommunityIcons name="star-four-points" size={14} color={colors.primary} />
@@ -116,7 +142,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         </View>
       </View>
     ),
-    [filteredRestaurants.length, t]
+    [filteredRestaurants.length, filtersOpen, t]
   );
 
   return (
@@ -180,7 +206,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           keyboardShouldPersistTaps="handled"
         />
       )}
-      <FilterBottomSheet ref={filterSheetRef} />
     </SafeAreaView>
   );
 }
@@ -196,8 +221,16 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.cardPadding,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.md,
+    gap: spacing.sm,
+  },
+  headerText: {
+    flex: 1,
+    minWidth: 0,
   },
   title: {
     ...typography.display,

@@ -1,7 +1,8 @@
 import * as Application from 'expo-application';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRef } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +14,7 @@ import ProfileSection from '../components/ProfileSection';
 import RateAppButton from '../components/RateAppButton';
 import ShareAppButton from '../components/ShareAppButton';
 import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../constants/appContact';
+import { ADMIN_UNLOCK_TAPS } from '../constants/adminConfig';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
@@ -26,6 +28,23 @@ function PerfilScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<PerfilNavigationProp>();
   const appVersion = Application.nativeApplicationVersion ?? '1.0.0';
+  const adminTapCount = useRef(0);
+  const adminTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleVersionPress = () => {
+    adminTapCount.current += 1;
+    if (adminTapTimer.current) {
+      clearTimeout(adminTapTimer.current);
+    }
+    adminTapTimer.current = setTimeout(() => {
+      adminTapCount.current = 0;
+    }, 2000);
+
+    if (adminTapCount.current >= ADMIN_UNLOCK_TAPS) {
+      adminTapCount.current = 0;
+      navigation.navigate('AdminLogin');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -66,10 +85,12 @@ function PerfilScreen() {
               label={t('profile.about')}
               onPress={() => navigation.navigate('About')}
             />
-            <ProfileMenuStaticRow
-              icon="cellphone"
-              label={t('profile.version', { version: appVersion })}
-            />
+            <Pressable onPress={handleVersionPress}>
+              <ProfileMenuStaticRow
+                icon="cellphone"
+                label={t('profile.version', { version: appVersion })}
+              />
+            </Pressable>
           </ProfileMenuCard>
         </ProfileSection>
 

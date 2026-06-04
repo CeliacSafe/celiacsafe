@@ -2,13 +2,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { useAppLanguage } from '../i18n/useAppLanguage';
-import type { AppLanguage } from '../i18n/getLocalizedName';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
-
 import { typography } from '../theme/typography';
-import type { DeliveryLink, Restaurant } from '../types/Restaurant';
+import type { Restaurant } from '../types/Restaurant';
+import { getActiveDeliveryLinks, resolveDeliveryUrl } from '../utils/platformLinks';
 import { openUrl } from '../utils/openExternalUrl';
 
 interface DeliveryButtonsProps {
@@ -17,28 +15,13 @@ interface DeliveryButtonsProps {
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
-const PLATFORM_HINT: Record<AppLanguage, (platform: string) => string> = {
-  es: (platform) => `Disponible en ${platform} (busca el nombre del restaurante)`,
-  en: (platform) => `Available on ${platform} (search for the restaurant name)`,
-  de: (platform) => `Verfügbar bei ${platform} (Restaurantname suchen)`,
-};
-
 const DELIVERY_PLATFORMS: Record<string, { label: string; color: string; icon: IconName }> = {
   glovo: { label: 'Glovo', color: '#FFC107', icon: 'bike-fast' },
   just_eat: { label: 'Just Eat', color: '#FF8000', icon: 'food' },
   uber_eats: { label: 'Uber Eats', color: '#06C167', icon: 'silverware-fork-knife' },
   wolt: { label: 'Wolt', color: '#009DE0', icon: 'bike' },
   deliveroo: { label: 'Deliveroo', color: '#00CCBC', icon: 'bike' },
-  own_delivery: { label: 'Pedido propio', color: colors.primaryDark, icon: 'home' },
-};
-
-const DELIVERY_HOME_URLS: Record<string, string> = {
-  glovo: 'https://glovoapp.com/',
-  just_eat: 'https://www.just-eat.es/',
-  uber_eats: 'https://www.ubereats.com/',
-  wolt: 'https://wolt.com/',
-  deliveroo: 'https://deliveroo.es/',
-  own_delivery: 'https://www.google.com/search?q=delivery+restaurant',
+  own_delivery: { label: 'Lieferung', color: colors.primaryDark, icon: 'home' },
 };
 
 function getPlatformMeta(platform: string) {
@@ -51,28 +34,11 @@ function getPlatformMeta(platform: string) {
   );
 }
 
-function normalizeUrl(url: string): string {
-  const trimmed = url.trim();
-  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-}
-
-function filterDeliveryLinks(links: DeliveryLink[] | undefined) {
-  return (links ?? []).filter(
-    (link) => link.is_active !== false && link.platform !== 'no_delivery'
-  );
-}
-
-/**
- * Lieferdienst-Buttons und Hinweise fuer Plattformen ohne direkte URL.
- */
 function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
   const { t } = useTranslation();
-  const language = useAppLanguage();
-  const activeLinks = filterDeliveryLinks(restaurant.delivery_links);
-  const withUrl = activeLinks.filter((link) => link.url?.trim());
-  const withoutUrl = activeLinks.filter((link) => !link.url?.trim());
+  const activeLinks = getActiveDeliveryLinks(restaurant);
 
-  if (withUrl.length === 0 && withoutUrl.length === 0) {
+  if (activeLinks.length === 0) {
     return null;
   }
 
@@ -83,39 +49,32 @@ function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
         <Text style={styles.title}>{t('detail.delivery')}</Text>
       </View>
 
-      {withUrl.map((link) => {
+      {activeLinks.map((link) => {
         const meta = getPlatformMeta(link.platform);
+        const targetUrl = resolveDeliveryUrl(restaurant, link);
+        if (!targetUrl) {
+          return null;
+        }
+
         return (
           <Pressable
-            key={`${link.platform}-url`}
+            key={link.platform}
             onPress={() => {
-              openUrl(normalizeUrl(link.url)).catch(() => undefined);
+              openUrl(targetUrl).catch(() => undefined);
             }}
             android_ripple={{ color: colors.rippleLight }}
             style={({ pressed }) => [styles.platformButton, pressed && styles.pressed]}
+            accessibilityRole="link"
+            accessibilityLabel={`${meta.label}, ${restaurant.name}`}
           >
             <View style={[styles.iconBadge, { backgroundColor: meta.color }]}>
               <MaterialCommunityIcons name={meta.icon} size={18} color={colors.white} />
             </View>
-            <Text style={styles.platformLabel}>{meta.label}</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textSecondary} />
-          </Pressable>
-        );
-      })}
-
-      {withoutUrl.map((link) => {
-        const meta = getPlatformMeta(link.platform);
-        const homeUrl = DELIVERY_HOME_URLS[link.platform] ?? 'https://www.google.com';
-        return (
-          <Pressable
-            key={`${link.platform}-hint`}
-            onPress={() => {
-              openUrl(homeUrl).catch(() => undefined);
-            }}
-            style={({ pressed }) => [styles.hintBanner, pressed && styles.pressed]}
-          >
-            <MaterialCommunityIcons name="information-outline" size={18} color={colors.primary} />
-            <Text style={styles.hintText}>{PLATFORM_HINT[language](meta.label)}</Text>
+            <View style={styles.labelBlock}>
+              <Text style={styles.platformLabel}>{meta.label}</Text>
+              <Text style={styles.platformHint}>{t('detail.delivery_open', { name: restaurant.name })}</Text>
+            </View>
+            <MaterialCommunityIcons name="open-in-new" size={20} color={colors.textSecondary} />
           </Pressable>
         );
       })}
@@ -156,24 +115,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  labelBlock: {
+    flex: 1,
+  },
   platformLabel: {
     ...typography.body,
     fontWeight: '600',
-    flex: 1,
     color: colors.textPrimary,
   },
-  hintBanner: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.cardPadding,
-    marginBottom: spacing.sm,
-  },
-  hintText: {
-    ...typography.bodySmall,
-    flex: 1,
+  platformHint: {
+    ...typography.caption,
+    marginTop: 2,
     color: colors.textSecondary,
   },
   pressed: {

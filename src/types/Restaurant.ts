@@ -161,6 +161,7 @@ export interface Restaurant {
   whatsapp?: string;
   email?: string;
   website?: string;
+  menu_url?: string;
   instagram?: string;
   facebook?: string;
   opening_hours?: string;

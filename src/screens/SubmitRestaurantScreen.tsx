@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
+import { useAdminStore } from '../store/adminStore';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
 
@@ -72,23 +73,28 @@ function SubmitRestaurantScreen() {
 
   const canSubmit = validation.formOk && !submitting;
 
+  const addSubmissionFromApp = useAdminStore((s) => s.addSubmissionFromApp);
+
   const handleSubmit = async () => {
     if (!canSubmit) {
       return;
     }
 
+    const payload = {
+      restaurantName: restaurantName.trim(),
+      city: city.trim(),
+      address: address.trim() || undefined,
+      website: website.trim() || undefined,
+      contactInfo: contactInfo.trim() || undefined,
+      notes: notes.trim() || undefined,
+      submitterName: submitterName.trim() || undefined,
+      submitterEmail: submitterEmail.trim() || undefined,
+    };
+
     setSubmitting(true);
     try {
-      const sent = await submitRestaurantViaEmail({
-        restaurantName: restaurantName.trim(),
-        city: city.trim(),
-        address: address.trim() || undefined,
-        website: website.trim() || undefined,
-        contactInfo: contactInfo.trim() || undefined,
-        notes: notes.trim() || undefined,
-        submitterName: submitterName.trim() || undefined,
-        submitterEmail: submitterEmail.trim() || undefined,
-      });
+      addSubmissionFromApp(payload);
+      const sent = await submitRestaurantViaEmail(payload);
 
       if (sent) {
         hapticSuccess();

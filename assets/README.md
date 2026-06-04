@@ -1,6 +1,20 @@
 # Assets — CeliacSafe
 
-Kopieren Sie Ihre Canva-Exporte hierher (M10 Teil 1 + 2).
+Standard-Logo: **Glutenfrei-Symbol** (Weizenähre mit Durchstreichung auf Grün `#2E7D32`).
+
+**Restaurant-Arten:** Standardfotos in `assets/venue-types/` (Pizza, Brot, Kaffee, …). Neu laden:
+
+```powershell
+npm run assets:venue-photos
+```
+
+Quellen-SVGs: `assets/brand/`. PNGs neu erzeugen:
+
+```powershell
+npm run assets:generate
+```
+
+Optional: Canva-Exporte überschreiben die generierten Dateien (M10 Teil 1 + 2).
 
 ## Pflicht (Store / Build)
 

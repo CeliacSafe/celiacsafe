@@ -1,10 +1,10 @@
-import { Image } from 'expo-image';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
-import RestaurantImagePlaceholder from './RestaurantImagePlaceholder';
+import RestaurantHeroImage from './RestaurantHeroImage';
+import RestaurantMiniMap from './RestaurantMiniMap';
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { radius, shadows, spacing } from '../theme/spacing';
@@ -28,8 +28,6 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
   const cuisineTypes = restaurant.cuisine_types ?? [];
   const visibleCuisines = cuisineTypes.slice(0, MAX_CUISINE_TAGS);
   const hiddenCuisineCount = cuisineTypes.length - visibleCuisines.length;
-  const hasImage = Boolean(restaurant.featured_image_url?.trim());
-
   const accessibilityLabel = `${restaurant.name}, ${restaurant.city}, 100 Prozent glutenfrei`;
 
   return (
@@ -42,16 +40,7 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
         <View style={styles.imageContainer}>
-          {hasImage ? (
-            <Image
-              source={{ uri: restaurant.featured_image_url }}
-              style={styles.image}
-              contentFit="cover"
-              transition={200}
-            />
-          ) : (
-            <RestaurantImagePlaceholder restaurantId={restaurant.id} iconSize={64} />
-          )}
+          <RestaurantHeroImage restaurant={restaurant} iconSize={64} />
 
           <View style={styles.badgeStack}>
             <BadgePill
@@ -74,6 +63,8 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
           <Text style={styles.location}>
             {restaurant.city} · {regionLabel}
           </Text>
+
+          <RestaurantMiniMap restaurant={restaurant} onPress={onPress} />
 
           {(visibleCuisines.length > 0 || hiddenCuisineCount > 0) && (
             <View style={styles.tagRow}>
@@ -117,10 +108,6 @@ const styles = StyleSheet.create({
     height: 220,
     position: 'relative',
     backgroundColor: colors.background,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
   },
   badgeStack: {
     position: 'absolute',

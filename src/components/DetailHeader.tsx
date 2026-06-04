@@ -1,5 +1,4 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
-import RestaurantImagePlaceholder from './RestaurantImagePlaceholder';
+import RestaurantHeroImage from './RestaurantHeroImage';
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
@@ -33,21 +32,10 @@ function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
   const showVerificationBadge =
     restaurant.face_program === true || restaurant.aoecs_certified === true;
   const regionLabel = regionName(restaurant.region_code);
-  const hasImage = Boolean(restaurant.featured_image_url?.trim());
-
   return (
     <View style={styles.wrapper}>
       <View style={styles.imageContainer}>
-        {hasImage ? (
-          <Image
-            source={{ uri: restaurant.featured_image_url }}
-            style={styles.image}
-            contentFit="cover"
-            transition={200}
-          />
-        ) : (
-          <RestaurantImagePlaceholder restaurantId={restaurant.id} iconSize={96} />
-        )}
+        <RestaurantHeroImage restaurant={restaurant} iconSize={96} />
 
         <LinearGradient
           colors={['transparent', colors.background]}
@@ -112,10 +100,6 @@ const styles = StyleSheet.create({
     height: HERO_HEIGHT,
     position: 'relative',
     backgroundColor: colors.surface,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
   },
   bottomGradient: {
     position: 'absolute',

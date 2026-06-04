@@ -1,6 +1,5 @@
 import { REGION_NAMES } from '../i18n/regions';
 
-// Primaere Venue-Types fuer schnell zugaengliche Pill-Filter in der Suchansicht.
 export const PRIMARY_VENUE_TYPES = [
   { code: 'restaurant', icon: 'silverware-fork-knife' },
   { code: 'pizzeria', icon: 'pizza' },
@@ -11,13 +10,19 @@ export const PRIMARY_VENUE_TYPES = [
   { code: 'bar_tapas', icon: 'glass-wine' },
 ] as const;
 
-// Alle verfuegbaren Regions-Codes fuer den Bottom-Sheet-Filter.
+/** Regionen in der Suche (Schwerpunkt Mockup: Balearen, Valencia, Katalonien). */
+export const SEARCH_REGIONS = ['ES-IB', 'ES-VC', 'ES-CT', 'ES-MD', 'ES-AN'] as const;
+
 export const ALL_REGIONS = Object.keys(REGION_NAMES) as Array<keyof typeof REGION_NAMES>;
 
-// Preisfilter fuer erweiterten Filterdialog.
 export const PRICE_RANGES = ['€', '€€', '€€€', '€€€€'] as const;
 
-// Sortieroptionen mit Labels fuer spaetere i18n-Umschaltung.
+export const RATING_CHIPS = ['all', '3', '4', '4.5'] as const;
+
+export type RatingChip = (typeof RATING_CHIPS)[number];
+
+export type SearchCategoryTab = 'all' | 'verified' | 'bakery' | 'community';
+
 export const SORT_OPTIONS = [
   { code: 'name_asc', labels: { es: 'Nombre A-Z', en: 'Name A-Z', de: 'Name A-Z' } },
   { code: 'name_desc', labels: { es: 'Nombre Z-A', en: 'Name Z-A', de: 'Name Z-A' } },

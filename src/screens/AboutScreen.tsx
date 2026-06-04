@@ -1,12 +1,12 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
-import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useMemo } from 'react';
 import { Platform, Pressable, Share, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import GlutenFreeLogo from '../components/GlutenFreeLogo';
 import LegalSubScreenLayout, { LegalSectionBlock } from '../components/LegalSubScreenLayout';
 import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../constants/appContact';
 import { getPlatformStoreUrl } from '../constants/storeUrls';
@@ -17,8 +17,6 @@ import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { openEmail } from '../utils/openExternalUrl';
 import { requestAppStoreReview } from '../utils/rateApp';
-
-const APP_ICON = require('../../assets/icon.png');
 
 type AboutNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'About'>;
 
@@ -98,12 +96,7 @@ function AboutScreen() {
   return (
     <LegalSubScreenLayout title={t('about.title')}>
       <View style={styles.hero}>
-        <Image
-          source={APP_ICON}
-          style={styles.logo}
-          contentFit="contain"
-          accessibilityIgnoresInvertColors
-        />
+        <GlutenFreeLogo size={88} style={styles.logo} />
         <Text style={styles.heroTitle}>{t('about.brand_name')}</Text>
         <Text style={styles.heroSubtitle}>{t('about.hero_subtitle')}</Text>
       </View>

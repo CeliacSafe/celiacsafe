@@ -1,4 +1,5 @@
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
+import { Platform } from 'react-native';
 import { Marker } from 'react-native-maps';
 
 import CustomMarker from './CustomMarker';
@@ -26,12 +27,22 @@ const RestaurantMapMarker = memo(function MapRestaurantMarker({
     [restaurant.latitude, restaurant.longitude]
   );
 
+  const [tracksViewChanges, setTracksViewChanges] = useState(Platform.OS === 'android');
+
+  useEffect(() => {
+    if (!tracksViewChanges) {
+      return;
+    }
+    const timer = setTimeout(() => setTracksViewChanges(false), 600);
+    return () => clearTimeout(timer);
+  }, [tracksViewChanges, isSelected]);
+
   return (
     <Marker
       identifier={restaurant.id}
       coordinate={coordinate}
       onPress={() => onPress(restaurant.id)}
-      tracksViewChanges={false}
+      tracksViewChanges={tracksViewChanges}
     >
       <CustomMarker isSelected={isSelected} />
     </Marker>

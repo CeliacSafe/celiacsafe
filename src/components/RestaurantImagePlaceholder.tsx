@@ -2,20 +2,25 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 
+import { getVenueTypeIconName } from '../constants/venueTypeIcons';
+import type { VenueType } from '../types/Restaurant';
 import { PLACEHOLDER_ICON_COLOR, getPlaceholderGradientColors } from '../theme/placeholderGradient';
 
 interface RestaurantImagePlaceholderProps {
   restaurantId: string;
+  venueType?: VenueType;
   iconSize: number;
   style?: StyleProp<ViewStyle>;
 }
 
 function RestaurantImagePlaceholder({
   restaurantId,
+  venueType,
   iconSize,
   style,
 }: RestaurantImagePlaceholderProps) {
   const gradientColors = getPlaceholderGradientColors(restaurantId);
+  const iconName = getVenueTypeIconName(venueType);
 
   return (
     <LinearGradient
@@ -24,11 +29,7 @@ function RestaurantImagePlaceholder({
       end={{ x: 1, y: 1 }}
       style={[styles.fill, style]}
     >
-      <MaterialCommunityIcons
-        name="silverware-fork-knife"
-        size={iconSize}
-        color={PLACEHOLDER_ICON_COLOR}
-      />
+      <MaterialCommunityIcons name={iconName} size={iconSize} color={PLACEHOLDER_ICON_COLOR} />
     </LinearGradient>
   );
 }

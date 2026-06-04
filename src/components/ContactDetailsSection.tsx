@@ -107,6 +107,17 @@ function ContactDetailsSection({ restaurant }: ContactDetailsSectionProps) {
     });
   }
 
+  if (restaurant.menu_url) {
+    const menuUrl = restaurant.menu_url.trim();
+    rows.push({
+      key: 'menu',
+      icon: 'book-open-page-variant',
+      label: t('detail.menu'),
+      value: menuUrl,
+      onPress: () => openUrl(normalizeWebsiteUrl(menuUrl)).catch(() => undefined),
+    });
+  }
+
   if (restaurant.instagram) {
     const handle = formatInstagramLabel(restaurant.instagram);
     rows.push({

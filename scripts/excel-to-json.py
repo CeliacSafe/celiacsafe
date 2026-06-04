@@ -10,6 +10,10 @@ Blätter:
     - delivery_links     → Liefer-Links, verknüpft über ``restaurant_id``
     - reservation_links  → Reservierungs-Links, verknüpft über ``restaurant_id``
 
+Leere ``url``-Zellen werden beim Export automatisch ergänzt (TheFork, Glovo,
+Uber Eats, …) — siehe ``scripts/platform_urls.py``. Optional: Spalten
+``thefork_url``, ``glovo_url``, ``uber_eats_url`` im Blatt ``restaurants``.
+
 Verwendung::
 
     pip install -r scripts/requirements.txt
@@ -34,10 +38,17 @@ except ImportError:
     print("Bitte ausfuehren: pip install -r scripts/requirements.txt")
     sys.exit(1)
 
+from platform_urls import (
+    enrich_restaurant_links,
+    extract_inline_urls_from_row,
+    merge_link_lists,
+    normalize_platform,
+)
+
 # ─── Konfiguration ───────────────────────────────────────────────────────────
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_INPUT = ROOT / "data-source" / "CeliacSafe_Datenbank_v3.xlsx"
+DEFAULT_INPUT = ROOT / "data-source" / "CeliacSafe_Datenbank_v4.xlsx"
 DEFAULT_OUTPUT = ROOT / "src" / "data" / "restaurants.json"
 DEFAULT_SHEET = "restaurants"
 META_VERSION = "1.0.0"
@@ -70,6 +81,7 @@ STRING_FIELDS = {
     "whatsapp",
     "email",
     "website",
+    "menu_url",
     "instagram",
     "facebook",
     "opening_hours",
@@ -265,7 +277,7 @@ def read_sheet_rows(workbook: Any, sheet_name: str) -> tuple[list[dict[str, Any]
 
 def row_to_link(row: dict[str, Any]) -> dict[str, Any] | None:
     """Wandelt eine Zeile aus delivery_links/reservation_links in ein Link-Objekt um."""
-    platform = parse_string(row.get("platform"))
+    platform = normalize_platform(row.get("platform"))
     if not platform:
         return None
 
@@ -383,6 +395,8 @@ def convert_workbook(path: Path, sheet_name: str) -> tuple[list[dict[str, Any]],
         "read": len(restaurant_rows),
         "delivery_restaurants": len(delivery_by_id),
         "reservation_restaurants": len(reservation_by_id),
+        "delivery_urls_enriched": 0,
+        "reservation_urls_enriched": 0,
         "exported": 0,
         "skipped_status": 0,
         "skipped_invalid": 0,
@@ -402,11 +416,27 @@ def convert_workbook(path: Path, sheet_name: str) -> tuple[list[dict[str, Any]],
 
         restaurant_id = restaurant["id"]
 
-        delivery_links = delivery_by_id.get(restaurant_id)
+        inline = extract_inline_urls_from_row(row)
+        delivery_links = merge_link_lists(
+            delivery_by_id.get(restaurant_id, []),
+            inline["delivery"],
+        )
+        reservation_links = merge_link_lists(
+            reservation_by_id.get(restaurant_id, []),
+            inline["reservation"],
+        )
+
+        delivery_links, reservation_links, enrich_stats = enrich_restaurant_links(
+            restaurant,
+            delivery_links or None,
+            reservation_links or None,
+        )
+        stats["delivery_urls_enriched"] += enrich_stats["delivery_enriched"]
+        stats["reservation_urls_enriched"] += enrich_stats["reservation_enriched"]
+
         if delivery_links:
             restaurant["delivery_links"] = delivery_links
 
-        reservation_links = reservation_by_id.get(restaurant_id)
         if reservation_links:
             restaurant["reservation_links"] = reservation_links
 
@@ -439,6 +469,11 @@ def print_status(
     print(f"Datenzeilen: {stats['read']}")
     print(f"Delivery-Links fuer {stats['delivery_restaurants']} Restaurants")
     print(f"Reservierungs-Links fuer {stats['reservation_restaurants']} Restaurants")
+    print(
+        f"Automatisch ergaenzte URLs: "
+        f"{stats.get('delivery_urls_enriched', 0)} Lieferung, "
+        f"{stats.get('reservation_urls_enriched', 0)} Reservierung"
+    )
     print()
     print("=== ERGEBNIS ===")
     print(f"Exportiert: {stats['exported']} Restaurants")

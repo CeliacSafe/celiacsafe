@@ -21,6 +21,7 @@ import { useFilterStore } from '../store/filterStore';
 import { spacing } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
 import { hapticError, hapticMedium } from '../utils/haptics';
+import { toMapFilterCriteria } from '../utils/platformLinks';
 import { applyFilters } from '../utils/searchAndFilter';
 
 const INITIAL_REGION = QUICK_JUMPS[0].region;
@@ -50,6 +51,10 @@ export function MapaScreen() {
   const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
+  const selectedCity = useFilterStore((state) => state.selectedCity);
+  const dietVegan = useFilterStore((state) => state.dietVegan);
+  const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
+  const categoryTab = useFilterStore((state) => state.categoryTab);
   const sortBy = useFilterStore((state) => state.sortBy);
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
   const resetFilters = useFilterStore((state) => state.resetFilters);
@@ -64,6 +69,10 @@ export function MapaScreen() {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCity,
+      dietVegan,
+      dietVegetarian,
+      categoryTab,
     }),
     [
       selectedVenueTypes,
@@ -71,12 +80,18 @@ export function MapaScreen() {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCity,
+      dietVegan,
+      dietVegetarian,
+      categoryTab,
     ]
   );
 
+  const mapFilterCriteria = useMemo(() => toMapFilterCriteria(filterCriteria), [filterCriteria]);
+
   const filteredRestaurants = useMemo(
-    () => applyFilters(restaurants, searchQuery, filterCriteria, sortBy),
-    [restaurants, searchQuery, filterCriteria, sortBy]
+    () => applyFilters(restaurants, searchQuery, mapFilterCriteria, sortBy),
+    [restaurants, searchQuery, mapFilterCriteria, sortBy]
   );
 
   const mappableRestaurants = useMemo(
