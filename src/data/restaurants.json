@@ -1,60 +1,8 @@
 {
   "version": "1.0",
-  "generated_at": "2026-06-04T07:39:43.170Z",
+  "generated_at": "2026-06-04T12:31:14.995Z",
   "count": 107,
   "restaurants": [
-    {
-      "id": "es_ib_001",
-      "name": "Avocado Mallorca",
-      "slug": "avocado-mallorca-palma",
-      "country_code": "ES",
-      "region_code": "ES-IB",
-      "region_name": "Illes Balears",
-      "province": "Mallorca",
-      "city": "Palma de Mallorca",
-      "district": "Cala Major",
-      "postal_code": "07015",
-      "address_street": "Avinguda Joan Miró, 279",
-      "latitude": 39.553688,
-      "longitude": 2.605564,
-      "venue_type": "brunch_place",
-      "cuisine_types": [
-        "saludable",
-        "vegana",
-        "internacional"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "breakfast",
-        "brunch",
-        "lunch"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": true,
-      "aoecs_certified": false,
-      "national_authority": "FACE, Celiacs Balears",
-      "phone": "+34871532073",
-      "email": "avocadomallorca@gmail.com",
-      "website": "https://www.avocadomallorca.com",
-      "instagram": "@avocadomallorca",
-      "description_es": "Restaurante 100% libre de gluten, plant-based, certificado por FACE. Brunch saludable en Cala Major.",
-      "description_en": "100% gluten-free restaurant, plant-based, FACE-certified. Healthy brunch in Cala Major.",
-      "description_de": "100% glutenfreies Restaurant, pflanzenbasiert, FACE-zertifiziert. Gesundes Brunch in Cala Major.",
-      "delivery_links": [
-        {
-          "platform": "own_delivery",
-          "url": "https://www.avocadomallorca.com",
-          "is_active": true
-        }
-      ],
-      "reservation_links": [
-        {
-          "platform": "own_website",
-          "url": "https://www.avocadomallorca.com",
-          "is_active": true
-        }
-      ]
-    },
     {
       "id": "es_ib_002",
       "name": "Bolixe",
@@ -543,47 +491,6 @@
       ]
     },
     {
-      "id": "es_md_010",
-      "name": "Celicioso Barquillo",
-      "slug": "celicioso-barquillo",
-      "country_code": "ES",
-      "region_code": "ES-MD",
-      "region_name": "Comunidad de Madrid",
-      "province": "Madrid",
-      "city": "Madrid",
-      "district": "Chueca",
-      "postal_code": "28004",
-      "address_street": "Calle Barquillo, 19",
-      "latitude": 40.422064,
-      "longitude": -3.695695,
-      "venue_type": "pastry_shop",
-      "cuisine_types": [
-        "saludable"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "breakfast",
-        "brunch",
-        "snacks"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": false,
-      "aoecs_certified": false,
-      "national_authority": "ACSG Madrid",
-      "phone": "+34915322899",
-      "website": "https://celicioso.shop",
-      "description_es": "Pastelería 100% sin gluten en Chueca.",
-      "description_en": "100% gluten-free bakery in Chueca.",
-      "description_de": "100% glutenfreie Bäckerei in Chueca.",
-      "delivery_links": [
-        {
-          "platform": "own_delivery",
-          "url": "https://celicioso.shop",
-          "is_active": true
-        }
-      ]
-    },
-    {
       "id": "es_md_011",
       "name": "Celicioso Callao (El Corte Inglés)",
       "slug": "celicioso-callao",
@@ -1051,33 +958,6 @@
       "description_de": "100% veganes und 100% glutenfreies Restaurant nahe Francesc Macià."
     },
     {
-      "id": "es_ct_009",
-      "name": "Pötstöt",
-      "slug": "potstot-barcelona",
-      "country_code": "ES",
-      "region_code": "ES-CT",
-      "region_name": "Cataluña",
-      "province": "Barcelona",
-      "city": "Barcelona",
-      "latitude": 41.38258,
-      "longitude": 2.177073,
-      "venue_type": "restaurant",
-      "cuisine_types": [
-        "internacional"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "lunch",
-        "dinner"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": false,
-      "aoecs_certified": false,
-      "description_es": "Restaurante 100% sin gluten en Barcelona.",
-      "description_en": "100% gluten-free restaurant in Barcelona.",
-      "description_de": "100% glutenfreies Restaurant in Barcelona."
-    },
-    {
       "id": "es_ct_010",
       "name": "Pizza Natura Pau Claris",
       "slug": "pizza-natura-pau-claris-barcelona",
@@ -1308,54 +1188,6 @@
       "national_authority": "FACE, Celiacs Catalunya"
     },
     {
-      "id": "es_vc_001",
-      "name": "El Miracle",
-      "slug": "el-miracle-valencia",
-      "country_code": "ES",
-      "region_code": "ES-VC",
-      "region_name": "Comunidad Valenciana",
-      "province": "Valencia",
-      "city": "Valencia",
-      "district": "Ciutat Jardín",
-      "postal_code": "46022",
-      "address_street": "Carrer de Campoamor, 42",
-      "latitude": 39.468813,
-      "longitude": -0.340323,
-      "venue_type": "restaurant",
-      "cuisine_types": [
-        "internacional",
-        "mediterranea",
-        "hamburguesas"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "lunch",
-        "dinner"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": true,
-      "aoecs_certified": false,
-      "national_authority": "FACE, ACECOVA",
-      "website": "https://miraclerestaurante.es",
-      "description_es": "Primer restaurante 100% sin gluten certificado por ACECOVA en la Comunitat Valenciana.",
-      "description_en": "First 100% gluten-free restaurant in Comunitat Valenciana certified by ACECOVA.",
-      "description_de": "Erstes von ACECOVA zertifiziertes 100% glutenfreies Restaurant in der Comunitat Valenciana.",
-      "delivery_links": [
-        {
-          "platform": "own_delivery",
-          "url": "https://miraclerestaurante.es",
-          "is_active": true
-        }
-      ],
-      "reservation_links": [
-        {
-          "platform": "own_website",
-          "url": "https://miraclerestaurante.es",
-          "is_active": true
-        }
-      ]
-    },
-    {
       "id": "es_vc_002",
       "name": "Naked & Sated Valencia",
       "slug": "naked-sated-valencia",
@@ -1544,36 +1376,6 @@
       "description_de": "Traditionelle sevillanische Küche, 100% glutenfrei."
     },
     {
-      "id": "es_an_002",
-      "name": "MITO Postigo",
-      "slug": "mito-postigo-sevilla",
-      "country_code": "ES",
-      "region_code": "ES-AN",
-      "region_name": "Andalucía",
-      "province": "Sevilla",
-      "city": "Sevilla",
-      "district": "Casco Antiguo",
-      "postal_code": "41001",
-      "address_street": "C. Almirantazgo, 11",
-      "latitude": 37.385215,
-      "longitude": -5.994717,
-      "venue_type": "ice_cream",
-      "cuisine_types": [
-        "italiana"
-      ],
-      "price_range": "€",
-      "meal_types": [
-        "snacks"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": false,
-      "aoecs_certified": false,
-      "national_authority": "Red Sevilla Sin Gluten",
-      "description_es": "Heladería italiana 100% sin gluten en Sevilla.",
-      "description_en": "Italian gelato, 100% gluten-free, in Sevilla.",
-      "description_de": "Italienische Eisdiele, 100% glutenfrei, in Sevilla."
-    },
-    {
       "id": "es_an_003",
       "name": "MITO San Pablo",
       "slug": "mito-san-pablo-sevilla",
@@ -1600,45 +1402,6 @@
       "description_es": "Filial MITO de gelato 100% sin gluten en San Pablo.",
       "description_en": "MITO gelato branch, 100% gluten-free, in San Pablo.",
       "description_de": "MITO-Filiale für 100% glutenfreies Gelato in San Pablo."
-    },
-    {
-      "id": "es_an_004",
-      "name": "Grosso Senza Glutine Sevilla",
-      "slug": "grosso-senza-glutine-sevilla",
-      "country_code": "ES",
-      "region_code": "ES-AN",
-      "region_name": "Andalucía",
-      "province": "Sevilla",
-      "city": "Sevilla",
-      "district": "Alameda de Hércules",
-      "postal_code": "41002",
-      "address_street": "Alameda de Hércules, 46",
-      "latitude": 37.400632,
-      "longitude": -5.993704,
-      "venue_type": "pizzeria",
-      "cuisine_types": [
-        "italiana",
-        "pizzas"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "lunch",
-        "dinner"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": true,
-      "aoecs_certified": false,
-      "national_authority": "FACE",
-      "description_es": "Pizzería napolitana 100% sin gluten, FACE-certificada.",
-      "description_en": "Neapolitan pizzeria, 100% gluten-free, FACE-certified.",
-      "description_de": "Neapolitanische Pizzeria, 100% glutenfrei, FACE-zertifiziert.",
-      "delivery_links": [
-        {
-          "platform": "glovo",
-          "url": "https://glovoapp.com/es/search?query=Grosso%20Senza%20Glutine%20Sevilla%20Sevilla",
-          "is_active": true
-        }
-      ]
     },
     {
       "id": "es_an_005",
@@ -2031,35 +1794,6 @@
       "description_es": "Restaurante 100% sin gluten en Murcia.",
       "description_en": "100% gluten-free restaurant in Murcia.",
       "description_de": "100% glutenfreies Restaurant in Murcia."
-    },
-    {
-      "id": "es_pv_006",
-      "name": "GOPHY",
-      "slug": "gophy-vitoria-gasteiz",
-      "country_code": "ES",
-      "region_code": "ES-PV",
-      "region_name": "País Vasco / Euskadi",
-      "province": "Álava",
-      "city": "Vitoria-Gasteiz",
-      "district": "Centro",
-      "latitude": 42.850584,
-      "longitude": -2.66145,
-      "venue_type": "bakery",
-      "cuisine_types": [
-        "saludable"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "breakfast",
-        "snacks"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": false,
-      "aoecs_certified": false,
-      "national_authority": "Celiacos Euskadi",
-      "description_es": "Obrador artesano 100% sin gluten en Vitoria-Gasteiz, también sin azúcar y opciones veganas.",
-      "description_en": "Artisan 100% gluten-free bakery in Vitoria-Gasteiz, also sugar-free and vegan options.",
-      "description_de": "Handwerkliche 100% glutenfreie Bäckerei in Vitoria-Gasteiz, auch zuckerfrei und vegan."
     },
     {
       "id": "es_pv_007",
@@ -2513,38 +2247,6 @@
       "description_de": "100% glutenfreies Restaurant in Gijón, traditionelle asturische Küche mit modernen Akzenten."
     },
     {
-      "id": "es_as_006",
-      "name": "Casa Niembro",
-      "slug": "casa-niembro-asiegu",
-      "country_code": "ES",
-      "region_code": "ES-AS",
-      "region_name": "Principado de Asturias",
-      "province": "Asturias",
-      "city": "Asiegu",
-      "district": "Cabrales",
-      "address_street": "Asiegu, Cabrales",
-      "latitude": 43.323991,
-      "longitude": -4.858951,
-      "venue_type": "restaurant",
-      "cuisine_types": [
-        "asturiana",
-        "sidreria",
-        "espanola"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "lunch",
-        "dinner"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": false,
-      "aoecs_certified": false,
-      "national_authority": "ACEPA",
-      "description_es": "Sidrería 100% sin gluten en Cabrales con vistas al Urriellu. Cocina asturiana tradicional premiada.",
-      "description_en": "100% gluten-free cider house in Cabrales with Urriellu views. Award-winning traditional Asturian cuisine.",
-      "description_de": "100% glutenfreies Sidrería in Cabrales mit Blick auf den Urriellu. Preisgekrönte traditionelle asturische Küche."
-    },
-    {
       "id": "es_as_007",
       "name": "Bar Moreno",
       "slug": "bar-moreno-cangas-narcea",
@@ -2943,36 +2645,6 @@
       "description_es": "Restaurante de cocina fusión con menú degustación 100% sin gluten en el casco antiguo de Zaragoza.",
       "description_en": "Fusion restaurant with 100% gluten-free tasting menu in Zaragoza's old town.",
       "description_de": "Fusion-Restaurant mit 100% glutenfreiem Tasting-Menü in Zaragozas Altstadt."
-    },
-    {
-      "id": "es_ar_003",
-      "name": "De Moretti",
-      "slug": "de-moretti-zaragoza",
-      "country_code": "ES",
-      "region_code": "ES-AR",
-      "region_name": "Aragón",
-      "province": "Zaragoza",
-      "city": "Zaragoza",
-      "latitude": 41.691585,
-      "longitude": -0.910127,
-      "venue_type": "restaurant",
-      "cuisine_types": [
-        "italiana",
-        "pasta",
-        "pizzas"
-      ],
-      "price_range": "€€",
-      "meal_types": [
-        "lunch",
-        "dinner"
-      ],
-      "verification_status": "to_be_verified",
-      "face_program": false,
-      "aoecs_certified": false,
-      "national_authority": "ACA",
-      "description_es": "Primer restaurante italiano 100% sin gluten de Aragón con obrador propio de pasta fresca.",
-      "description_en": "Aragón's first 100% gluten-free Italian restaurant with own fresh pasta production.",
-      "description_de": "Aragóns erstes 100% glutenfreies italienisches Restaurant mit eigener frischer Pasta-Manufaktur."
     },
     {
       "id": "es_ar_004",
@@ -3397,6 +3069,334 @@
       "description_es": "Restaurante sin gluten en Granada.",
       "description_en": "Gluten-free restaurant in Granada.",
       "description_de": "Glutenfreies Restaurant in Granada."
+    },
+    {
+      "id": "es_ib_001",
+      "name": "Avocado Mallorca",
+      "slug": "avocado-mallorca-palma",
+      "country_code": "ES",
+      "region_code": "ES-IB",
+      "region_name": "Illes Balears",
+      "province": "Mallorca",
+      "city": "Palma de Mallorca",
+      "district": "Cala Major",
+      "postal_code": "07015",
+      "address_street": "Avinguda Joan Miró, 279",
+      "latitude": 39.553688,
+      "longitude": 2.605564,
+      "venue_type": "brunch_place",
+      "cuisine_types": [
+        "saludable",
+        "vegana",
+        "internacional"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "breakfast",
+        "brunch",
+        "lunch"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": true,
+      "aoecs_certified": false,
+      "national_authority": "FACE, Celiacs Balears",
+      "phone": "+34871532073",
+      "email": "avocadomallorca@gmail.com",
+      "website": "https://www.avocadomallorca.com",
+      "instagram": "@avocadomallorca",
+      "description_es": "Restaurante 100% libre de gluten, plant-based, certificado por FACE. Brunch saludable en Cala Major.",
+      "description_en": "100% gluten-free restaurant, plant-based, FACE-certified. Healthy brunch in Cala Major.",
+      "description_de": "100% glutenfreies Restaurant, pflanzenbasiert, FACE-zertifiziert. Gesundes Brunch in Cala Major.",
+      "delivery_links": [
+        {
+          "platform": "own_delivery",
+          "url": "https://www.avocadomallorca.com",
+          "is_active": true
+        }
+      ],
+      "reservation_links": [
+        {
+          "platform": "own_website",
+          "url": "https://www.avocadomallorca.com",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": "es_md_010",
+      "name": "Celicioso Barquillo",
+      "slug": "celicioso-barquillo",
+      "country_code": "ES",
+      "region_code": "ES-MD",
+      "region_name": "Comunidad de Madrid",
+      "province": "Madrid",
+      "city": "Madrid",
+      "district": "Chueca",
+      "postal_code": "28004",
+      "address_street": "Calle Barquillo, 19",
+      "latitude": 40.422064,
+      "longitude": -3.695695,
+      "venue_type": "pastry_shop",
+      "cuisine_types": [
+        "saludable"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "breakfast",
+        "brunch",
+        "snacks"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": false,
+      "aoecs_certified": false,
+      "national_authority": "ACSG Madrid",
+      "phone": "+34915322899",
+      "website": "https://celicioso.shop",
+      "description_es": "Pastelería 100% sin gluten en Chueca.",
+      "description_en": "100% gluten-free bakery in Chueca.",
+      "description_de": "100% glutenfreie Bäckerei in Chueca.",
+      "delivery_links": [
+        {
+          "platform": "own_delivery",
+          "url": "https://celicioso.shop",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": "es_ct_009",
+      "name": "Pötstöt",
+      "slug": "potstot-barcelona",
+      "country_code": "ES",
+      "region_code": "ES-CT",
+      "region_name": "Cataluña",
+      "province": "Barcelona",
+      "city": "Barcelona",
+      "latitude": 41.38258,
+      "longitude": 2.177073,
+      "venue_type": "restaurant",
+      "cuisine_types": [
+        "internacional"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": false,
+      "aoecs_certified": false,
+      "description_es": "Restaurante 100% sin gluten en Barcelona.",
+      "description_en": "100% gluten-free restaurant in Barcelona.",
+      "description_de": "100% glutenfreies Restaurant in Barcelona."
+    },
+    {
+      "id": "es_vc_001",
+      "name": "El Miracle",
+      "slug": "el-miracle-valencia",
+      "country_code": "ES",
+      "region_code": "ES-VC",
+      "region_name": "Comunidad Valenciana",
+      "province": "Valencia",
+      "city": "Valencia",
+      "district": "Ciutat Jardín",
+      "postal_code": "46022",
+      "address_street": "Carrer de Campoamor, 42",
+      "latitude": 39.468813,
+      "longitude": -0.340323,
+      "venue_type": "restaurant",
+      "cuisine_types": [
+        "internacional",
+        "mediterranea",
+        "hamburguesas"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": true,
+      "aoecs_certified": false,
+      "national_authority": "FACE, ACECOVA",
+      "website": "https://miraclerestaurante.es",
+      "description_es": "Primer restaurante 100% sin gluten certificado por ACECOVA en la Comunitat Valenciana.",
+      "description_en": "First 100% gluten-free restaurant in Comunitat Valenciana certified by ACECOVA.",
+      "description_de": "Erstes von ACECOVA zertifiziertes 100% glutenfreies Restaurant in der Comunitat Valenciana.",
+      "delivery_links": [
+        {
+          "platform": "own_delivery",
+          "url": "https://miraclerestaurante.es",
+          "is_active": true
+        }
+      ],
+      "reservation_links": [
+        {
+          "platform": "own_website",
+          "url": "https://miraclerestaurante.es",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": "es_an_002",
+      "name": "MITO Postigo",
+      "slug": "mito-postigo-sevilla",
+      "country_code": "ES",
+      "region_code": "ES-AN",
+      "region_name": "Andalucía",
+      "province": "Sevilla",
+      "city": "Sevilla",
+      "district": "Casco Antiguo",
+      "postal_code": "41001",
+      "address_street": "C. Almirantazgo, 11",
+      "latitude": 37.385215,
+      "longitude": -5.994717,
+      "venue_type": "ice_cream",
+      "cuisine_types": [
+        "italiana"
+      ],
+      "price_range": "€",
+      "meal_types": [
+        "snacks"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": false,
+      "aoecs_certified": false,
+      "national_authority": "Red Sevilla Sin Gluten",
+      "description_es": "Heladería italiana 100% sin gluten en Sevilla.",
+      "description_en": "Italian gelato, 100% gluten-free, in Sevilla.",
+      "description_de": "Italienische Eisdiele, 100% glutenfrei, in Sevilla."
+    },
+    {
+      "id": "es_an_004",
+      "name": "Grosso Senza Glutine Sevilla",
+      "slug": "grosso-senza-glutine-sevilla",
+      "country_code": "ES",
+      "region_code": "ES-AN",
+      "region_name": "Andalucía",
+      "province": "Sevilla",
+      "city": "Sevilla",
+      "district": "Alameda de Hércules",
+      "postal_code": "41002",
+      "address_street": "Alameda de Hércules, 46",
+      "latitude": 37.400632,
+      "longitude": -5.993704,
+      "venue_type": "pizzeria",
+      "cuisine_types": [
+        "italiana",
+        "pizzas"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": true,
+      "aoecs_certified": false,
+      "national_authority": "FACE",
+      "description_es": "Pizzería napolitana 100% sin gluten, FACE-certificada.",
+      "description_en": "Neapolitan pizzeria, 100% gluten-free, FACE-certified.",
+      "description_de": "Neapolitanische Pizzeria, 100% glutenfrei, FACE-zertifiziert.",
+      "delivery_links": [
+        {
+          "platform": "glovo",
+          "url": "https://glovoapp.com/es/search?query=Grosso%20Senza%20Glutine%20Sevilla%20Sevilla",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "id": "es_pv_006",
+      "name": "GOPHY",
+      "slug": "gophy-vitoria-gasteiz",
+      "country_code": "ES",
+      "region_code": "ES-PV",
+      "region_name": "País Vasco / Euskadi",
+      "province": "Álava",
+      "city": "Vitoria-Gasteiz",
+      "district": "Centro",
+      "latitude": 42.850584,
+      "longitude": -2.66145,
+      "venue_type": "bakery",
+      "cuisine_types": [
+        "saludable"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "breakfast",
+        "snacks"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": false,
+      "aoecs_certified": false,
+      "national_authority": "Celiacos Euskadi",
+      "description_es": "Obrador artesano 100% sin gluten en Vitoria-Gasteiz, también sin azúcar y opciones veganas.",
+      "description_en": "Artisan 100% gluten-free bakery in Vitoria-Gasteiz, also sugar-free and vegan options.",
+      "description_de": "Handwerkliche 100% glutenfreie Bäckerei in Vitoria-Gasteiz, auch zuckerfrei und vegan."
+    },
+    {
+      "id": "es_as_006",
+      "name": "Casa Niembro",
+      "slug": "casa-niembro-asiegu",
+      "country_code": "ES",
+      "region_code": "ES-AS",
+      "region_name": "Principado de Asturias",
+      "province": "Asturias",
+      "city": "Asiegu",
+      "district": "Cabrales",
+      "address_street": "Asiegu, Cabrales",
+      "latitude": 43.323991,
+      "longitude": -4.858951,
+      "venue_type": "restaurant",
+      "cuisine_types": [
+        "asturiana",
+        "sidreria",
+        "espanola"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": false,
+      "aoecs_certified": false,
+      "national_authority": "ACEPA",
+      "description_es": "Sidrería 100% sin gluten en Cabrales con vistas al Urriellu. Cocina asturiana tradicional premiada.",
+      "description_en": "100% gluten-free cider house in Cabrales with Urriellu views. Award-winning traditional Asturian cuisine.",
+      "description_de": "100% glutenfreies Sidrería in Cabrales mit Blick auf den Urriellu. Preisgekrönte traditionelle asturische Küche."
+    },
+    {
+      "id": "es_ar_003",
+      "name": "De Moretti",
+      "slug": "de-moretti-zaragoza",
+      "country_code": "ES",
+      "region_code": "ES-AR",
+      "region_name": "Aragón",
+      "province": "Zaragoza",
+      "city": "Zaragoza",
+      "latitude": 41.691585,
+      "longitude": -0.910127,
+      "venue_type": "restaurant",
+      "cuisine_types": [
+        "italiana",
+        "pasta",
+        "pizzas"
+      ],
+      "price_range": "€€",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "verification_status": "to_be_verified",
+      "face_program": false,
+      "aoecs_certified": false,
+      "national_authority": "ACA",
+      "description_es": "Primer restaurante italiano 100% sin gluten de Aragón con obrador propio de pasta fresca.",
+      "description_en": "Aragón's first 100% gluten-free Italian restaurant with own fresh pasta production.",
+      "description_de": "Aragóns erstes 100% glutenfreies italienisches Restaurant mit eigener frischer Pasta-Manufaktur."
     },
     {
       "id": "es_mc_002",

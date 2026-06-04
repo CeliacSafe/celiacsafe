@@ -34,11 +34,11 @@ Zentrale Datenbank in **Supabase Region EU (Frankfurt)** + **Web-Admin am PC** +
 
 ---
 
-## Schnellstart (Stand: Schema noch offen)
+## Schnellstart (Stand: Phase 1 aktiv)
 
-**Erledigt:** Supabase-Projekt EU, Keys in `.env`, Secret Key gesetzt.
+**Erledigt:** Supabase-Projekt EU, Schema, 107 Restaurants importiert, Admin-User, Web-Admin, JSON-Export-Skript.
 
-**Noch offen:** Tabellen anlegen → Daten importieren → Admin-User.
+**Regelmäßig:** Nach DB-Änderungen `npm run data:export-supabase` → App-Bundle aktualisieren.
 
 ### Schritt 1 — Schema (2 Min., einmalig)
 
