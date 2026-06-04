@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
-import GlutenFreeLogo from '../components/GlutenFreeLogo';
+import AppLogo from '../components/AppLogo';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
@@ -116,23 +116,14 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   const listHeader = useMemo(
     () => (
-      <View style={styles.stickyHeader}>
+      <View style={styles.listHeader}>
         <View style={styles.header}>
-          <GlutenFreeLogo size={44} style={styles.headerLogo} />
-          <View style={styles.headerText}>
-            <Text style={styles.title}>{t('search.brand_title')}</Text>
+          <View style={styles.headerMain}>
+            <AppLogo width={200} />
             <Text style={styles.subtitle}>{t('search.subtitle')}</Text>
           </View>
           <LanguageSwitcher variant="compact" />
         </View>
-
-        <SearchBarRow
-          filtersOpen={filtersOpen}
-          onToggleFilters={() => setFiltersOpen((open) => !open)}
-        />
-        {filtersOpen ? <SearchFilterPanel onClose={() => setFiltersOpen(false)} /> : null}
-
-        <SearchCategoryTabs />
 
         <View style={styles.counterRow}>
           <MaterialCommunityIcons name="star-four-points" size={14} color={colors.primary} />
@@ -142,16 +133,24 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         </View>
       </View>
     ),
-    [filteredRestaurants.length, filtersOpen, t]
+    [filteredRestaurants.length, t]
   );
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
+      <View style={styles.topChrome}>
+        <SearchBarRow
+          filtersOpen={filtersOpen}
+          onToggleFilters={() => setFiltersOpen((open) => !open)}
+        />
+        {filtersOpen ? <SearchFilterPanel onClose={() => setFiltersOpen(false)} /> : null}
+        <SearchCategoryTabs />
+      </View>
       {loading ? (
         <FlatList
+          style={styles.list}
           data={Array(5).fill(null)}
           ListHeaderComponent={listHeader}
-          stickyHeaderIndices={[0]}
           keyExtractor={(_item, index) => `skeleton-${index}`}
           renderItem={() => <SkeletonCard />}
           contentContainerStyle={styles.listContent}
@@ -160,9 +159,9 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         />
       ) : (
         <FlatList
+          style={styles.list}
           data={filteredRestaurants}
           ListHeaderComponent={listHeader}
-          stickyHeaderIndices={[0]}
           ListEmptyComponent={
             hasActiveFilters() ? (
               <EmptyState
@@ -215,7 +214,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  stickyHeader: {
+  topChrome: {
+    zIndex: 10,
+    elevation: 8,
+    backgroundColor: colors.background,
+    paddingTop: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surface,
+  },
+  list: {
+    flex: 1,
+  },
+  listHeader: {
     backgroundColor: colors.background,
     paddingTop: spacing.sm,
     paddingBottom: spacing.cardPadding,
@@ -228,17 +238,13 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     gap: spacing.sm,
   },
-  headerText: {
+  headerMain: {
     flex: 1,
     minWidth: 0,
-  },
-  title: {
-    ...typography.display,
-    color: colors.primary,
+    gap: spacing.xs,
   },
   subtitle: {
     ...typography.bodySmall,
-    marginTop: spacing.xs,
     color: colors.textSecondary,
   },
   counterRow: {

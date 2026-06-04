@@ -6,7 +6,7 @@ import { useCallback, useMemo } from 'react';
 import { Platform, Pressable, Share, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import GlutenFreeLogo from '../components/GlutenFreeLogo';
+import AppLogo from '../components/AppLogo';
 import LegalSubScreenLayout, { LegalSectionBlock } from '../components/LegalSubScreenLayout';
 import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../constants/appContact';
 import { getPlatformStoreUrl } from '../constants/storeUrls';
@@ -96,8 +96,7 @@ function AboutScreen() {
   return (
     <LegalSubScreenLayout title={t('about.title')}>
       <View style={styles.hero}>
-        <GlutenFreeLogo size={88} style={styles.logo} />
-        <Text style={styles.heroTitle}>{t('about.brand_name')}</Text>
+        <AppLogo width={280} style={styles.logo} />
         <Text style={styles.heroSubtitle}>{t('about.hero_subtitle')}</Text>
       </View>
 
@@ -145,13 +144,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   logo: {
-    width: 88,
-    height: 88,
-    borderRadius: radius.icon,
-  },
-  heroTitle: {
-    ...typography.h1,
-    color: colors.primary,
+    marginBottom: spacing.xs,
   },
   heroSubtitle: {
     ...typography.body,

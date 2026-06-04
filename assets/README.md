@@ -1,6 +1,6 @@
 # Assets — CeliacSafe
 
-Standard-Logo: **Glutenfrei-Symbol** (Weizenähre mit Durchstreichung auf Grün `#2E7D32`).
+Markenlogo: **`assets/brand/celiacsafe-logo.png`** (horizontales CeliacSafe-Logo). App-Icons erzeugen:
 
 **Restaurant-Arten:** Standardfotos in `assets/venue-types/` (Pizza, Brot, Kaffee, …). Neu laden:
 

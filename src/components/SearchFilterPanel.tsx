@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
@@ -106,7 +106,13 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
     : t('filter.all');
 
   return (
-    <View style={styles.panel}>
+    <ScrollView
+      style={styles.panelScroll}
+      contentContainerStyle={styles.panelContent}
+      nestedScrollEnabled
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <MaterialCommunityIcons name="tune-vertical" size={18} color={colors.textSecondary} />
@@ -125,6 +131,7 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
 
       <View style={styles.dropdownRow}>
         <FilterSelect
+          flex
           label={t('filter.region')}
           value={regionCode}
           displayValue={regionLabel}
@@ -133,6 +140,7 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
           active={regionCode != null}
         />
         <FilterSelect
+          flex
           label={t('filter.city')}
           value={selectedCity}
           displayValue={selectedCity ?? t('filter.all_cities')}
@@ -142,27 +150,34 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
         />
       </View>
 
-      <FilterSelect
-        label={t('filter.venue_type')}
-        value={venueCode}
-        displayValue={venueLabel}
-        options={venueOptions}
-        onChange={setVenueTypeSingle}
-        active={venueCode != null}
-      />
-
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{t('filter.rating')}</Text>
-        <Text style={styles.sectionHint}>{t('filter.verified_hint')}</Text>
+      <View style={styles.fullWidthField}>
+        <FilterSelect
+          label={t('filter.venue_type')}
+          value={venueCode}
+          displayValue={venueLabel}
+          options={venueOptions}
+          onChange={setVenueTypeSingle}
+          active={venueCode != null}
+        />
       </View>
-      <FilterChipRow
-        options={ratingOptions}
-        selectedId={minRating}
-        onSelect={(id) => setMinRating(id as (typeof RATING_CHIPS)[number])}
-      />
 
-      <Text style={styles.sectionTitle}>{t('filter.price')}</Text>
-      <FilterChipRow
+      <View style={styles.sectionBlock}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{t('filter.rating')}</Text>
+          <Text style={styles.sectionHint} numberOfLines={1}>
+            {t('filter.verified_hint')}
+          </Text>
+        </View>
+        <FilterChipRow
+          options={ratingOptions}
+          selectedId={minRating}
+          onSelect={(id) => setMinRating(id as (typeof RATING_CHIPS)[number])}
+        />
+      </View>
+
+      <View style={styles.sectionBlock}>
+        <Text style={styles.sectionTitle}>{t('filter.price')}</Text>
+        <FilterChipRow
         options={priceOptions}
         selectedId={priceChipId}
         onSelect={(id) => {
@@ -173,10 +188,12 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
             togglePriceRange(id);
           }
         }}
-      />
+        />
+      </View>
 
-      <Text style={styles.sectionTitle}>{t('filter.dietary')}</Text>
-      <View style={styles.dietRow}>
+      <View style={styles.sectionBlock}>
+        <Text style={styles.sectionTitle}>{t('filter.dietary')}</Text>
+        <View style={styles.dietRow}>
         <Pressable
           onPress={() => {
             hapticLight();
@@ -209,19 +226,29 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
             {t('filter.vegetarian')}
           </Text>
         </Pressable>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  panel: {
+  panelScroll: {
+    maxHeight: 340,
     marginHorizontal: spacing.screenPadding,
     marginTop: spacing.sm,
-    padding: spacing.cardPadding,
     borderRadius: radius.xl,
     backgroundColor: colors.surface,
+  },
+  panelContent: {
+    padding: spacing.cardPadding,
     gap: spacing.md,
+  },
+  fullWidthField: {
+    width: '100%',
+  },
+  sectionBlock: {
+    gap: spacing.sm,
   },
   header: {
     flexDirection: 'row',
@@ -250,6 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: spacing.sm,
   },
   sectionTitle: {
     ...typography.overline,
@@ -257,9 +285,11 @@ const styles = StyleSheet.create({
   },
   sectionHint: {
     ...typography.caption,
+    flexShrink: 1,
     color: colors.primary,
     fontStyle: 'italic',
     fontWeight: '600',
+    textAlign: 'right',
   },
   dietRow: {
     flexDirection: 'row',

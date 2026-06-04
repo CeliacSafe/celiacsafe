@@ -19,6 +19,8 @@ interface FilterSelectProps {
   options: FilterSelectOption[];
   onChange: (value: string | null) => void;
   active?: boolean;
+  /** Nur in horizontalen Zeilen (z. B. Region/Stadt): flex: 1 */
+  flex?: boolean;
 }
 
 function FilterSelect({
@@ -28,13 +30,14 @@ function FilterSelect({
   options,
   onChange,
   active = false,
+  flex = false,
 }: FilterSelectProps) {
   const [open, setOpen] = useState(false);
   const hasValue = value != null;
 
   return (
     <>
-      <View style={styles.wrap}>
+      <View style={[styles.wrap, flex && styles.wrapFlex]}>
         <View style={styles.labelRow}>
           <Text style={[styles.label, active && styles.labelActive]}>{label}</Text>
           {active ? <View style={styles.activeDot} /> : null}
@@ -107,8 +110,11 @@ function FilterSelect({
 
 const styles = StyleSheet.create({
   wrap: {
-    flex: 1,
+    alignSelf: 'stretch',
     minWidth: 0,
+  },
+  wrapFlex: {
+    flex: 1,
   },
   labelRow: {
     flexDirection: 'row',
