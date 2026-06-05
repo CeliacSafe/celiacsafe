@@ -1,22 +1,19 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 
-import CustomMarker from './CustomMarker';
+import AddressMapPreview from './AddressMapPreview';
 import { useLocalized } from '../hooks/useLocalized';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
-import { openMapsRouting } from '../utils/openExternalUrl';
+import { canOpenExternalMaps, openMapsPlace } from '../utils/mapsPlaceLinks';
 
 interface AddressSectionProps {
   restaurant: Restaurant;
 }
-
-const MAP_DELTA = 0.005;
 
 function formatAddress(restaurant: Restaurant, regionLabel: string): string {
   const parts: string[] = [];
@@ -47,20 +44,11 @@ function AddressSection({ restaurant }: AddressSectionProps) {
     return null;
   }
 
-  const mapRegion = hasCoordinates
-    ? {
-        latitude: restaurant.latitude!,
-        longitude: restaurant.longitude!,
-        latitudeDelta: MAP_DELTA,
-        longitudeDelta: MAP_DELTA,
-      }
-    : null;
-
-  const handleRouting = () => {
-    if (hasCoordinates) {
-      openMapsRouting(restaurant.latitude!, restaurant.longitude!, restaurant.name);
-    }
+  const handleOpenMaps = () => {
+    openMapsPlace(restaurant);
   };
+
+  const showMapsButton = canOpenExternalMaps(restaurant);
 
   return (
     <View style={styles.wrapper}>
@@ -71,38 +59,19 @@ function AddressSection({ restaurant }: AddressSectionProps) {
 
       {addressText ? <Text style={styles.addressText}>{addressText}</Text> : null}
 
-      {mapRegion ? (
-        <Pressable onPress={handleRouting} style={styles.mapPressable}>
-          <MapView
-            provider={PROVIDER_DEFAULT}
-            style={styles.miniMap}
-            region={mapRegion}
-            scrollEnabled={false}
-            zoomEnabled={false}
-            pitchEnabled={false}
-            rotateEnabled={false}
-            pointerEvents="none"
-          >
-            <Marker
-              coordinate={{
-                latitude: restaurant.latitude!,
-                longitude: restaurant.longitude!,
-              }}
-              tracksViewChanges={false}
-            >
-              <CustomMarker />
-            </Marker>
-          </MapView>
-        </Pressable>
+      {hasCoordinates ? (
+        <View style={styles.mapWrap}>
+          <AddressMapPreview restaurant={restaurant} onPress={handleOpenMaps} />
+        </View>
       ) : null}
 
-      {hasCoordinates ? (
+      {showMapsButton ? (
         <Pressable
-          onPress={handleRouting}
+          onPress={handleOpenMaps}
           android_ripple={{ color: colors.rippleLight }}
           style={({ pressed }) => [styles.routeButton, pressed && styles.routePressed]}
         >
-          <Text style={styles.routeLabel}>{t('detail.directions')}</Text>
+          <Text style={styles.routeLabel}>{t('detail.open_in_maps')}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -130,14 +99,8 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginBottom: spacing.cardPadding,
   },
-  mapPressable: {
-    borderRadius: radius.lg,
-    overflow: 'hidden',
+  mapWrap: {
     marginBottom: spacing.cardPadding,
-  },
-  miniMap: {
-    width: '100%',
-    height: 180,
   },
   routeButton: {
     borderRadius: radius.lg,

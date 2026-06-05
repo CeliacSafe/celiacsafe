@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { Region } from 'react-native-maps';
 
 import { QUICK_JUMPS } from '../data/quickJumps';
+import type { MapRegion } from '../types/MapRegion';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
@@ -9,7 +9,7 @@ import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 
 interface RegionQuickJumpsProps {
-  onJumpTo: (region: Region) => void;
+  onJumpTo: (region: MapRegion) => void;
 }
 
 /**

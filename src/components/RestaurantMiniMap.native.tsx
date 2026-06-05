@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 
@@ -33,6 +33,16 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
     };
   }, [restaurant.latitude, restaurant.longitude]);
 
+  const [tracksViewChanges, setTracksViewChanges] = useState(Platform.OS === 'android');
+
+  useEffect(() => {
+    if (!tracksViewChanges) {
+      return;
+    }
+    const timer = setTimeout(() => setTracksViewChanges(false), 600);
+    return () => clearTimeout(timer);
+  }, [tracksViewChanges, region?.latitude, region?.longitude]);
+
   if (!region) {
     return null;
   }
@@ -49,7 +59,7 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
       pointerEvents="none"
       liteMode={Platform.OS === 'android'}
     >
-      <Marker coordinate={region} tracksViewChanges={Platform.OS === 'android'}>
+      <Marker coordinate={region} tracksViewChanges={tracksViewChanges}>
         <CustomMarker />
       </Marker>
     </MapView>

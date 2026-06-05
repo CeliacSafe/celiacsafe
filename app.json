@@ -32,7 +32,13 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "Celiac Safe",
+      "shortName": "CeliacSafe",
+      "themeColor": "#1F6B73",
+      "backgroundColor": "#121212"
     },
     "plugins": [
       "expo-font",

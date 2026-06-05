@@ -14,9 +14,20 @@ export async function shareTextAsFile(content: string, filename: string): Promis
     encoding: FileSystem.EncodingType.UTF8,
   });
 
+  if (Platform.OS === 'web' && typeof document !== 'undefined') {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
+    const objectUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(objectUrl);
+    return;
+  }
+
   const canShare = await Sharing.isAvailableAsync();
   if (!canShare) {
-    Alert.alert('Export', Platform.OS === 'web' ? 'Download nicht verfügbar.' : 'Teilen nicht verfügbar.');
+    Alert.alert('Export', 'Teilen nicht verfügbar.');
     return;
   }
 
