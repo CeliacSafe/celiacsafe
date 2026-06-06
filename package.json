@@ -9,7 +9,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "web:export": "expo export --platform web",
+    "web:export": "expo export --platform web && node scripts/post-web-export.mjs",
     "web:preview": "npm run web:export && npx serve dist",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",

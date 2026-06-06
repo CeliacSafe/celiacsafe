@@ -4,15 +4,16 @@
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "framework": null,
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!_expo/|favicon.ico).*)",
-      "destination": "/index.html"
+      "source": "/:path*",
+      "destination": "/"
     }
   ],
   "headers": [
     {
-      "source": "/_expo/static/(.*)",
+      "source": "/expo-static/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
