@@ -1,86 +1,212 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
 import FilterSelect from './FilterSelect';
-import { PRICE_RANGES, RATING_CHIPS, SEARCH_REGIONS } from '../data/filterOptions';
+import { RATING_CHIPS } from '../data/filterOptions';
 import { useAppLanguage } from '../i18n/useAppLanguage';
+import { DELIVERY_PLATFORM_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { REGION_NAMES } from '../i18n/regions';
-import { VENUE_TYPE_NAMES } from '../i18n/lookups';
-import { useRestaurants } from '../hooks/useRestaurants';
 import { useFilterStore } from '../store/filterStore';
+import type { Restaurant } from '../types/Restaurant';
 import { colors } from '../theme/colors';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
+import {
+  buildFilterOptionContext,
+  getAvailableCities,
+  getAvailableDeliveryPlatforms,
+  getAvailablePriceRanges,
+  getAvailableRegionCodes,
+  getAvailableVenueTypes,
+  poolHasDietOption,
+} from '../utils/filterAvailability';
 
 interface SearchFilterPanelProps {
+  restaurants: Restaurant[];
   onClose: () => void;
 }
 
-function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
+function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const { t } = useTranslation();
   const language = useAppLanguage();
-  const { restaurants } = useRestaurants();
 
+  const searchQuery = useFilterStore((s) => s.searchQuery);
   const selectedRegions = useFilterStore((s) => s.selectedRegions);
   const selectedCity = useFilterStore((s) => s.selectedCity);
   const selectedVenueTypes = useFilterStore((s) => s.selectedVenueTypes);
   const selectedPriceRanges = useFilterStore((s) => s.selectedPriceRanges);
+  const selectedDeliveryPlatform = useFilterStore((s) => s.selectedDeliveryPlatform);
   const minRating = useFilterStore((s) => s.minRating);
   const dietVegan = useFilterStore((s) => s.dietVegan);
   const dietVegetarian = useFilterStore((s) => s.dietVegetarian);
+  const onlyFaceCertified = useFilterStore((s) => s.onlyFaceCertified);
+  const onlyAoecsCertified = useFilterStore((s) => s.onlyAoecsCertified);
+  const categoryTab = useFilterStore((s) => s.categoryTab);
 
   const setRegionSingle = useFilterStore((s) => s.setRegionSingle);
   const setSelectedCity = useFilterStore((s) => s.setSelectedCity);
   const setVenueTypeSingle = useFilterStore((s) => s.setVenueTypeSingle);
+  const setDeliveryPlatformSingle = useFilterStore((s) => s.setDeliveryPlatformSingle);
   const setPriceRangesAll = useFilterStore((s) => s.setPriceRangesAll);
   const togglePriceRange = useFilterStore((s) => s.togglePriceRange);
   const setMinRating = useFilterStore((s) => s.setMinRating);
   const setDietVegan = useFilterStore((s) => s.setDietVegan);
   const setDietVegetarian = useFilterStore((s) => s.setDietVegetarian);
 
-  const regionCode = selectedRegions[0] ?? null;
+  const filterContext = useMemo(
+    () =>
+      buildFilterOptionContext({
+        searchQuery,
+        selectedVenueTypes,
+        selectedRegions,
+        selectedPriceRanges,
+        selectedCity,
+        selectedDeliveryPlatform,
+        onlyFaceCertified,
+        onlyAoecsCertified,
+        dietVegan,
+        dietVegetarian,
+        minRating,
+        categoryTab,
+      }),
+    [
+      searchQuery,
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      selectedCity,
+      selectedDeliveryPlatform,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
+    ]
+  );
 
-  const cityOptions = useMemo(() => {
-    const cities = new Set<string>();
-    for (const r of restaurants) {
-      if (regionCode && r.region_code !== regionCode) continue;
-      if (r.city) cities.add(r.city);
+  const availableRegionCodes = useMemo(
+    () => getAvailableRegionCodes(restaurants, filterContext),
+    [restaurants, filterContext]
+  );
+  const availableCities = useMemo(
+    () => getAvailableCities(restaurants, filterContext),
+    [restaurants, filterContext]
+  );
+  const availableVenueTypes = useMemo(
+    () => getAvailableVenueTypes(restaurants, filterContext),
+    [restaurants, filterContext]
+  );
+  const availablePriceRanges = useMemo(
+    () => getAvailablePriceRanges(restaurants, filterContext),
+    [restaurants, filterContext]
+  );
+  const availableDeliveryPlatforms = useMemo(
+    () => getAvailableDeliveryPlatforms(restaurants, filterContext),
+    [restaurants, filterContext]
+  );
+  const hasVeganOption = useMemo(
+    () => poolHasDietOption(restaurants, filterContext, 'vegana'),
+    [restaurants, filterContext]
+  );
+  const hasVegetarianOption = useMemo(
+    () => poolHasDietOption(restaurants, filterContext, 'vegetariana'),
+    [restaurants, filterContext]
+  );
+
+  const regionCode = selectedRegions[0] ?? null;
+  const venueCode = selectedVenueTypes[0] ?? null;
+  const deliveryCode = selectedDeliveryPlatform;
+
+  useEffect(() => {
+    if (regionCode && !availableRegionCodes.includes(regionCode)) {
+      setRegionSingle(null);
     }
-    return [...cities].sort((a, b) => a.localeCompare(b, 'es'));
-  }, [restaurants, regionCode]);
+  }, [availableRegionCodes, regionCode, setRegionSingle]);
+
+  useEffect(() => {
+    if (selectedCity && !availableCities.includes(selectedCity)) {
+      setSelectedCity(null);
+    }
+  }, [availableCities, selectedCity, setSelectedCity]);
+
+  useEffect(() => {
+    if (venueCode && !availableVenueTypes.includes(venueCode)) {
+      setVenueTypeSingle(null);
+    }
+  }, [availableVenueTypes, venueCode, setVenueTypeSingle]);
+
+  useEffect(() => {
+    if (deliveryCode && !availableDeliveryPlatforms.includes(deliveryCode)) {
+      setDeliveryPlatformSingle(null);
+    }
+  }, [availableDeliveryPlatforms, deliveryCode, setDeliveryPlatformSingle]);
+
+  useEffect(() => {
+    if (
+      selectedPriceRanges.length > 0 &&
+      !selectedPriceRanges.every((p) => availablePriceRanges.includes(p))
+    ) {
+      setPriceRangesAll();
+    }
+  }, [availablePriceRanges, selectedPriceRanges, setPriceRangesAll]);
+
+  useEffect(() => {
+    if (dietVegan && !hasVeganOption) {
+      setDietVegan(false);
+    }
+  }, [dietVegan, hasVeganOption, setDietVegan]);
+
+  useEffect(() => {
+    if (dietVegetarian && !hasVegetarianOption) {
+      setDietVegetarian(false);
+    }
+  }, [dietVegetarian, hasVegetarianOption, setDietVegetarian]);
 
   const regionOptions = useMemo(
     () => [
       { value: null, label: t('filter.all_regions') },
-      ...SEARCH_REGIONS.map((code) => ({
+      ...availableRegionCodes.map((code) => ({
         value: code,
-        label: REGION_NAMES[code][language],
+        label: REGION_NAMES[code as keyof typeof REGION_NAMES]?.[language] ?? code,
       })),
     ],
-    [language, t]
+    [availableRegionCodes, language, t]
   );
 
   const citySelectOptions = useMemo(
     () => [
       { value: null, label: t('filter.all_cities') },
-      ...cityOptions.map((city) => ({ value: city, label: city })),
+      ...availableCities.map((city) => ({ value: city, label: city })),
     ],
-    [cityOptions, t]
+    [availableCities, t]
   );
 
   const venueOptions = useMemo(
     () => [
       { value: null, label: t('filter.all') },
-      ...Object.entries(VENUE_TYPE_NAMES).map(([code, names]) => ({
+      ...availableVenueTypes.map((code) => ({
         value: code,
-        label: names[language],
+        label:
+          VENUE_TYPE_NAMES[code as keyof typeof VENUE_TYPE_NAMES]?.[language] ?? code,
       })),
     ],
-    [language, t]
+    [availableVenueTypes, language, t]
+  );
+
+  const deliveryOptions = useMemo(
+    () => [
+      { value: null, label: t('filter.all') },
+      ...availableDeliveryPlatforms.map((code) => ({
+        value: code,
+        label: DELIVERY_PLATFORM_NAMES[code]?.[language] ?? code,
+      })),
+    ],
+    [availableDeliveryPlatforms, language, t]
   );
 
   const ratingOptions = RATING_CHIPS.map((id) => ({
@@ -93,16 +219,19 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
 
   const priceOptions = [
     { id: 'all', label: t('filter.all') },
-    ...PRICE_RANGES.map((p) => ({ id: p, label: p })),
+    ...availablePriceRanges.map((p) => ({ id: p, label: p })),
   ];
 
   const regionLabel = regionCode
-    ? REGION_NAMES[regionCode as keyof typeof REGION_NAMES][language]
+    ? REGION_NAMES[regionCode as keyof typeof REGION_NAMES]?.[language] ?? regionCode
     : t('filter.all_regions');
 
-  const venueCode = selectedVenueTypes[0] ?? null;
   const venueLabel = venueCode
     ? VENUE_TYPE_NAMES[venueCode as keyof typeof VENUE_TYPE_NAMES]?.[language] ?? venueCode
+    : t('filter.all');
+
+  const deliveryLabel = deliveryCode
+    ? DELIVERY_PLATFORM_NAMES[deliveryCode]?.[language] ?? deliveryCode
     : t('filter.all');
 
   return (
@@ -150,8 +279,9 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
         />
       </View>
 
-      <View style={styles.fullWidthField}>
+      <View style={styles.dropdownRow}>
         <FilterSelect
+          flex
           label={t('filter.venue_type')}
           value={venueCode}
           displayValue={venueLabel}
@@ -159,6 +289,17 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
           onChange={setVenueTypeSingle}
           active={venueCode != null}
         />
+        {availableDeliveryPlatforms.length > 0 ? (
+          <FilterSelect
+            flex
+            label={t('filter.delivery')}
+            value={deliveryCode}
+            displayValue={deliveryLabel}
+            options={deliveryOptions}
+            onChange={setDeliveryPlatformSingle}
+            active={deliveryCode != null}
+          />
+        ) : null}
       </View>
 
       <View style={styles.sectionBlock}>
@@ -175,66 +316,74 @@ function SearchFilterPanel({ onClose }: SearchFilterPanelProps) {
         />
       </View>
 
-      <View style={styles.sectionBlock}>
-        <Text style={styles.sectionTitle}>{t('filter.price')}</Text>
-        <FilterChipRow
-        options={priceOptions}
-        selectedId={priceChipId}
-        onSelect={(id) => {
-          if (id === 'all') {
-            setPriceRangesAll();
-          } else {
-            setPriceRangesAll();
-            togglePriceRange(id);
-          }
-        }}
-        />
-      </View>
-
-      <View style={styles.sectionBlock}>
-        <Text style={styles.sectionTitle}>{t('filter.dietary')}</Text>
-        <View style={styles.dietRow}>
-        <Pressable
-          onPress={() => {
-            hapticLight();
-            setDietVegan(!dietVegan);
-          }}
-          style={[styles.dietCard, dietVegan && styles.dietCardActive]}
-        >
-          <MaterialCommunityIcons
-            name="leaf"
-            size={28}
-            color={dietVegan ? colors.primary : colors.textSecondary}
+      {availablePriceRanges.length > 0 ? (
+        <View style={styles.sectionBlock}>
+          <Text style={styles.sectionTitle}>{t('filter.price')}</Text>
+          <FilterChipRow
+            options={priceOptions}
+            selectedId={priceChipId}
+            onSelect={(id) => {
+              if (id === 'all') {
+                setPriceRangesAll();
+              } else {
+                setPriceRangesAll();
+                togglePriceRange(id);
+              }
+            }}
           />
-          <Text style={[styles.dietLabel, dietVegan && styles.dietLabelActive]}>
-            {t('filter.vegan')}
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            hapticLight();
-            setDietVegetarian(!dietVegetarian);
-          }}
-          style={[styles.dietCard, dietVegetarian && styles.dietCardActive]}
-        >
-          <MaterialCommunityIcons
-            name="check-circle-outline"
-            size={28}
-            color={dietVegetarian ? colors.primary : colors.textSecondary}
-          />
-          <Text style={[styles.dietLabel, dietVegetarian && styles.dietLabelActive]}>
-            {t('filter.vegetarian')}
-          </Text>
-        </Pressable>
         </View>
-      </View>
+      ) : null}
+
+      {hasVeganOption || hasVegetarianOption ? (
+        <View style={styles.sectionBlock}>
+          <Text style={styles.sectionTitle}>{t('filter.dietary')}</Text>
+          <View style={styles.dietRow}>
+            {hasVeganOption ? (
+              <Pressable
+                onPress={() => {
+                  hapticLight();
+                  setDietVegan(!dietVegan);
+                }}
+                style={[styles.dietCard, dietVegan && styles.dietCardActive]}
+              >
+                <MaterialCommunityIcons
+                  name="leaf"
+                  size={28}
+                  color={dietVegan ? colors.primary : colors.textSecondary}
+                />
+                <Text style={[styles.dietLabel, dietVegan && styles.dietLabelActive]}>
+                  {t('filter.vegan')}
+                </Text>
+              </Pressable>
+            ) : null}
+            {hasVegetarianOption ? (
+              <Pressable
+                onPress={() => {
+                  hapticLight();
+                  setDietVegetarian(!dietVegetarian);
+                }}
+                style={[styles.dietCard, dietVegetarian && styles.dietCardActive]}
+              >
+                <MaterialCommunityIcons
+                  name="check-circle-outline"
+                  size={28}
+                  color={dietVegetarian ? colors.primary : colors.textSecondary}
+                />
+                <Text style={[styles.dietLabel, dietVegetarian && styles.dietLabelActive]}>
+                  {t('filter.vegetarian')}
+                </Text>
+              </Pressable>
+            ) : null}
+          </View>
+        </View>
+      ) : null}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   panelScroll: {
-    maxHeight: 340,
+    maxHeight: 400,
     marginHorizontal: spacing.screenPadding,
     marginTop: spacing.sm,
     borderRadius: radius.xl,

@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { radius, spacing } from '../theme/spacing';
@@ -145,10 +145,12 @@ const styles = StyleSheet.create({
     borderColor: colors.cuisineSurface,
     backgroundColor: colors.surface,
     paddingHorizontal: spacing.cardPadding,
+    paddingVertical: spacing.xs,
   },
   fieldMain: {
     flex: 1,
     minWidth: 0,
+    minHeight: 40,
     justifyContent: 'center',
   },
   fieldActive: {
@@ -156,8 +158,8 @@ const styles = StyleSheet.create({
   },
   value: {
     ...typography.body,
-    flex: 1,
     color: colors.textPrimary,
+    ...(Platform.OS === 'android' ? { textAlignVertical: 'center', includeFontPadding: false } : {}),
   },
   clearHit: {
     padding: spacing.xs,
@@ -177,6 +179,8 @@ const styles = StyleSheet.create({
   option: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,
+    justifyContent: 'center',
+    minHeight: 48,
   },
   optionSelected: {
     backgroundColor: colors.cuisineSurface,

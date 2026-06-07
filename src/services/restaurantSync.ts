@@ -1,18 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import bundledData from '../data/restaurants.json';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import type { Restaurant } from '../types/Restaurant';
 import { mapSupabaseRestaurantRow, type SupabaseRestaurantRow } from '../utils/mapSupabaseRestaurant';
 
-const CACHE_KEY = '@celiacsafe/restaurants_cache_v1';
+const CACHE_KEY = '@celiacsafe/restaurants_cache_v2';
 
 const RESTAURANT_SELECT = `
   id, name, slug, country_code, region_code, region_name, province, city, district,
-  postal_code, address_street, latitude, longitude, venue_type, cuisine_types,
+  postal_code, address_street, latitude, longitude,
+  venue_type, cuisine_types,
   price_range, meal_types, verification_status, verification_methods, last_verified_at,
   face_program, aoecs_certified, national_authority, phone, whatsapp, email, website,
   menu_url, instagram, facebook, opening_hours, seasonal_closure, description_es,
-  description_en, description_de, featured_image_url,
+  description_en, description_de, featured_image_url, is_premium_partner,
   delivery_links ( platform, url, is_active ),
   reservation_links ( platform, url, is_active )
 `;
@@ -80,6 +82,84 @@ async function persistCache(restaurants: Restaurant[]): Promise<void> {
   await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(payload));
 }
 
+function normalizeLookupKey(value: string | undefined | null): string {
+  return (value ?? '').trim().toLowerCase();
+}
+
+interface BundleLookups {
+  byId: Map<string, Restaurant>;
+  bySlug: Map<string, Restaurant>;
+  byName: Map<string, Restaurant>;
+  cityCentroids: Map<string, { latitude: number; longitude: number }>;
+}
+
+function buildBundleLookups(bundled: Restaurant[]): BundleLookups {
+  const byId = new Map<string, Restaurant>();
+  const bySlug = new Map<string, Restaurant>();
+  const byName = new Map<string, Restaurant>();
+  const cityCentroids = new Map<string, { latitude: number; longitude: number }>();
+
+  for (const restaurant of bundled) {
+    byId.set(normalizeLookupKey(restaurant.id), restaurant);
+    if (restaurant.slug) {
+      bySlug.set(normalizeLookupKey(restaurant.slug), restaurant);
+    }
+    byName.set(normalizeLookupKey(restaurant.name), restaurant);
+    if (
+      restaurant.city &&
+      restaurant.latitude != null &&
+      restaurant.longitude != null
+    ) {
+      const cityKey = normalizeLookupKey(restaurant.city);
+      if (!cityCentroids.has(cityKey)) {
+        cityCentroids.set(cityKey, {
+          latitude: restaurant.latitude,
+          longitude: restaurant.longitude,
+        });
+      }
+    }
+  }
+
+  return { byId, bySlug, byName, cityCentroids };
+}
+
+/** Maps-Deeplinks und Koordinaten aus restaurants.json ergänzen, solange Supabase/Cache unvollständig sind. */
+export function enrichRestaurantsFromBundle(restaurants: Restaurant[]): Restaurant[] {
+  const lookups = buildBundleLookups(bundledData.restaurants as Restaurant[]);
+
+  return restaurants.map((restaurant) => {
+    const bundledMatch =
+      lookups.byId.get(normalizeLookupKey(restaurant.id)) ??
+      (restaurant.slug
+        ? lookups.bySlug.get(normalizeLookupKey(restaurant.slug))
+        : undefined) ??
+      lookups.byName.get(normalizeLookupKey(restaurant.name));
+
+    const cityCentroid = restaurant.city
+      ? lookups.cityCentroids.get(normalizeLookupKey(restaurant.city))
+      : undefined;
+
+    const delivery_links = restaurant.delivery_links?.length
+      ? restaurant.delivery_links
+      : bundledMatch?.delivery_links;
+    const reservation_links = restaurant.reservation_links?.length
+      ? restaurant.reservation_links
+      : bundledMatch?.reservation_links;
+
+    return {
+      ...restaurant,
+      google_maps_url: restaurant.google_maps_url ?? bundledMatch?.google_maps_url,
+      apple_maps_url: restaurant.apple_maps_url ?? bundledMatch?.apple_maps_url,
+      latitude:
+        restaurant.latitude ?? bundledMatch?.latitude ?? cityCentroid?.latitude,
+      longitude:
+        restaurant.longitude ?? bundledMatch?.longitude ?? cityCentroid?.longitude,
+      ...(delivery_links?.length ? { delivery_links } : {}),
+      ...(reservation_links?.length ? { reservation_links } : {}),
+    };
+  });
+}
+
 /** Liest den zuletzt gespeicherten Supabase-Stand (offline-fähig). */
 export async function hydrateRestaurantCache(): Promise<void> {
   if (cacheHydrated) {
@@ -91,7 +171,7 @@ export async function hydrateRestaurantCache(): Promise<void> {
     if (raw) {
       const parsed = JSON.parse(raw) as CachePayload;
       if (Array.isArray(parsed.restaurants) && parsed.restaurants.length > 0) {
-        remoteRestaurants = parsed.restaurants;
+        remoteRestaurants = enrichRestaurantsFromBundle(parsed.restaurants);
         setState({
           source: 'cache',
           lastSyncedAt: parsed.fetchedAt ?? null,
@@ -128,9 +208,11 @@ export async function syncRestaurantsFromSupabase(): Promise<boolean> {
       throw error;
     }
 
-    const restaurants = ((data ?? []) as SupabaseRestaurantRow[])
-      .map(mapSupabaseRestaurantRow)
-      .sort((a, b) => a.name.localeCompare(b.name, 'es'));
+    const restaurants = enrichRestaurantsFromBundle(
+      ((data ?? []) as SupabaseRestaurantRow[])
+        .map(mapSupabaseRestaurantRow)
+        .sort((a, b) => a.name.localeCompare(b.name, 'es')),
+    );
 
     remoteRestaurants = restaurants;
     const fetchedAt = new Date().toISOString();
@@ -151,7 +233,7 @@ export async function syncRestaurantsFromSupabase(): Promise<boolean> {
   }
 }
 
-/** Cache laden, dann im Hintergrund Supabase synchronisieren. */
+/** Cache laden; Supabase-Sync läuft danach im Hintergrund (UI nicht blockieren). */
 export async function bootstrapRestaurantData(): Promise<void> {
   if (bootstrapStarted) {
     return;
@@ -161,6 +243,6 @@ export async function bootstrapRestaurantData(): Promise<void> {
   await hydrateRestaurantCache();
 
   if (isSupabaseConfigured) {
-    await syncRestaurantsFromSupabase();
+    void syncRestaurantsFromSupabase();
   }
 }

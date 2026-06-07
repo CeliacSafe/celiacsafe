@@ -14,6 +14,7 @@ interface FilterState {
   sortBy: 'name_asc' | 'name_desc' | 'recently_verified';
 
   selectedCity: string | null;
+  selectedDeliveryPlatform: string | null;
   dietVegan: boolean;
   dietVegetarian: boolean;
   minRating: RatingChip;
@@ -30,6 +31,7 @@ interface FilterState {
   setAoecsFilter: (value: boolean) => void;
   setSortBy: (sort: FilterState['sortBy']) => void;
   setSelectedCity: (city: string | null) => void;
+  setDeliveryPlatformSingle: (platform: string | null) => void;
   setDietVegan: (value: boolean) => void;
   setDietVegetarian: (value: boolean) => void;
   setMinRating: (value: RatingChip) => void;
@@ -47,6 +49,7 @@ const initialState = {
   onlyAoecsCertified: false,
   sortBy: 'name_asc' as const,
   selectedCity: null as string | null,
+  selectedDeliveryPlatform: null as string | null,
   dietVegan: false,
   dietVegetarian: false,
   minRating: 'all' as RatingChip,
@@ -99,6 +102,8 @@ export const useFilterStore = create<FilterState>((set, get) => ({
 
   setSelectedCity: (city) => set({ selectedCity: city }),
 
+  setDeliveryPlatformSingle: (platform) => set({ selectedDeliveryPlatform: platform }),
+
   setDietVegan: (value) => set({ dietVegan: value }),
 
   setDietVegetarian: (value) => set({ dietVegetarian: value }),
@@ -131,6 +136,7 @@ export const useFilterStore = create<FilterState>((set, get) => ({
       state.onlyFaceCertified ||
       state.onlyAoecsCertified ||
       state.selectedCity != null ||
+      state.selectedDeliveryPlatform != null ||
       state.dietVegan ||
       state.dietVegetarian ||
       state.minRating !== 'all' ||

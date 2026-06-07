@@ -14,6 +14,8 @@ const RESTAURANT_FIELDS = [
   'address_street',
   'latitude',
   'longitude',
+  'google_maps_url',
+  'apple_maps_url',
   'venue_type',
   'cuisine_types',
   'price_range',
@@ -37,6 +39,7 @@ const RESTAURANT_FIELDS = [
   'description_en',
   'description_de',
   'featured_image_url',
+  'is_premium_partner',
 ] as const;
 
 type LinkRow = { platform: string; url: string; is_active: boolean };
@@ -61,7 +64,12 @@ function mapLinks<T extends DeliveryLink | ReservationLink>(rows: LinkRow[] | nu
     return [];
   }
   return rows
-    .filter((row) => row.is_active !== false && row.url?.trim())
+    .filter(
+      (row) =>
+        row.is_active !== false &&
+        row.platform?.trim() &&
+        row.platform !== 'no_delivery'
+    )
     .map((row) => ({
       platform: row.platform,
       url: row.url,

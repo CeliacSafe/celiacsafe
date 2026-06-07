@@ -15,6 +15,38 @@ function isUsableUrl(url: string | undefined): boolean {
   return Boolean(url?.trim());
 }
 
+const DELIVERY_PLATFORM_ALIASES: Record<string, DeliveryPlatform> = {
+  uber_eats: 'uber_eats',
+  'uber eats': 'uber_eats',
+  ubereats: 'uber_eats',
+  just_eat: 'just_eat',
+  'just eat': 'just_eat',
+  justeat: 'just_eat',
+  lieferando: 'lieferando',
+  own_delivery: 'own_delivery',
+  own_delivery_page: 'own_delivery',
+  own_order_page: 'own_delivery',
+  own_takeaway: 'own_delivery',
+  own_online_shop: 'own_delivery',
+  own_order: 'own_delivery',
+  own_orders: 'own_delivery',
+  'own_order_/_pickup': 'own_delivery',
+};
+
+/** Excel-/DB-Varianten → kanonischer Plattform-Code (wie scripts/platform_urls.py). */
+export function normalizeDeliveryPlatform(platform: string): DeliveryPlatform {
+  const raw = platform.trim().toLowerCase().replace(/-/g, '_');
+  if (!raw) {
+    return 'own_delivery';
+  }
+  const underscored = raw.replace(/\s+/g, '_');
+  return (
+    DELIVERY_PLATFORM_ALIASES[raw] ??
+    DELIVERY_PLATFORM_ALIASES[underscored] ??
+    (underscored as DeliveryPlatform)
+  );
+}
+
 function searchQuery(restaurant: Restaurant): string {
   return [restaurant.name, restaurant.city].filter(Boolean).join(' ').trim();
 }
@@ -88,10 +120,11 @@ const RESERVATION_BUILDERS: Partial<
 };
 
 export function resolveDeliveryUrl(restaurant: Restaurant, link: DeliveryLink): string | null {
-  if (link.is_active === false || link.platform === 'no_delivery') {
+  const platform = normalizeDeliveryPlatform(link.platform);
+  if (link.is_active === false || platform === 'no_delivery') {
     return null;
   }
-  if (link.platform === 'own_delivery') {
+  if (platform === 'own_delivery') {
     if (isUsableUrl(link.url)) {
       return normalizeUrl(link.url);
     }
@@ -100,7 +133,7 @@ export function resolveDeliveryUrl(restaurant: Restaurant, link: DeliveryLink): 
     }
     return null;
   }
-  const builder = DELIVERY_BUILDERS[link.platform];
+  const builder = DELIVERY_BUILDERS[platform];
   if (builder) {
     const url = builder(restaurant, link.url);
     return url || null;
@@ -130,12 +163,17 @@ export function resolveReservationUrl(restaurant: Restaurant, link: ReservationL
 }
 
 export function getActiveDeliveryLinks(restaurant: Restaurant): DeliveryLink[] {
-  return (restaurant.delivery_links ?? []).filter(
-    (link) =>
-      link.is_active !== false &&
-      link.platform !== 'no_delivery' &&
-      resolveDeliveryUrl(restaurant, link) != null
-  );
+  return (restaurant.delivery_links ?? [])
+    .map((link) => ({
+      ...link,
+      platform: normalizeDeliveryPlatform(link.platform),
+    }))
+    .filter(
+      (link) =>
+        link.is_active !== false &&
+        link.platform !== 'no_delivery' &&
+        resolveDeliveryUrl(restaurant, link) != null
+    );
 }
 
 export function getActiveReservationLinks(restaurant: Restaurant): ReservationLink[] {

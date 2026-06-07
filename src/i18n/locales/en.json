@@ -30,7 +30,13 @@
     "sort_by": "Sort by",
     "sort_name_asc": "Name A–Z",
     "sort_name_desc": "Name Z–A",
-    "sort_recently_verified": "Recently verified"
+    "sort_recently_verified": "Recently verified",
+    "nearby_hint": "Restaurants near you",
+    "location_requesting": "Getting your location…",
+    "location_denied": "No location — sorted by name.",
+    "location_tap_to_enable": "Tap to sort by distance",
+    "load_more": "Load more",
+    "showing_nearby": "{{shown}} of {{total}} nearby"
   },
   "filter": {
     "title": "Filters",
@@ -41,6 +47,7 @@
     "all_regions": "All regions",
     "all_cities": "All cities",
     "venue_type": "Venue type",
+    "delivery": "Delivery",
     "rating": "Rating",
     "verified_hint": "Confirmed",
     "price": "Price range",
@@ -66,6 +73,7 @@
     "certified_by": "Certified by: {{authority}}",
     "address": "Address",
     "directions": "Get directions",
+    "open_in_maps": "Open in Maps",
     "about": "About the restaurant",
     "cuisine": "Cuisine",
     "opening_hours": "Opening hours",
@@ -93,7 +101,8 @@
   },
   "card": {
     "badge_sin_gluten": "100% GLUTEN FREE",
-    "badge_verified": "OFFICIAL VERIFICATION"
+    "badge_verified": "OFFICIAL VERIFICATION",
+    "badge_premium": "PREMIUM PARTNER"
   },
   "map": {
     "view_detail": "Details",
@@ -171,7 +180,7 @@
     "sections": [
       {
         "title": "Who is responsible",
-        "body": "Data controller (Art. 4(7) GDPR): Stephan [Surname], natural person based in the European Union (Germany), as operator of the «Celiac Safe» project.\n\nGeneral contact: contact@celiacsafe.app\n\nThere is no user account or registration on our own servers."
+        "body": "Data controller (Art. 4(7) GDPR): Stephan [Surname], natural person based in the European Union (Germany), as operator of the «Celiac Safe» project.\n\nGeneral contact: contact@celiacsafe.app\n\nApp users do not have accounts or registration. A separate staff login (email/password) exists only for internal curation via the web admin."
       },
       {
         "title": "Data protection officer (DPO)",
@@ -179,11 +188,11 @@
       },
       {
         "title": "What data we process",
-        "body": "The app is designed to minimise personal data:\n\n• Device location: only when you tap «My location» on the map to centre the map. No background tracking and no transmission to our servers.\n\n• Favourites: stored only in local device storage (AsyncStorage). Not synced to the cloud.\n\n• Interface language: preference stored locally on the device.\n\n• Restaurant suggestions, contact or bug reports: only if you voluntarily send an email from your mail client. We receive what you write (e.g. venue name, city, your name or email if provided). No automatic background sending.\n\n• Restaurant listings shown in the app: public or third-party information; not your health data."
+        "body": "The app is designed to minimise personal data:\n\n• Device location: only when you tap «My location» on the map to centre the map. No background tracking and no transmission to our servers.\n\n• Favourites: stored only in local device storage (AsyncStorage). Not synced to the cloud.\n\n• Interface language: preference stored locally on the device.\n\n• Restaurant suggestions via the in-app form: if you submit voluntarily, the details you enter (e.g. venue name, city, address, website, optional name/email, notes) are sent encrypted to our database hosted by Supabase (EU region, Frankfurt) and stored for review.\n\n• Restaurant suggestions, contact or bug reports by email: only if you voluntarily send an email from your mail client. We receive what you write.\n\n• Restaurant listings shown in the app: public or third-party information; not your health data."
       },
       {
         "title": "Where data is stored and retention",
-        "body": "On-device data (favourites, language): until you uninstall the app or clear app data in system settings.\n\nEmails you send us: processed in our mailbox for as long as needed to handle your request and, where relevant, document adding a venue; then deleted or anonymised per our internal retention policy unless law requires longer storage.\n\nWe do not operate cloud user profile databases."
+        "body": "On-device data (favourites, language): until you uninstall the app or clear app data in system settings.\n\nSuggestions from the in-app form: stored in Supabase (EU, Frankfurt) for processing; deleted or anonymised per our internal retention policy unless the suggestion is adopted or law requires longer storage.\n\nEmails you send us: processed in our mailbox for as long as needed to handle your request; then deleted or anonymised per our internal retention policy.\n\nWe do not operate cloud user profile databases for app users."
       },
       {
         "title": "Legal basis (Art. 6 GDPR)",
@@ -191,7 +200,7 @@
       },
       {
         "title": "Third-party providers",
-        "body": "Certain features may involve independent providers under their own terms:\n\n• Embedded maps (react-native-maps): Apple Maps on iOS and Google Maps on Android typically. Showing the map or opening directions may communicate coordinates to those providers. See their privacy policies.\n\n• External links: phone, WhatsApp, websites, Instagram, Facebook or other apps you open voluntarily.\n\n• System mail client: when you send suggestions or contact us, you send from your email provider (e.g. Gmail, iCloud Mail).\n\n• App stores (Apple App Store, Google Play): if you rate or share the app, Apple or Google terms apply.\n\nWe do not sell personal data or run profile-based advertising."
+        "body": "Certain features may involve independent providers under their own terms:\n\n• Supabase (database hosting, EU Frankfurt): stores restaurant suggestions from the in-app form and restaurant data for the app. Privacy: https://supabase.com/privacy\n\n• Embedded maps (react-native-maps): Apple Maps on iOS and Google Maps on Android typically. Showing the map or opening directions may communicate coordinates to those providers. See their privacy policies.\n\n• External links: phone, WhatsApp, websites, Instagram, Facebook or other apps you open voluntarily.\n\n• System mail client: when you send suggestions or contact us by email, you send from your email provider (e.g. Gmail, iCloud Mail).\n\n• App stores (Apple App Store, Google Play): if you rate or share the app, Apple or Google terms apply.\n\nWe do not sell personal data or run profile-based advertising."
       },
       {
         "title": "Your rights",
@@ -308,6 +317,11 @@
     "success_title": "Thank you!",
     "success_message": "Your mail app opened. Send the message to complete your suggestion.",
     "success_message_supabase": "Your suggestion was saved and will be reviewed. Thank you!",
+    "rate_limit_title": "Not possible right now",
+    "rate_limit_email": "Several suggestions were already sent from this email address. Please try again tomorrow or contact us directly.",
+    "rate_limit_global": "Many suggestions are being submitted right now. Please try again in an hour.",
+    "rate_limit_duplicate": "This restaurant was suggested recently. We are already reviewing that entry.",
+    "rate_limit_client": "Please wait a few minutes before submitting another suggestion.",
     "validation_min_length": "At least 2 characters",
     "validation_email": "Enter a valid email",
     "validation_website": "Must start with http, https or www",

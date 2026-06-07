@@ -30,7 +30,13 @@
     "sort_by": "Sortieren nach",
     "sort_name_asc": "Name A–Z",
     "sort_name_desc": "Name Z–A",
-    "sort_recently_verified": "Kürzlich verifiziert"
+    "sort_recently_verified": "Kürzlich verifiziert",
+    "nearby_hint": "Restaurants in deiner Nähe",
+    "location_requesting": "Standort wird ermittelt…",
+    "location_denied": "Ohne Standort — sortiert nach Name.",
+    "location_tap_to_enable": "Tippen, um nach Entfernung zu sortieren",
+    "load_more": "Mehr laden",
+    "showing_nearby": "{{shown}} von {{total}} in der Nähe"
   },
   "filter": {
     "title": "Filter",
@@ -41,6 +47,7 @@
     "all_regions": "Alle Regionen",
     "all_cities": "Alle Städte",
     "venue_type": "Restaurant-Art",
+    "delivery": "Lieferung",
     "rating": "Bewertung",
     "verified_hint": "Bestätigt",
     "price": "Preisbereich",
@@ -66,6 +73,7 @@
     "certified_by": "Zertifiziert durch: {{authority}}",
     "address": "Adresse",
     "directions": "Route planen",
+    "open_in_maps": "In Maps öffnen",
     "about": "Über das Restaurant",
     "cuisine": "Küche",
     "opening_hours": "Öffnungszeiten",
@@ -93,7 +101,8 @@
   },
   "card": {
     "badge_sin_gluten": "100% GLUTENFREI",
-    "badge_verified": "OFFIZIELLE VERIFIZIERUNG"
+    "badge_verified": "OFFIZIELLE VERIFIZIERUNG",
+    "badge_premium": "PREMIUMPARTNER"
   },
   "map": {
     "view_detail": "Details",
@@ -171,7 +180,7 @@
     "sections": [
       {
         "title": "Verantwortlicher",
-        "body": "Verantwortlicher im Sinne von Art. 4 Nr. 7 DSGVO: Stephan [Nachname], natürliche Person mit Wohnsitz in der Europäischen Union (Deutschland), als Verantwortlicher des Projekts «Celiac Safe».\n\nAllgemeiner Kontakt: contact@celiacsafe.app\n\nEs gibt kein Benutzerkonto und keine Registrierung auf eigenen Servern der App."
+        "body": "Verantwortlicher im Sinne von Art. 4 Nr. 7 DSGVO: Stephan [Nachname], natürliche Person mit Wohnsitz in der Europäischen Union (Deutschland), als Verantwortlicher des Projekts «Celiac Safe».\n\nAllgemeiner Kontakt: contact@celiacsafe.app\n\nFür App-Nutzerinnen und -Nutzer gibt es kein Benutzerkonto und keine Registrierung. Separates Staff-Login (E-Mail/Passwort) existiert nur für interne Redaktion über das Web-Admin."
       },
       {
         "title": "Datenschutzbeauftragter (DSB)",
@@ -179,11 +188,11 @@
       },
       {
         "title": "Welche Daten wir verarbeiten",
-        "body": "Die App ist auf Datenminimierung ausgelegt:\n\n• Gerätestandort: nur wenn Sie auf der Karte «Mein Standort» tippen, um die Karte zu zentrieren. Kein Hintergrund-Tracking, keine Übermittlung an unsere Server.\n\n• Favoriten: nur im lokalen Gerätespeicher (AsyncStorage). Keine Cloud-Synchronisation.\n\n• Sprache der Oberfläche: Präferenz nur lokal auf dem Gerät.\n\n• Restaurant-Vorschläge, Kontakt oder Fehlermeldungen: nur wenn Sie freiwillig eine E-Mail aus Ihrem Mail-Programm senden. Wir erhalten den von Ihnen geschriebenen Inhalt (z. B. Name des Restaurants, Stadt, Ihr Name oder Ihre E-Mail, falls angegeben). Kein automatischer Versand im Hintergrund.\n\n• In der App angezeigte Restaurantdaten: öffentliche oder von Dritten bereitgestellte Informationen; keine Gesundheitsdaten von Ihnen."
+        "body": "Die App ist auf Datenminimierung ausgelegt:\n\n• Gerätestandort: nur wenn Sie auf der Karte «Mein Standort» tippen, um die Karte zu zentrieren. Kein Hintergrund-Tracking, keine Übermittlung an unsere Server.\n\n• Favoriten: nur im lokalen Gerätespeicher (AsyncStorage). Keine Cloud-Synchronisation.\n\n• Sprache der Oberfläche: Präferenz nur lokal auf dem Gerät.\n\n• Restaurant-Vorschläge über das Formular in der App: wenn Sie freiwillig absenden, werden die von Ihnen eingegebenen Angaben (z. B. Restaurantname, Stadt, Adresse, Website, optional Name/E-Mail, Notizen) verschlüsselt an unsere Datenbank bei Supabase (EU-Region Frankfurt) übermittelt und von uns zur Prüfung gespeichert.\n\n• Restaurant-Vorschläge, Kontakt oder Fehlermeldungen per E-Mail: nur wenn Sie freiwillig eine E-Mail aus Ihrem Mail-Programm senden. Wir erhalten den von Ihnen geschriebenen Inhalt.\n\n• In der App angezeigte Restaurantdaten: öffentliche oder von Dritten bereitgestellte Informationen; keine Gesundheitsdaten von Ihnen."
       },
       {
         "title": "Speicherort und Speicherdauer",
-        "body": "Daten auf dem Gerät (Favoriten, Sprache): bis zur Deinstallation der App oder Löschung der App-Daten in den Systemeinstellungen.\n\nE-Mails an uns: Verarbeitung im Postfach des Verantwortlichen, so lange wie für die Bearbeitung Ihres Anliegens und ggf. die Dokumentation der Aufnahme eines Restaurants erforderlich; anschließend Löschung oder Anonymisierung nach interner Aufbewahrungsrichtlinie, sofern keine gesetzliche Aufbewahrungspflicht besteht.\n\nWir betreiben keine Cloud-Datenbanken mit Nutzerprofilen."
+        "body": "Daten auf dem Gerät (Favoriten, Sprache): bis zur Deinstallation der App oder Löschung der App-Daten in den Systemeinstellungen.\n\nVorschläge aus dem App-Formular: Speicherung in Supabase (EU, Frankfurt) zur Bearbeitung durch uns; Löschung oder Anonymisierung nach interner Aufbewahrungsrichtlinie, sofern der Vorschlag nicht übernommen wird und keine gesetzliche Aufbewahrungspflicht besteht.\n\nE-Mails an uns: Verarbeitung im Postfach des Verantwortlichen, so lange wie für die Bearbeitung Ihres Anliegens erforderlich; anschließend Löschung oder Anonymisierung nach interner Aufbewahrungsrichtlinie.\n\nWir betreiben keine Cloud-Datenbanken mit Nutzerprofilen für App-Nutzer."
       },
       {
         "title": "Rechtsgrundlagen (Art. 6 DSGVO)",
@@ -191,7 +200,7 @@
       },
       {
         "title": "Drittanbieter und Dienste",
-        "body": "Bei bestimmten Funktionen können unabhängige Anbieter unter eigenen Bedingungen eingeschaltet werden:\n\n• Eingebettete Karten (react-native-maps): unter iOS typischerweise Apple Maps, unter Android Google Maps. Beim Anzeigen der Karte oder Öffnen der Navigation («Route») können Koordinaten an diese Anbieter übermittelt werden. Bitte deren Datenschutzhinweise beachten.\n\n• Externe Links: Telefon, WhatsApp, Websites, Instagram, Facebook oder andere Apps, die Sie freiwillig öffnen.\n\n• System-Mail-Client: beim Senden von Vorschlägen oder Kontakt erfolgt der Versand über Ihren E-Mail-Anbieter (z. B. Gmail, iCloud Mail).\n\n• App-Stores (Apple App Store, Google Play): bei Bewertung oder Teilen gelten die Bedingungen von Apple bzw. Google.\n\nWir verkaufen keine personenbezogenen Daten und betreiben kein profilbasiertes Werbetracking."
+        "body": "Bei bestimmten Funktionen können unabhängige Anbieter unter eigenen Bedingungen eingeschaltet werden:\n\n• Supabase (Datenbank-Hosting, EU Frankfurt): Speicherung von Restaurant-Vorschlägen aus dem App-Formular und von Restaurant-Stammdaten für die App. Datenschutz: https://supabase.com/privacy\n\n• Eingebettete Karten (react-native-maps): unter iOS typischerweise Apple Maps, unter Android Google Maps. Beim Anzeigen der Karte oder Öffnen der Navigation («Route») können Koordinaten an diese Anbieter übermittelt werden. Bitte deren Datenschutzhinweise beachten.\n\n• Externe Links: Telefon, WhatsApp, Websites, Instagram, Facebook oder andere Apps, die Sie freiwillig öffnen.\n\n• System-Mail-Client: beim Senden von Vorschlägen oder Kontakt per E-Mail erfolgt der Versand über Ihren E-Mail-Anbieter (z. B. Gmail, iCloud Mail).\n\n• App-Stores (Apple App Store, Google Play): bei Bewertung oder Teilen gelten die Bedingungen von Apple bzw. Google.\n\nWir verkaufen keine personenbezogenen Daten und betreiben kein profilbasiertes Werbetracking."
       },
       {
         "title": "Ihre Rechte",
@@ -308,6 +317,11 @@
     "success_title": "Danke!",
     "success_message": "Die Mail-App wurde geöffnet. Senden Sie die Nachricht, um den Vorschlag abzuschließen.",
     "success_message_supabase": "Ihr Vorschlag wurde gespeichert und wird von uns geprüft. Vielen Dank!",
+    "rate_limit_title": "Gerade nicht möglich",
+    "rate_limit_email": "Für diese E-Mail-Adresse wurden bereits mehrere Vorschläge gesendet. Bitte versuchen Sie es morgen erneut oder schreiben Sie uns direkt.",
+    "rate_limit_global": "Derzeit werden sehr viele Vorschläge eingereicht. Bitte versuchen Sie es in einer Stunde erneut.",
+    "rate_limit_duplicate": "Dieses Restaurant wurde kürzlich schon vorgeschlagen. Wir prüfen den bestehenden Eintrag.",
+    "rate_limit_client": "Bitte warten Sie einige Minuten, bevor Sie erneut einen Vorschlag senden.",
     "validation_min_length": "Mindestens 2 Zeichen",
     "validation_email": "Gültige E-Mail eingeben",
     "validation_website": "Muss mit http, https oder www beginnen",

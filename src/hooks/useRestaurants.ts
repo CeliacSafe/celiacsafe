@@ -83,7 +83,7 @@ export function useRestaurants(): UseRestaurantsResult {
 
   return {
     restaurants,
-    loading: loading || !adminHydrated,
+    loading: loading && restaurants.length === 0,
     error,
     syncing: syncState.syncing,
     lastSyncedAt: syncState.lastSyncedAt,

@@ -8,7 +8,7 @@ import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { ALL_REGIONS, PRICE_RANGES, SORT_OPTIONS } from '../data/filterOptions';
+import { SORT_OPTIONS } from '../data/filterOptions';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { REGION_NAMES } from '../i18n/regions';
 import { useRestaurants } from '../hooks/useRestaurants';
@@ -18,6 +18,11 @@ import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import { hapticMedium } from '../utils/haptics';
+import {
+  buildFilterOptionContext,
+  getAvailablePriceRanges,
+  getAvailableRegionCodes,
+} from '../utils/filterAvailability';
 import { applyFilters } from '../utils/searchAndFilter';
 
 export interface FilterBottomSheetRef {
@@ -42,9 +47,15 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef>((_props, ref) => {
   const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
   const selectedRegions = useFilterStore((state) => state.selectedRegions);
   const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
+  const selectedCity = useFilterStore((state) => state.selectedCity);
+  const selectedDeliveryPlatform = useFilterStore((state) => state.selectedDeliveryPlatform);
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const sortBy = useFilterStore((state) => state.sortBy);
+  const minRating = useFilterStore((state) => state.minRating);
+  const categoryTab = useFilterStore((state) => state.categoryTab);
+  const dietVegan = useFilterStore((state) => state.dietVegan);
+  const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
 
   const toggleRegion = useFilterStore((state) => state.toggleRegion);
   const togglePriceRange = useFilterStore((state) => state.togglePriceRange);
@@ -61,6 +72,12 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef>((_props, ref) => {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCity,
+      selectedDeliveryPlatform,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
     }),
     [
       selectedVenueTypes,
@@ -68,7 +85,55 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef>((_props, ref) => {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCity,
+      selectedDeliveryPlatform,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
     ]
+  );
+
+  const filterContext = useMemo(
+    () =>
+      buildFilterOptionContext({
+        searchQuery,
+        selectedVenueTypes,
+        selectedRegions,
+        selectedPriceRanges,
+        selectedCity,
+        selectedDeliveryPlatform,
+        onlyFaceCertified,
+        onlyAoecsCertified,
+        dietVegan,
+        dietVegetarian,
+        minRating,
+        categoryTab,
+      }),
+    [
+      searchQuery,
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      selectedCity,
+      selectedDeliveryPlatform,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
+    ]
+  );
+
+  const availableRegions = useMemo(
+    () => getAvailableRegionCodes(restaurants, filterContext),
+    [restaurants, filterContext]
+  );
+
+  const availablePriceRanges = useMemo(
+    () => getAvailablePriceRanges(restaurants, filterContext),
+    [restaurants, filterContext]
   );
 
   const resultCount = useMemo(
@@ -107,7 +172,7 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef>((_props, ref) => {
 
         <Text style={styles.sectionTitle}>{t('filter.region')}</Text>
         <View style={styles.chipsWrap}>
-          {ALL_REGIONS.map((regionCode) => {
+          {availableRegions.map((regionCode) => {
             const active = selectedRegions.includes(regionCode);
             return (
               <Pressable
@@ -130,7 +195,7 @@ const FilterBottomSheet = forwardRef<FilterBottomSheetRef>((_props, ref) => {
 
         <Text style={styles.sectionTitle}>{t('filter.price')}</Text>
         <View style={styles.chipsWrap}>
-          {PRICE_RANGES.map((range) => {
+          {availablePriceRanges.map((range) => {
             const active = selectedPriceRanges.includes(range);
             return (
               <Pressable

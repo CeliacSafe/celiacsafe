@@ -21,6 +21,19 @@ export const VENUE_TYPE_NAMES: Record<VenueType, LocalizedLabel> = {
   asian_restaurant: { es: 'Asiatico', en: 'Asian', de: 'Asiatisch' },
 };
 
+export const DELIVERY_PLATFORM_NAMES: Record<string, LocalizedLabel> = {
+  glovo: { es: 'Glovo', en: 'Glovo', de: 'Glovo' },
+  uber_eats: { es: 'Uber Eats', en: 'Uber Eats', de: 'Uber Eats' },
+  just_eat: { es: 'Just Eat', en: 'Just Eat', de: 'Just Eat' },
+  wolt: { es: 'Wolt', en: 'Wolt', de: 'Wolt' },
+  deliveroo: { es: 'Deliveroo', en: 'Deliveroo', de: 'Deliveroo' },
+  lieferando: { es: 'Lieferando', en: 'Lieferando', de: 'Lieferando' },
+  foodora: { es: 'Foodora', en: 'Foodora', de: 'Foodora' },
+  takeaway: { es: 'Takeaway', en: 'Takeaway', de: 'Takeaway' },
+  bolt_food: { es: 'Bolt Food', en: 'Bolt Food', de: 'Bolt Food' },
+  own_delivery: { es: 'Entrega propia', en: 'Own delivery', de: 'Eigene Lieferung' },
+};
+
 export const CUISINE_TYPE_NAMES: Record<string, LocalizedLabel> = {
   andaluza: { es: 'Andaluza', en: 'Andalusian', de: 'Andalusisch' },
   arroces: { es: 'Arroces', en: 'Rice dishes', de: 'Reisgerichte' },

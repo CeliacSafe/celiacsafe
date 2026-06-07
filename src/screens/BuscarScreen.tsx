@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type {
   NativeStackNavigationProp,
@@ -17,33 +17,62 @@ import SearchBarRow from '../components/SearchBarRow';
 import SearchCategoryTabs from '../components/SearchCategoryTabs';
 import SearchFilterPanel from '../components/SearchFilterPanel';
 import SkeletonCard from '../components/SkeletonCard';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { useUserLocation } from '../hooks/useUserLocation';
 import { hapticMedium } from '../utils/haptics';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import { useFilterStore } from '../store/filterStore';
 import type { Restaurant } from '../types/Restaurant';
 import { colors } from '../theme/colors';
-import { spacing } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import { formatResultCount } from '../utils/pluralize';
+import { sortRestaurantsByDistance, restaurantDistanceKm } from '../utils/restaurantDistance';
 import { applyFilters } from '../utils/searchAndFilter';
 
 type BuscarNavigationProp = NativeStackNavigationProp<BuscarStackParamList, 'BuscarList'>;
 type BuscarScreenProps = NativeStackScreenProps<BuscarStackParamList, 'BuscarList'>;
-const ITEM_HEIGHT = 320;
+const NEARBY_PAGE_SIZE = 10;
+
+type BuscarRowProps = {
+  restaurant: Restaurant;
+  distanceKm: number | null;
+  onPressRestaurant: (id: string) => void;
+};
+
+const BuscarRestaurantRow = memo(function BuscarRestaurantRow({
+  restaurant,
+  distanceKm,
+  onPressRestaurant,
+}: BuscarRowProps) {
+  const handlePress = useCallback(
+    () => onPressRestaurant(restaurant.id),
+    [onPressRestaurant, restaurant.id]
+  );
+  return (
+    <RestaurantCard restaurant={restaurant} distanceKm={distanceKm} onPress={handlePress} />
+  );
+}, (prev, next) =>
+  prev.restaurant.id === next.restaurant.id && prev.distanceKm === next.distanceKm
+);
 
 export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const { t } = useTranslation();
   const navigation = useNavigation<BuscarNavigationProp>();
   const { restaurants, loading, error, refetch } = useRestaurants();
+  const { location, loading: locationLoading, error: locationError, requestLocation } =
+    useUserLocation();
   const searchQuery = useFilterStore((state) => state.searchQuery);
+  const debouncedSearchQuery = useDebouncedValue(searchQuery);
   const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
   const selectedRegions = useFilterStore((state) => state.selectedRegions);
   const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const selectedCity = useFilterStore((state) => state.selectedCity);
+  const selectedDeliveryPlatform = useFilterStore((state) => state.selectedDeliveryPlatform);
   const dietVegan = useFilterStore((state) => state.dietVegan);
   const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
   const minRating = useFilterStore((state) => state.minRating);
@@ -53,6 +82,21 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const [refreshing, setRefreshing] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(NEARBY_PAGE_SIZE);
+  const [locationRequested, setLocationRequested] = useState(false);
+
+  useEffect(() => {
+    if (locationRequested) return;
+    setLocationRequested(true);
+    // Browser blockieren Geolocation ohne Nutzeraktion — auf Web per Banner-Tap anfordern.
+    if (Platform.OS !== 'web') {
+      requestLocation().catch(() => undefined);
+    }
+  }, [locationRequested, requestLocation]);
+
+  const handleRequestLocation = useCallback(() => {
+    requestLocation().catch(() => undefined);
+  }, [requestLocation]);
 
   const handleClearFilters = useCallback(() => {
     hapticMedium();
@@ -67,6 +111,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       onlyFaceCertified,
       onlyAoecsCertified,
       selectedCity,
+      selectedDeliveryPlatform,
       dietVegan,
       dietVegetarian,
       minRating,
@@ -79,6 +124,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       onlyFaceCertified,
       onlyAoecsCertified,
       selectedCity,
+      selectedDeliveryPlatform,
       dietVegan,
       dietVegetarian,
       minRating,
@@ -86,10 +132,51 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     ]
   );
 
+  const isBrowsingNearby = !hasActiveFilters() && searchQuery.trim().length === 0;
+
   const filteredRestaurants = useMemo(
-    () => applyFilters(restaurants, searchQuery, filterCriteria, sortBy),
-    [restaurants, searchQuery, filterCriteria, sortBy]
+    () => applyFilters(restaurants, debouncedSearchQuery, filterCriteria, sortBy),
+    [restaurants, debouncedSearchQuery, filterCriteria, sortBy]
   );
+
+  const sortedRestaurants = useMemo(() => {
+    if (location && isBrowsingNearby) {
+      return sortRestaurantsByDistance(
+        filteredRestaurants,
+        location.latitude,
+        location.longitude
+      );
+    }
+    return filteredRestaurants;
+  }, [filteredRestaurants, isBrowsingNearby, location]);
+
+  const displayRestaurants = useMemo(() => {
+    if (!isBrowsingNearby) {
+      return sortedRestaurants;
+    }
+    return sortedRestaurants.slice(0, visibleCount);
+  }, [isBrowsingNearby, sortedRestaurants, visibleCount]);
+
+  const hasMoreNearby = isBrowsingNearby && visibleCount < sortedRestaurants.length;
+
+  useEffect(() => {
+    setVisibleCount(NEARBY_PAGE_SIZE);
+  }, [
+    searchQuery,
+    selectedVenueTypes,
+    selectedRegions,
+    selectedPriceRanges,
+    onlyFaceCertified,
+    onlyAoecsCertified,
+    selectedCity,
+    selectedDeliveryPlatform,
+    dietVegan,
+    dietVegetarian,
+    minRating,
+    categoryTab,
+    location?.latitude,
+    location?.longitude,
+  ]);
 
   const openDetail = useCallback(
     (restaurantId: string) => {
@@ -102,17 +189,48 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     setRefreshing(true);
     try {
       await refetch();
+      await requestLocation();
     } finally {
       setRefreshing(false);
     }
-  }, [refetch]);
+  }, [refetch, requestLocation]);
+
+  const loadMore = useCallback(() => {
+    hapticMedium();
+    setVisibleCount((count) => count + NEARBY_PAGE_SIZE);
+  }, []);
 
   const renderItem = useCallback(
     ({ item }: { item: Restaurant }) => (
-      <RestaurantCard restaurant={item} onPress={() => openDetail(item.id)} />
+      <BuscarRestaurantRow
+        restaurant={item}
+        distanceKm={
+          location
+            ? restaurantDistanceKm(item, location.latitude, location.longitude)
+            : null
+        }
+        onPressRestaurant={openDetail}
+      />
     ),
-    [openDetail]
+    [location, openDetail]
   );
+
+  const counterLabel = useMemo(() => {
+    if (isBrowsingNearby && sortedRestaurants.length > displayRestaurants.length) {
+      return t('search.showing_nearby', {
+        shown: displayRestaurants.length,
+        total: sortedRestaurants.length,
+      }).toUpperCase();
+    }
+    return formatResultCount(sortedRestaurants.length).toUpperCase();
+  }, [displayRestaurants.length, isBrowsingNearby, sortedRestaurants.length, t]);
+
+  const listSortKey = useMemo(() => {
+    if (!location || !isBrowsingNearby) {
+      return 'name';
+    }
+    return `${location.latitude.toFixed(4)},${location.longitude.toFixed(4)}`;
+  }, [isBrowsingNearby, location]);
 
   const listHeader = useMemo(
     () => (
@@ -125,16 +243,62 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           <LanguageSwitcher variant="compact" />
         </View>
 
+        {isBrowsingNearby ? (
+          <Pressable
+            onPress={
+              Platform.OS === 'web' && !locationLoading
+                ? handleRequestLocation
+                : undefined
+            }
+            disabled={locationLoading}
+            style={({ pressed }) => [
+              styles.nearbyBanner,
+              Platform.OS === 'web' && !locationLoading && pressed && styles.nearbyBannerPressed,
+            ]}
+            accessibilityRole={Platform.OS === 'web' ? 'button' : undefined}
+            accessibilityLabel={
+              Platform.OS === 'web' ? t('search.location_tap_to_enable') : undefined
+            }
+          >
+            <MaterialCommunityIcons name="crosshairs-gps" size={16} color={colors.primary} />
+            <Text style={styles.nearbyBannerText}>
+              {locationLoading
+                ? t('search.location_requesting')
+                : locationError
+                  ? t('search.location_denied')
+                  : location
+                    ? t('search.nearby_hint')
+                    : Platform.OS === 'web'
+                      ? t('search.location_tap_to_enable')
+                      : t('search.nearby_hint')}
+            </Text>
+          </Pressable>
+        ) : null}
+
         <View style={styles.counterRow}>
           <MaterialCommunityIcons name="star-four-points" size={14} color={colors.primary} />
-          <Text style={styles.counterText}>
-            {formatResultCount(filteredRestaurants.length).toUpperCase()}
-          </Text>
+          <Text style={styles.counterText}>{counterLabel}</Text>
         </View>
       </View>
     ),
-    [filteredRestaurants.length, t]
+    [counterLabel, isBrowsingNearby, location, locationError, locationLoading, t]
   );
+
+  const listFooter = useMemo(() => {
+    if (!hasMoreNearby) {
+      return null;
+    }
+    return (
+      <Pressable
+        onPress={loadMore}
+        android_ripple={{ color: colors.rippleLight }}
+        style={({ pressed }) => [styles.loadMoreButton, pressed && styles.loadMorePressed]}
+      >
+        <Text style={styles.loadMoreLabel}>{t('search.load_more')}</Text>
+        <MaterialCommunityIcons name="chevron-down" size={22} color={colors.background} />
+      </Pressable>
+    );
+  }, [hasMoreNearby, loadMore, t]);
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
@@ -143,7 +307,12 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           filtersOpen={filtersOpen}
           onToggleFilters={() => setFiltersOpen((open) => !open)}
         />
-        {filtersOpen ? <SearchFilterPanel onClose={() => setFiltersOpen(false)} /> : null}
+        {filtersOpen ? (
+          <SearchFilterPanel
+            restaurants={restaurants}
+            onClose={() => setFiltersOpen(false)}
+          />
+        ) : null}
         <SearchCategoryTabs />
       </View>
       {loading ? (
@@ -159,9 +328,12 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         />
       ) : (
         <FlatList
+          key={listSortKey}
           style={styles.list}
-          data={filteredRestaurants}
+          data={displayRestaurants}
+          extraData={listSortKey}
           ListHeaderComponent={listHeader}
+          ListFooterComponent={listFooter}
           ListEmptyComponent={
             hasActiveFilters() ? (
               <EmptyState
@@ -187,20 +359,15 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           renderItem={renderItem}
           contentContainerStyle={[
             styles.listContent,
-            filteredRestaurants.length === 0 && styles.listContentEmpty,
+            displayRestaurants.length === 0 && styles.listContentEmpty,
           ]}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          initialNumToRender={8}
+          initialNumToRender={4}
           removeClippedSubviews
-          windowSize={10}
-          maxToRenderPerBatch={5}
-          updateCellsBatchingPeriod={50}
-          getItemLayout={(_data, index) => ({
-            length: ITEM_HEIGHT,
-            offset: ITEM_HEIGHT * index,
-            index,
-          })}
+          windowSize={5}
+          maxToRenderPerBatch={3}
+          updateCellsBatchingPeriod={100}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />
@@ -247,6 +414,25 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.textSecondary,
   },
+  nearbyBanner: {
+    marginHorizontal: spacing.screenPadding,
+    marginBottom: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.cardPadding,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+  },
+  nearbyBannerPressed: {
+    opacity: 0.85,
+  },
+  nearbyBannerText: {
+    ...typography.bodySmall,
+    flex: 1,
+    color: colors.textSecondary,
+  },
   counterRow: {
     marginTop: spacing.cardPadding,
     marginHorizontal: spacing.screenPadding,
@@ -264,6 +450,26 @@ const styles = StyleSheet.create({
   },
   listContentEmpty: {
     flexGrow: 1,
+  },
+  loadMoreButton: {
+    marginTop: spacing.md,
+    marginBottom: spacing.cardPadding,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.md,
+    overflow: 'hidden',
+  },
+  loadMorePressed: {
+    opacity: 0.9,
+  },
+  loadMoreLabel: {
+    ...typography.button,
+    fontWeight: '700',
+    color: colors.background,
   },
 });
 

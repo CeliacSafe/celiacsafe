@@ -4,9 +4,11 @@
  * dass die Ergebnisliste konsistent und performant berechnet wird.
  */
 
-import type { Restaurant } from '../types/Restaurant';
+import type { DeliveryPlatform, Restaurant } from '../types/Restaurant';
 
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
+import { compareWithPremiumInCity } from './restaurantSort';
+import { getActiveDeliveryLinks } from './platformLinks';
 
 export interface FilterCriteria {
   selectedVenueTypes: string[];
@@ -15,6 +17,7 @@ export interface FilterCriteria {
   onlyFaceCertified: boolean;
   onlyAoecsCertified: boolean;
   selectedCity?: string | null;
+  selectedDeliveryPlatform?: string | null;
   dietVegan?: boolean;
   dietVegetarian?: boolean;
   minRating?: RatingChip;
@@ -75,6 +78,12 @@ export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolea
   if (c.selectedCity && restaurant.city !== c.selectedCity) {
     return false;
   }
+  if (c.selectedDeliveryPlatform) {
+    const platforms = getActiveDeliveryLinks(restaurant).map((link) => link.platform);
+    if (!platforms.includes(c.selectedDeliveryPlatform as DeliveryPlatform)) {
+      return false;
+    }
+  }
   if (c.dietVegan && !(restaurant.cuisine_types ?? []).includes('vegana')) {
     return false;
   }
@@ -103,15 +112,25 @@ export function sortRestaurants(
   const copy = [...restaurants];
   switch (sortBy) {
     case 'name_asc':
-      return copy.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+      return copy.sort((a, b) =>
+        compareWithPremiumInCity(a, b, (left, right) =>
+          left.name.localeCompare(right.name, 'es')
+        )
+      );
     case 'name_desc':
-      return copy.sort((a, b) => b.name.localeCompare(a.name, 'es'));
+      return copy.sort((a, b) =>
+        compareWithPremiumInCity(a, b, (left, right) =>
+          right.name.localeCompare(left.name, 'es')
+        )
+      );
     case 'recently_verified':
-      return copy.sort((a, b) => {
-        const da = a.last_verified_at ?? '';
-        const db = b.last_verified_at ?? '';
-        return db.localeCompare(da);
-      });
+      return copy.sort((a, b) =>
+        compareWithPremiumInCity(a, b, (left, right) => {
+          const da = left.last_verified_at ?? '';
+          const db = right.last_verified_at ?? '';
+          return db.localeCompare(da);
+        })
+      );
   }
 }
 

@@ -1,5 +1,6 @@
 import data from '../data/restaurants.json';
 import {
+  enrichRestaurantsFromBundle,
   getRemoteRestaurants,
   getRestaurantSyncState,
   type RestaurantDataSource,
@@ -18,7 +19,11 @@ export function loadBundledRestaurants(): Restaurant[] {
 }
 
 function getBaseRestaurants(): Restaurant[] {
-  return getRemoteRestaurants() ?? loadBundledRestaurants();
+  const remote = getRemoteRestaurants();
+  if (remote) {
+    return enrichRestaurantsFromBundle(remote);
+  }
+  return loadBundledRestaurants();
 }
 
 /** Supabase/Cache/Bundled + Admin-Overrides */
