@@ -19,6 +19,7 @@ type UseRestaurantsResult = {
   loading: boolean;
   error: string | null;
   syncing: boolean;
+  syncError: string | null;
   lastSyncedAt: string | null;
   dataSource: 'remote' | 'cache' | 'bundle';
   refetch: () => Promise<void>;
@@ -86,6 +87,7 @@ export function useRestaurants(): UseRestaurantsResult {
     loading: loading && restaurants.length === 0,
     error,
     syncing: syncState.syncing,
+    syncError: syncState.syncError,
     lastSyncedAt: syncState.lastSyncedAt,
     dataSource: syncState.source,
     refetch,

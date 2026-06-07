@@ -36,7 +36,8 @@
     "location_denied": "No location — sorted by name.",
     "location_tap_to_enable": "Tap to sort by distance",
     "load_more": "Load more",
-    "showing_nearby": "{{shown}} of {{total}} nearby"
+    "showing_nearby": "{{shown}} of {{total}} nearby",
+    "offline_stale": "Offline – showing saved data. Tap to refresh."
   },
   "filter": {
     "title": "Filters",

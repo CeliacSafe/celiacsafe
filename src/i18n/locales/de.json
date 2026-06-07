@@ -36,7 +36,8 @@
     "location_denied": "Ohne Standort — sortiert nach Name.",
     "location_tap_to_enable": "Tippen, um nach Entfernung zu sortieren",
     "load_more": "Mehr laden",
-    "showing_nearby": "{{shown}} von {{total}} in der Nähe"
+    "showing_nearby": "{{shown}} von {{total}} in der Nähe",
+    "offline_stale": "Offline – es werden gespeicherte Daten angezeigt. Zum Aktualisieren tippen."
   },
   "filter": {
     "title": "Filter",

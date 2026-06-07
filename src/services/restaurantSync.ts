@@ -10,6 +10,7 @@ const CACHE_KEY = '@celiacsafe/restaurants_cache_v2';
 const RESTAURANT_SELECT = `
   id, name, slug, country_code, region_code, region_name, province, city, district,
   postal_code, address_street, latitude, longitude,
+  google_maps_url, apple_maps_url,
   venue_type, cuisine_types,
   price_range, meal_types, verification_status, verification_methods, last_verified_at,
   face_program, aoecs_certified, national_authority, phone, whatsapp, email, website,

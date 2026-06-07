@@ -61,7 +61,7 @@ const BuscarRestaurantRow = memo(function BuscarRestaurantRow({
 export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const { t } = useTranslation();
   const navigation = useNavigation<BuscarNavigationProp>();
-  const { restaurants, loading, error, refetch } = useRestaurants();
+  const { restaurants, loading, error, syncError, refetch } = useRestaurants();
   const { location, loading: locationLoading, error: locationError, requestLocation } =
     useUserLocation();
   const searchQuery = useFilterStore((state) => state.searchQuery);
@@ -314,6 +314,18 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           />
         ) : null}
         <SearchCategoryTabs />
+        {syncError && restaurants.length > 0 ? (
+          <Pressable
+            onPress={onRefresh}
+            style={({ pressed }) => [styles.staleBanner, pressed && styles.nearbyBannerPressed]}
+          >
+            <MaterialCommunityIcons name="cloud-off-outline" size={16} color={colors.textSecondary} />
+            <Text style={styles.staleBannerText} numberOfLines={2}>
+              {t('search.offline_stale')}
+            </Text>
+            <MaterialCommunityIcons name="refresh" size={16} color={colors.primary} />
+          </Pressable>
+        ) : null}
       </View>
       {loading ? (
         <FlatList
@@ -427,6 +439,22 @@ const styles = StyleSheet.create({
   },
   nearbyBannerPressed: {
     opacity: 0.85,
+  },
+  staleBanner: {
+    marginHorizontal: spacing.screenPadding,
+    marginBottom: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.cardPadding,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+  },
+  staleBannerText: {
+    ...typography.bodySmall,
+    flex: 1,
+    color: colors.textSecondary,
   },
   nearbyBannerText: {
     ...typography.bodySmall,

@@ -6,6 +6,7 @@
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
 import type { DeliveryPlatform, Restaurant } from '../types/Restaurant';
 import { getActiveDeliveryLinks, normalizeDeliveryPlatform } from './platformLinks';
+import { cuisineMatchesDiet, normalizeVenueTypes } from './venueNormalization';
 import { matchesFilter, matchesQuery, type FilterCriteria } from './searchAndFilter';
 
 export type FilterDimension =
@@ -104,8 +105,8 @@ export function getAvailableVenueTypes(
   const pool = getRestaurantsForFilterOptions(restaurants, criteria, 'venueType');
   const types = new Set<string>();
   for (const r of pool) {
-    if (r.venue_type) {
-      types.add(r.venue_type);
+    for (const code of normalizeVenueTypes(r.venue_type)) {
+      types.add(code);
     }
   }
   return [...types].sort((a, b) => a.localeCompare(b, 'es'));
@@ -155,10 +156,11 @@ export function poolHasDietOption(
     dietVegan: false,
     dietVegetarian: false,
   };
+  const diet = cuisineCode === 'vegana' ? 'vegan' : 'vegetarian';
   return restaurants
     .filter((r) => matchesQuery(r, query))
     .filter((r) => matchesFilter(r, scoped))
-    .some((r) => (r.cuisine_types ?? []).includes(cuisineCode));
+    .some((r) => cuisineMatchesDiet(r.cuisine_types, diet));
 }
 
 export function buildFilterOptionContext(state: {

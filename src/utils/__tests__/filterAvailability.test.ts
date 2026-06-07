@@ -116,7 +116,7 @@ describe('filterAvailability', () => {
           url: 'https://example.com/order',
           is_active: true,
         },
-      ] as DeliveryLink[],
+      ] as unknown as DeliveryLink[],
     });
     const platforms = getAvailableDeliveryPlatforms([withOwnTakeaway], baseCriteria);
     expect(platforms).toContain('own_delivery');

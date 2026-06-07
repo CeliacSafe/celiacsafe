@@ -36,7 +36,8 @@
     "location_denied": "Sin ubicación — ordenados por nombre.",
     "location_tap_to_enable": "Toca para ordenar por distancia",
     "load_more": "Cargar más",
-    "showing_nearby": "{{shown}} de {{total}} cerca"
+    "showing_nearby": "{{shown}} de {{total}} cerca",
+    "offline_stale": "Sin conexión: se muestran datos guardados. Toca para actualizar."
   },
   "filter": {
     "title": "Filtros",

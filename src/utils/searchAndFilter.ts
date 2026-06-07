@@ -9,6 +9,7 @@ import type { DeliveryPlatform, Restaurant } from '../types/Restaurant';
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
 import { compareWithPremiumInCity } from './restaurantSort';
 import { getActiveDeliveryLinks } from './platformLinks';
+import { cuisineMatchesDiet, restaurantMatchesVenueType } from './venueNormalization';
 
 export interface FilterCriteria {
   selectedVenueTypes: string[];
@@ -56,7 +57,7 @@ export function matchesQuery(restaurant: Restaurant, query: string): boolean {
 export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolean {
   if (
     c.selectedVenueTypes.length > 0 &&
-    !c.selectedVenueTypes.includes(restaurant.venue_type ?? '')
+    !c.selectedVenueTypes.some((code) => restaurantMatchesVenueType(restaurant, code))
   ) {
     return false;
   }
@@ -84,10 +85,10 @@ export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolea
       return false;
     }
   }
-  if (c.dietVegan && !(restaurant.cuisine_types ?? []).includes('vegana')) {
+  if (c.dietVegan && !cuisineMatchesDiet(restaurant.cuisine_types, 'vegan')) {
     return false;
   }
-  if (c.dietVegetarian && !(restaurant.cuisine_types ?? []).includes('vegetariana')) {
+  if (c.dietVegetarian && !cuisineMatchesDiet(restaurant.cuisine_types, 'vegetarian')) {
     return false;
   }
   if (c.categoryTab === 'verified' && restaurant.verification_status === 'rejected') {
@@ -99,7 +100,7 @@ export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolea
   ) {
     return false;
   }
-  if (c.categoryTab === 'bakery' && restaurant.venue_type !== 'bakery') {
+  if (c.categoryTab === 'bakery' && !restaurantMatchesVenueType(restaurant, 'bakery')) {
     return false;
   }
   return true;

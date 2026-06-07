@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
 import FilterSelect from './FilterSelect';
-import { RATING_CHIPS } from '../data/filterOptions';
+import { RATING_CHIPS, SORT_OPTIONS } from '../data/filterOptions';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { DELIVERY_PLATFORM_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { REGION_NAMES } from '../i18n/regions';
@@ -40,6 +40,7 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const selectedVenueTypes = useFilterStore((s) => s.selectedVenueTypes);
   const selectedPriceRanges = useFilterStore((s) => s.selectedPriceRanges);
   const selectedDeliveryPlatform = useFilterStore((s) => s.selectedDeliveryPlatform);
+  const sortBy = useFilterStore((s) => s.sortBy);
   const minRating = useFilterStore((s) => s.minRating);
   const dietVegan = useFilterStore((s) => s.dietVegan);
   const dietVegetarian = useFilterStore((s) => s.dietVegetarian);
@@ -51,6 +52,7 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const setSelectedCity = useFilterStore((s) => s.setSelectedCity);
   const setVenueTypeSingle = useFilterStore((s) => s.setVenueTypeSingle);
   const setDeliveryPlatformSingle = useFilterStore((s) => s.setDeliveryPlatformSingle);
+  const setSortBy = useFilterStore((s) => s.setSortBy);
   const setPriceRangesAll = useFilterStore((s) => s.setPriceRangesAll);
   const togglePriceRange = useFilterStore((s) => s.togglePriceRange);
   const setMinRating = useFilterStore((s) => s.setMinRating);
@@ -234,6 +236,14 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     ? DELIVERY_PLATFORM_NAMES[deliveryCode]?.[language] ?? deliveryCode
     : t('filter.all');
 
+  const sortOptions = useMemo(
+    () => SORT_OPTIONS.map((option) => ({ value: option.code, label: option.labels[language] })),
+    [language]
+  );
+  const sortLabel =
+    SORT_OPTIONS.find((option) => option.code === sortBy)?.labels[language] ??
+    SORT_OPTIONS[0].labels[language];
+
   return (
     <ScrollView
       style={styles.panelScroll}
@@ -300,6 +310,18 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
             active={deliveryCode != null}
           />
         ) : null}
+      </View>
+
+      <View style={styles.dropdownRow}>
+        <FilterSelect
+          flex
+          label={t('search.sort_by')}
+          value={sortBy}
+          displayValue={sortLabel}
+          options={sortOptions}
+          onChange={(value) => setSortBy((value ?? 'name_asc') as typeof sortBy)}
+          active={sortBy !== 'name_asc'}
+        />
       </View>
 
       <View style={styles.sectionBlock}>
