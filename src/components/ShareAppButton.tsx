@@ -8,7 +8,7 @@ import {
   PROFILE_MENU_ICON_SIZE,
   profileMenuStyles,
 } from './profileMenuStyles';
-import { getPlatformStoreUrl } from '../constants/storeUrls';
+import { getShareUrl } from '../constants/storeUrls';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
 
@@ -28,7 +28,7 @@ function ShareAppButton({ variant = 'plain' }: ShareAppButtonProps) {
     }
     setLoading(true);
     try {
-      const url = getPlatformStoreUrl();
+      const url = getShareUrl();
       const message = t('about.share_message', { url });
 
       if (Platform.OS === 'ios') {

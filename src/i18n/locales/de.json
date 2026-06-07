@@ -115,7 +115,17 @@
     "no_pins_description": "Passen Sie die Filter an, um Treffer mit Koordinaten anzuzeigen."
   },
   "community": {
-    "coming_soon": "Demnächst verfügbar"
+    "coming_soon": "Demnächst verfügbar",
+    "title": "Community",
+    "intro": "CeliacSafe lebt von der Community. Jeder geprüfte Eintrag hilft anderen, sicher glutenfrei zu essen.",
+    "stat_restaurants": "Restaurants",
+    "stat_cities": "Städte",
+    "stat_countries": "Länder",
+    "cta_suggest_title": "Restaurant vorschlagen",
+    "cta_suggest_desc": "Kennst du ein glutenfreies Lokal? Teile es mit uns.",
+    "cta_report_title": "Fehler melden",
+    "cta_report_desc": "Falsche Angaben oder geschlossen? Sag uns Bescheid.",
+    "recent_title": "Zuletzt geprüft"
   },
   "favorites": {
     "title": "Favoriten",
@@ -294,8 +304,11 @@
   },
   "submit": {
     "title": "Restaurant vorschlagen",
-    "hint": "Ihr Vorschlag erreicht uns per E-Mail. Wir prüfen persönlich, bevor das Restaurant aufgenommen wird.",
+    "hint": "Ihr Vorschlag wird gespeichert und persönlich geprüft, bevor das Restaurant aufgenommen wird.",
     "section_required": "Pflichtangaben",
+    "country_label": "Land",
+    "country_es": "Spanien",
+    "country_de": "Deutschland",
     "section_optional": "Optional",
     "section_submitter": "Über mich (optional)",
     "restaurant_name_label": "Name des Restaurants",
@@ -314,7 +327,8 @@
     "submitter_name_placeholder": "Optional",
     "submitter_email_label": "Meine E-Mail (für Rückfragen)",
     "submitter_email_placeholder": "du@email.com",
-    "submit_button": "Per E-Mail senden",
+    "submit_button": "Vorschlag senden",
+    "error_generic": "Der Vorschlag konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
     "success_title": "Danke!",
     "success_message": "Die Mail-App wurde geöffnet. Senden Sie die Nachricht, um den Vorschlag abzuschließen.",
     "success_message_supabase": "Ihr Vorschlag wurde gespeichert und wird von uns geprüft. Vielen Dank!",

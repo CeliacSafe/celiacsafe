@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BuscarStack from './BuscarStack';
+import ComunidadStack from './ComunidadStack';
 import FavoritosStack from './FavoritosStack';
 import MapaStack from './MapaStack';
-import { ComunidadScreen } from '../screens/ComunidadScreen';
 import PerfilStack from './PerfilStack';
 import TabBarButton from './TabBarButton';
 import { useFavoritesStore } from '../store/favoritesStore';
@@ -84,8 +84,9 @@ export function RootTabs() {
       />
       <Tab.Screen
         name="Comunidad"
-        component={ComunidadScreen}
+        component={ComunidadStack}
         options={{
+          headerShown: false,
           tabBarLabel: t('tabs.community').toUpperCase(),
           tabBarIcon: createTabBarIcon('Comunidad'),
         }}

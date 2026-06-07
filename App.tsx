@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StyleSheet, View } from 'react-native';
 
 import LoadingSpinner from './src/components/LoadingSpinner';
+import { linking } from './src/navigation/linking';
 import { navigationTheme } from './src/navigation/theme';
 import { RootTabs } from './src/navigation/RootTabs';
 import { colors } from './src/theme/colors';
@@ -45,7 +46,7 @@ export default function App() {
     <GestureHandlerRootView style={styles.root}>
       <BottomSheetModalProvider>
         <SafeAreaProvider>
-          <NavigationContainer theme={navigationTheme}>
+          <NavigationContainer theme={navigationTheme} linking={linking}>
             <StatusBar style="light" backgroundColor={colors.background} />
             <RootTabs />
           </NavigationContainer>

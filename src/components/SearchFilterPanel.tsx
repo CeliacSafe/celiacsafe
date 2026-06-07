@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
 import FilterSelect from './FilterSelect';
-import { RATING_CHIPS, SORT_OPTIONS } from '../data/filterOptions';
+import { SORT_OPTIONS } from '../data/filterOptions';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { DELIVERY_PLATFORM_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { REGION_NAMES } from '../i18n/regions';
@@ -55,7 +55,6 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const setSortBy = useFilterStore((s) => s.setSortBy);
   const setPriceRangesAll = useFilterStore((s) => s.setPriceRangesAll);
   const togglePriceRange = useFilterStore((s) => s.togglePriceRange);
-  const setMinRating = useFilterStore((s) => s.setMinRating);
   const setDietVegan = useFilterStore((s) => s.setDietVegan);
   const setDietVegetarian = useFilterStore((s) => s.setDietVegetarian);
 
@@ -211,11 +210,6 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     [availableDeliveryPlatforms, language, t]
   );
 
-  const ratingOptions = RATING_CHIPS.map((id) => ({
-    id,
-    label: id === 'all' ? t('filter.all') : `${id}+`,
-  }));
-
   const priceChipId =
     selectedPriceRanges.length === 0 ? 'all' : selectedPriceRanges[0] ?? 'all';
 
@@ -321,20 +315,6 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
           options={sortOptions}
           onChange={(value) => setSortBy((value ?? 'name_asc') as typeof sortBy)}
           active={sortBy !== 'name_asc'}
-        />
-      </View>
-
-      <View style={styles.sectionBlock}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('filter.rating')}</Text>
-          <Text style={styles.sectionHint} numberOfLines={1}>
-            {t('filter.verified_hint')}
-          </Text>
-        </View>
-        <FilterChipRow
-          options={ratingOptions}
-          selectedId={minRating}
-          onSelect={(id) => setMinRating(id as (typeof RATING_CHIPS)[number])}
         />
       </View>
 

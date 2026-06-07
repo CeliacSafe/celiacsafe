@@ -9,6 +9,7 @@ import { hapticError } from './haptics';
 export interface SubmissionData {
   restaurantName: string;
   city: string;
+  countryCode?: 'ES' | 'DE';
   address?: string;
   website?: string;
   contactInfo?: string;
@@ -26,6 +27,7 @@ function buildSubmissionBody(data: SubmissionData): string {
     '',
     `Name: ${data.restaurantName}`,
     `Stadt: ${data.city}`,
+    `Land: ${data.countryCode ?? 'ES'}`,
     data.address ? `Adresse: ${data.address}` : '',
     data.website ? `Webseite: ${data.website}` : '',
     data.contactInfo ? `Kontakt: ${data.contactInfo}` : '',

@@ -19,12 +19,13 @@ import SeasonalClosureBanner from '../components/SeasonalClosureBanner';
 import VerificationSection from '../components/VerificationSection';
 import { useRestaurantById } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
+import type { ComunidadStackParamList } from '../navigation/ComunidadStack';
 import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
 import type { MapaStackParamList } from '../navigation/MapaStack';
 import { colors } from '../theme/colors';
 
 type Props = NativeStackScreenProps<
-  BuscarStackParamList | MapaStackParamList | FavoritosStackParamList,
+  BuscarStackParamList | MapaStackParamList | FavoritosStackParamList | ComunidadStackParamList,
   'RestaurantDetail'
 >;
 

@@ -24,31 +24,11 @@ import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import { hapticSuccess } from '../utils/haptics';
+import { parseSubmissionData } from '../utils/submissionSchema';
 import { submitRestaurantToSupabase } from '../utils/submitToSupabase';
 import { submitRestaurantViaEmail } from '../utils/submitViaEmail';
 
 type SubmitNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'SubmitRestaurant'>;
-
-const MIN_TEXT_LENGTH = 2;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function isValidEmail(value: string): boolean {
-  const trimmed = value.trim();
-  if (!trimmed) {
-    return true;
-  }
-  return EMAIL_REGEX.test(trimmed);
-}
-
-function isValidWebsite(value: string): boolean {
-  const trimmed = value.trim().toLowerCase();
-  if (!trimmed) {
-    return true;
-  }
-  return (
-    trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('www.')
-  );
-}
 
 function SubmitRestaurantScreen() {
   const { t } = useTranslation();
@@ -56,52 +36,92 @@ function SubmitRestaurantScreen() {
 
   const [restaurantName, setRestaurantName] = useState('');
   const [city, setCity] = useState('');
+  const [countryCode, setCountryCode] = useState<'ES' | 'DE'>('ES');
   const [address, setAddress] = useState('');
   const [website, setWebsite] = useState('');
   const [contactInfo, setContactInfo] = useState('');
   const [notes, setNotes] = useState('');
   const [submitterName, setSubmitterName] = useState('');
   const [submitterEmail, setSubmitterEmail] = useState('');
+  /** Honeypot — für Menschen unsichtbar; Bots füllen es oft aus. */
+  const [honeypot, setHoneypot] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const validation = useMemo(() => {
-    const nameOk = restaurantName.trim().length >= MIN_TEXT_LENGTH;
-    const cityOk = city.trim().length >= MIN_TEXT_LENGTH;
-    const emailOk = isValidEmail(submitterEmail);
-    const websiteOk = isValidWebsite(website);
-    return { nameOk, cityOk, emailOk, websiteOk, formOk: nameOk && cityOk && emailOk && websiteOk };
-  }, [restaurantName, city, submitterEmail, website]);
+    const nameOk = restaurantName.trim().length >= 2;
+    const cityOk = city.trim().length >= 2;
+    const emailTrimmed = submitterEmail.trim();
+    const websiteTrimmed = website.trim();
+    const emailOk =
+      emailTrimmed === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed);
+    const websiteOk =
+      websiteTrimmed === '' ||
+      /^https?:\/\/.+/i.test(websiteTrimmed) ||
+      /^www\./i.test(websiteTrimmed);
+    const parsed = parseSubmissionData({
+      restaurantName,
+      city,
+      countryCode,
+      address,
+      website,
+      contactInfo,
+      notes,
+      submitterName,
+      submitterEmail,
+    });
+    return {
+      parsed,
+      nameOk,
+      cityOk,
+      emailOk,
+      websiteOk,
+      formOk: parsed !== null,
+    };
+  }, [restaurantName, city, countryCode, address, website, contactInfo, notes, submitterName, submitterEmail]);
 
   const canSubmit = validation.formOk && !submitting;
 
   const addSubmissionFromApp = useAdminStore((s) => s.addSubmissionFromApp);
 
   const handleSubmit = async () => {
-    if (!canSubmit) {
+    if (!canSubmit || !validation.parsed) {
+      return;
+    }
+
+    if (honeypot.trim()) {
+      Alert.alert(t('submit.success_title'), t('submit.success_message_supabase'), [
+        { text: t('common.accept'), onPress: () => navigation.goBack() },
+      ]);
       return;
     }
 
     const payload = {
-      restaurantName: restaurantName.trim(),
-      city: city.trim(),
-      address: address.trim() || undefined,
-      website: website.trim() || undefined,
-      contactInfo: contactInfo.trim() || undefined,
-      notes: notes.trim() || undefined,
-      submitterName: submitterName.trim() || undefined,
-      submitterEmail: submitterEmail.trim() || undefined,
+      restaurantName: validation.parsed.restaurantName,
+      city: validation.parsed.city,
+      countryCode: validation.parsed.countryCode,
+      address: validation.parsed.address,
+      website: validation.parsed.website,
+      contactInfo: validation.parsed.contactInfo,
+      notes: validation.parsed.notes,
+      submitterName: validation.parsed.submitterName,
+      submitterEmail: validation.parsed.submitterEmail,
     };
 
     setSubmitting(true);
     try {
       addSubmissionFromApp(payload);
-      const savedRemote = await submitRestaurantToSupabase(payload);
+      const remoteResult = await submitRestaurantToSupabase(payload);
 
-      if (savedRemote) {
+      if (remoteResult.ok) {
         hapticSuccess();
         Alert.alert(t('submit.success_title'), t('submit.success_message_supabase'), [
           { text: t('common.accept'), onPress: () => navigation.goBack() },
         ]);
+        return;
+      }
+
+      if (remoteResult.reason.startsWith('rate_limit')) {
+        Alert.alert(t('submit.rate_limit_title'), t(`submit.${remoteResult.reason}`));
         return;
       }
 
@@ -112,7 +132,12 @@ function SubmitRestaurantScreen() {
         Alert.alert(t('submit.success_title'), t('submit.success_message'), [
           { text: t('common.accept'), onPress: () => navigation.goBack() },
         ]);
+      } else {
+        Alert.alert(t('common.error'), t('submit.error_generic'));
       }
+    } catch (error) {
+      console.warn('Submit restaurant failed:', error);
+      Alert.alert(t('common.error'), t('submit.error_generic'));
     } finally {
       setSubmitting(false);
     }
@@ -150,6 +175,16 @@ function SubmitRestaurantScreen() {
             <Text style={styles.hintText}>{t('submit.hint')}</Text>
           </View>
 
+          <View style={styles.honeypot} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <TextInput
+              value={honeypot}
+              onChangeText={setHoneypot}
+              autoComplete="off"
+              tabIndex={-1}
+              accessibilityLabel=""
+            />
+          </View>
+
           <Text style={styles.sectionLabel}>{t('submit.section_required')}</Text>
           <FormField
             label={t('submit.restaurant_name_label')}
@@ -169,6 +204,26 @@ function SubmitRestaurantScreen() {
             hasError={city.length > 0 && !validation.cityOk}
             errorText={t('submit.validation_min_length')}
           />
+
+          <View style={styles.field}>
+            <Text style={styles.label}>{t('submit.country_label')} *</Text>
+            <View style={styles.countryRow}>
+              {(['ES', 'DE'] as const).map((code) => {
+                const active = countryCode === code;
+                return (
+                  <Pressable
+                    key={code}
+                    onPress={() => setCountryCode(code)}
+                    style={[styles.countryChip, active ? styles.countryChipActive : styles.countryChipInactive]}
+                  >
+                    <Text style={[styles.countryChipText, active && styles.countryChipTextActive]}>
+                      {t(`submit.country_${code.toLowerCase()}`)}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
 
           <Text style={styles.sectionLabel}>{t('submit.section_optional')}</Text>
           <FormField
@@ -339,6 +394,13 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.textSecondary,
   },
+  honeypot: {
+    position: 'absolute',
+    left: -9999,
+    width: 1,
+    height: 1,
+    opacity: 0,
+  },
   sectionLabel: {
     ...typography.overline,
     marginTop: spacing.sm,
@@ -346,6 +408,32 @@ const styles = StyleSheet.create({
   },
   field: {
     gap: spacing.sm,
+  },
+  countryRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  countryChip: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: spacing.cardPadding,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+  },
+  countryChipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  countryChipInactive: {
+    backgroundColor: colors.surface,
+    borderColor: 'transparent',
+  },
+  countryChipText: {
+    ...typography.button,
+    color: colors.textPrimary,
+  },
+  countryChipTextActive: {
+    color: colors.background,
   },
   label: {
     ...typography.h4,

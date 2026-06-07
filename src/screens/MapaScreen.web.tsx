@@ -1,17 +1,16 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, FlatList, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
+import InteractiveOsmMap from '../components/InteractiveOsmMap';
 import LoadingSpinner from '../components/LoadingSpinner';
 import MyLocationButton from '../components/MyLocationButton';
 import RegionQuickJumps from '../components/RegionQuickJumps';
 import RestaurantBottomSheet from '../components/RestaurantBottomSheet';
-import RestaurantCard from '../components/RestaurantCard';
-import StaticOsmMapImage from '../components/StaticOsmMapImage';
 import { QUICK_JUMPS } from '../data/quickJumps';
 import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
@@ -50,6 +49,7 @@ export function MapaScreen() {
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const selectedCity = useFilterStore((state) => state.selectedCity);
+  const selectedDeliveryPlatform = useFilterStore((state) => state.selectedDeliveryPlatform);
   const dietVegan = useFilterStore((state) => state.dietVegan);
   const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
   const categoryTab = useFilterStore((state) => state.categoryTab);
@@ -68,6 +68,7 @@ export function MapaScreen() {
       onlyFaceCertified,
       onlyAoecsCertified,
       selectedCity,
+      selectedDeliveryPlatform,
       dietVegan,
       dietVegetarian,
       categoryTab,
@@ -79,6 +80,7 @@ export function MapaScreen() {
       onlyFaceCertified,
       onlyAoecsCertified,
       selectedCity,
+      selectedDeliveryPlatform,
       dietVegan,
       dietVegetarian,
       categoryTab,
@@ -115,9 +117,20 @@ export function MapaScreen() {
     [navigation]
   );
 
-  const handleRestaurantPress = useCallback((restaurant: Restaurant) => {
-    setSelectedRestaurant(restaurant);
-  }, []);
+  const restaurantById = useMemo(
+    () => new Map(mappableRestaurants.map((restaurant) => [restaurant.id, restaurant])),
+    [mappableRestaurants]
+  );
+
+  const handleMarkerPress = useCallback(
+    (restaurantId: string) => {
+      const restaurant = restaurantById.get(restaurantId);
+      if (restaurant) {
+        setSelectedRestaurant(restaurant);
+      }
+    },
+    [restaurantById]
+  );
 
   const handleMyLocationPress = useCallback(async () => {
     const loc = await requestLocation();
@@ -140,28 +153,16 @@ export function MapaScreen() {
     setViewRegion(region);
   }, []);
 
-  const listHeader = useMemo(
-    () => (
-      <View style={styles.mapHeader}>
-        <StaticOsmMapImage
-          latitude={viewRegion.latitude}
-          longitude={viewRegion.longitude}
-          height={220}
-          latitudeDelta={viewRegion.latitudeDelta}
-        />
-      </View>
-    ),
-    [viewRegion]
-  );
-
   return (
     <View style={styles.container}>
-      <View style={[styles.quickJumpBar, { paddingTop: insets.top }]}>
-        <RegionQuickJumps onJumpTo={handleQuickJump} />
-      </View>
+      <InteractiveOsmMap
+        restaurants={mappableRestaurants}
+        region={viewRegion}
+        onMarkerPress={handleMarkerPress}
+      />
 
       {showNoPinsEmpty ? (
-        <View style={styles.emptyWrap}>
+        <View style={[styles.emptyOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
           <EmptyState
             illustration="map"
             iconName="map-marker-off-outline"
@@ -169,21 +170,14 @@ export function MapaScreen() {
             description={t('map.no_pins_description')}
             actionLabel={t('search.clear_filters')}
             onAction={handleClearFilters}
+            style={styles.emptyState}
           />
         </View>
-      ) : (
-        <FlatList
-          data={mappableRestaurants}
-          keyExtractor={(item) => item.id}
-          ListHeaderComponent={listHeader}
-          contentContainerStyle={styles.listContent}
-          initialNumToRender={8}
-          windowSize={7}
-          renderItem={({ item }) => (
-            <RestaurantCard restaurant={item} onPress={() => handleRestaurantPress(item)} />
-          )}
-        />
-      )}
+      ) : null}
+
+      <View style={[styles.quickJumpOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
+        <RegionQuickJumps onJumpTo={handleQuickJump} />
+      </View>
 
       <MyLocationButton
         onPress={handleMyLocationPress}
@@ -207,26 +201,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  quickJumpBar: {
+  quickJumpOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     zIndex: 1,
   },
-  mapHeader: {
-    marginBottom: spacing.md,
-  },
-  listContent: {
-    paddingHorizontal: spacing.screenPadding,
-    paddingBottom: spacing.xl + 56,
-    gap: spacing.md,
-  },
-  emptyWrap: {
-    flex: 1,
+  emptyOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(18, 18, 18, 0.55)',
+    zIndex: 2,
     paddingHorizontal: spacing.lg,
+  },
+  emptyState: {
+    flex: undefined,
+    minHeight: 0,
+    paddingVertical: 0,
   },
   myLocationButton: {
     position: 'absolute',
     bottom: 24,
     right: 16,
+    zIndex: 2,
   },
 });
 

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import AppLogo from '../components/AppLogo';
 import LegalSubScreenLayout, { LegalSectionBlock } from '../components/LegalSubScreenLayout';
 import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../constants/appContact';
-import { getPlatformStoreUrl } from '../constants/storeUrls';
+import { getShareUrl } from '../constants/storeUrls';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
@@ -34,7 +34,7 @@ function AboutScreen() {
   const appVersion = Application.nativeApplicationVersion ?? '1.0.0';
 
   const handleShare = useCallback(async () => {
-    const url = getPlatformStoreUrl();
+    const url = getShareUrl();
     const message = t('about.share_message', { url });
     if (Platform.OS === 'ios') {
       await Share.share({ message, url });

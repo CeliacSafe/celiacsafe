@@ -15,14 +15,16 @@ export async function requestAppStoreReview(): Promise<void> {
   }
 
   const storeUrl = getPlatformStoreUrl();
-  try {
-    const canOpen = await Linking.canOpenURL(storeUrl);
-    if (canOpen) {
-      await Linking.openURL(storeUrl);
-      return;
+  if (storeUrl) {
+    try {
+      const canOpen = await Linking.canOpenURL(storeUrl);
+      if (canOpen) {
+        await Linking.openURL(storeUrl);
+        return;
+      }
+    } catch (error) {
+      console.error('Store URL open failed:', error);
     }
-  } catch (error) {
-    console.error('Store URL open failed:', error);
   }
 
   Alert.alert(i18n.t('common.error'), i18n.t('profile.rate_not_available'));
