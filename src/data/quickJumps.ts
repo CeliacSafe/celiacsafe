@@ -45,4 +45,24 @@ export const QUICK_JUMPS: QuickJumpRegion[] = [
     labels: { es: 'Euskadi', en: 'Basque Country', de: 'Baskenland' },
     region: { latitude: 43.2, longitude: -2.5, latitudeDelta: 1, longitudeDelta: 1.5 },
   },
+  {
+    code: 'DE',
+    labels: { es: 'Alemania', en: 'Germany', de: 'Deutschland' },
+    region: { latitude: 51.1657, longitude: 10.4515, latitudeDelta: 8, longitudeDelta: 8 },
+  },
+  {
+    code: 'DE-BE',
+    labels: { es: 'Berlín', en: 'Berlin', de: 'Berlin' },
+    region: { latitude: 52.52, longitude: 13.405, latitudeDelta: 0.25, longitudeDelta: 0.25 },
+  },
+  {
+    code: 'DE-NW',
+    labels: { es: 'Renania del Norte-Westfalia', en: 'NRW', de: 'NRW' },
+    region: { latitude: 51.25, longitude: 6.75, latitudeDelta: 1.2, longitudeDelta: 1.2 },
+  },
+  {
+    code: 'DE-BY',
+    labels: { es: 'Baviera', en: 'Bavaria', de: 'Bayern' },
+    region: { latitude: 48.1351, longitude: 11.582, latitudeDelta: 1.5, longitudeDelta: 1.5 },
+  },
 ];

@@ -82,6 +82,8 @@ STRING_FIELDS = {
     "email",
     "website",
     "menu_url",
+    "google_maps_url",
+    "apple_maps_url",
     "instagram",
     "facebook",
     "opening_hours",
@@ -101,11 +103,21 @@ LIST_FIELDS = {
 BOOLEAN_FIELDS = {
     "face_program",
     "aoecs_certified",
+    "is_published",
+    "is_hidden",
 }
 
 FLOAT_FIELDS = {
     "latitude",
     "longitude",
+}
+
+# Excel-Spaltennamen → kanonische JSON-Felder
+EXCEL_FIELD_ALIASES: dict[str, list[str]] = {
+    "google_maps_url": ["google_maps_deeplink"],
+    "apple_maps_url": ["apple_maps_deeplink"],
+    "latitude": ["geo_latitude"],
+    "longitude": ["geo_longitude"],
 }
 
 DATE_FIELDS = {
@@ -118,6 +130,7 @@ VERIFICATION_STATUS_MAP = {
     "to_be_verified": "to_be_verified",
     "in_verification": "in_verification",
     "verified": "verified",
+    "verified_100_percent_gluten_free": "verified",
     "rejected": "rejected",
 }
 
@@ -317,12 +330,78 @@ def set_if_present(target: dict[str, Any], key: str, value: Any) -> None:
     target[key] = value
 
 
+def apply_excel_field_aliases(row: dict[str, Any]) -> dict[str, Any]:
+    """Übernimmt Werte aus alternativen Excel-Spalten (z. B. *_deeplink, geo_*)."""
+    merged = dict(row)
+    for target, sources in EXCEL_FIELD_ALIASES.items():
+        if target in {"latitude", "longitude"}:
+            if parse_float(merged.get(target)) is not None:
+                continue
+        elif parse_string(merged.get(target)):
+            continue
+        for source in sources:
+            if target in {"latitude", "longitude"}:
+                value = parse_float(merged.get(source))
+                if value is not None:
+                    merged[target] = value
+                    break
+            else:
+                value = parse_string(merged.get(source))
+                if value:
+                    merged[target] = value
+                    break
+    return merged
+
+
+def build_geocoding_lookup(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """Indexiert Zeilen aus geocoding_all_129 nach restaurant id."""
+    lookup: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        restaurant_id = parse_string(row.get("id"))
+        if restaurant_id:
+            lookup[restaurant_id] = row
+    return lookup
+
+
+def apply_geocoding_lookup(row: dict[str, Any], lookup: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Ergänzt Koordinaten und Maps-Links aus dem Geocoding-Blatt."""
+    merged = apply_excel_field_aliases(row)
+    restaurant_id = parse_string(merged.get("id"))
+    if not restaurant_id:
+        return merged
+
+    geo_row = lookup.get(restaurant_id)
+    if not geo_row:
+        return merged
+
+    merged = apply_excel_field_aliases({**geo_row, **merged})
+
+    for target, sources in EXCEL_FIELD_ALIASES.items():
+        if target in {"latitude", "longitude"}:
+            if parse_float(merged.get(target)) is not None:
+                continue
+            for source in sources:
+                value = parse_float(geo_row.get(source))
+                if value is not None:
+                    merged[target] = value
+                    break
+        elif not parse_string(merged.get(target)):
+            for source in sources:
+                value = parse_string(geo_row.get(source))
+                if value:
+                    merged[target] = value
+                    break
+
+    return merged
+
+
 def row_to_restaurant(row: dict[str, Any], row_number: int) -> dict[str, Any]:
     """
     Wandelt eine Excel-Zeile in ein Restaurant-Objekt um.
 
     Pflichtfelder werden immer gesetzt; leere optionale Felder werden weggelassen.
     """
+    row = apply_excel_field_aliases(row)
     restaurant: dict[str, Any] = {}
 
     for field in REQUIRED_FIELDS:
@@ -382,6 +461,9 @@ def convert_workbook(path: Path, sheet_name: str) -> tuple[list[dict[str, Any]],
         )
 
     restaurant_rows, column_count = read_sheet_rows(workbook, sheet_name)
+    geocoding_lookup = build_geocoding_lookup(
+        read_sheet_rows(workbook, "geocoding_all_129")[0]
+    )
     delivery_by_id = group_links_by_restaurant(read_sheet_rows(workbook, "delivery_links")[0])
     reservation_by_id = group_links_by_restaurant(
         read_sheet_rows(workbook, "reservation_links")[0]
@@ -400,11 +482,13 @@ def convert_workbook(path: Path, sheet_name: str) -> tuple[list[dict[str, Any]],
         "exported": 0,
         "skipped_status": 0,
         "skipped_invalid": 0,
+        "with_coordinates": 0,
     }
 
     for index, row in enumerate(restaurant_rows, start=2):
-        status = parse_string(row.get("verification_status"))
-        if status not in allowed_statuses:
+        row = apply_geocoding_lookup(row, geocoding_lookup)
+        status = normalize_verification_status(row.get("verification_status"))
+        if not status or status not in allowed_statuses:
             stats["skipped_status"] += 1
             continue
 
@@ -413,6 +497,9 @@ def convert_workbook(path: Path, sheet_name: str) -> tuple[list[dict[str, Any]],
         except ValueError:
             stats["skipped_invalid"] += 1
             continue
+
+        if restaurant.get("latitude") is not None and restaurant.get("longitude") is not None:
+            stats["with_coordinates"] += 1
 
         restaurant_id = restaurant["id"]
 
@@ -479,6 +566,7 @@ def print_status(
     print(f"Exportiert: {stats['exported']} Restaurants")
     print(f"Uebersprungen wegen Status: {stats['skipped_status']}")
     print(f"Uebersprungen wegen ungueltiger Daten: {stats['skipped_invalid']}")
+    print(f"Mit Koordinaten: {stats.get('with_coordinates', 0)}")
     print(f"Ausgabedatei: {output_path}")
 
     if output_path.exists():
@@ -492,6 +580,46 @@ def print_status(
         print()
         print("Warnung: Keine Datensaetze exportiert.")
         print("Tipp: Setze INCLUDE_PENDING_FOR_DEV=True fuer die Entwicklung.")
+
+
+def merge_workbooks(input_paths: list[Path], sheet_name: str) -> tuple[list[dict[str, Any]], dict[str, int], str]:
+    """Liest mehrere Excel-Dateien und vereinigt Restaurants (nach id, spätere Datei gewinnt)."""
+    by_id: dict[str, dict[str, Any]] = {}
+    combined_stats = {
+        "columns": 0,
+        "read": 0,
+        "delivery_restaurants": 0,
+        "reservation_restaurants": 0,
+        "delivery_urls_enriched": 0,
+        "reservation_urls_enriched": 0,
+        "exported": 0,
+        "skipped_status": 0,
+        "skipped_invalid": 0,
+        "with_coordinates": 0,
+    }
+    source_names: list[str] = []
+
+    for input_path in input_paths:
+        restaurants, stats = convert_workbook(input_path, sheet_name)
+        source_names.append(input_path.name)
+        combined_stats["columns"] = max(combined_stats["columns"], stats["columns"])
+        for key in (
+            "read",
+            "delivery_restaurants",
+            "reservation_restaurants",
+            "delivery_urls_enriched",
+            "reservation_urls_enriched",
+            "skipped_status",
+            "skipped_invalid",
+            "with_coordinates",
+        ):
+            combined_stats[key] += stats[key]
+        for restaurant in restaurants:
+            by_id[restaurant["id"]] = restaurant
+
+    combined_stats["exported"] = len(by_id)
+    source = "data-source/" + " + ".join(source_names)
+    return list(by_id.values()), combined_stats, source
 
 
 def main() -> None:
@@ -523,9 +651,10 @@ def main() -> None:
     parser.add_argument(
         "--input",
         "-i",
+        action="append",
         type=Path,
         default=None,
-        help=f"Excel-Eingabedatei (Standard: {DEFAULT_INPUT})",
+        help=f"Excel-Eingabedatei (mehrfach für Merge; Standard: {DEFAULT_INPUT})",
     )
     parser.add_argument(
         "--output",
@@ -541,15 +670,27 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    input_path = args.input or args.input_pos or DEFAULT_INPUT
     output_path = args.output or args.output_pos or DEFAULT_OUTPUT
 
-    if not input_path.exists():
-        print(f"Fehler: Excel-Datei nicht gefunden: {input_path}")
-        sys.exit(1)
+    if args.input:
+        input_paths = args.input
+    elif args.input_pos:
+        input_paths = [args.input_pos]
+    else:
+        input_paths = [DEFAULT_INPUT]
 
-    restaurants, stats = convert_workbook(input_path, args.sheet)
-    payload = build_output(restaurants, f"data-source/{input_path.name}")
+    for input_path in input_paths:
+        if not input_path.exists():
+            print(f"Fehler: Excel-Datei nicht gefunden: {input_path}")
+            sys.exit(1)
+
+    if len(input_paths) == 1:
+        restaurants, stats = convert_workbook(input_paths[0], args.sheet)
+        source = f"data-source/{input_paths[0].name}"
+    else:
+        restaurants, stats, source = merge_workbooks(input_paths, args.sheet)
+
+    payload = build_output(restaurants, source)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
@@ -557,7 +698,9 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    print_status(stats, input_path, output_path)
+    print_status(stats, input_paths[0] if len(input_paths) == 1 else Path("merge"), output_path)
+    if len(input_paths) > 1:
+        print(f"Quellen: {', '.join(p.name for p in input_paths)}")
 
 
 if __name__ == "__main__":

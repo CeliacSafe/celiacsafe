@@ -10,7 +10,7 @@
 /** ISO-ähnlicher Ländercode für unterstützte Märkte. */
 export type CountryCode = 'ES' | 'PT' | 'IT' | 'FR' | 'DE' | 'AT' | 'CH' | 'GB';
 
-/** Autonome Gemeinschaft / Region in Spanien (ISO 3166-2:ES). */
+/** Autonome Gemeinschaft / Region (ISO 3166-2). */
 export type RegionCode =
   | 'ES-AN'
   | 'ES-AR'
@@ -30,7 +30,23 @@ export type RegionCode =
   | 'ES-PV'
   | 'ES-VC'
   | 'ES-CE'
-  | 'ES-ML';
+  | 'ES-ML'
+  | 'DE-BW'
+  | 'DE-BY'
+  | 'DE-BE'
+  | 'DE-BB'
+  | 'DE-HB'
+  | 'DE-HH'
+  | 'DE-HE'
+  | 'DE-MV'
+  | 'DE-NI'
+  | 'DE-NW'
+  | 'DE-RP'
+  | 'DE-SL'
+  | 'DE-SN'
+  | 'DE-ST'
+  | 'DE-SH'
+  | 'DE-TH';
 
 /** Art des Lokals — bestimmt Icon, Kategorie-Filter und Suchvorschläge. */
 export type VenueType =
@@ -148,6 +164,10 @@ export interface Restaurant {
   address_street?: string;
   latitude?: number;
   longitude?: number;
+  /** Google-Maps-Profil (Teilen-Link vom Unternehmen). */
+  google_maps_url?: string;
+  /** Apple-Maps-Profil (Teilen-Link vom Unternehmen). */
+  apple_maps_url?: string;
   venue_type?: VenueType;
   cuisine_types?: string[];
   price_range?: PriceRange;
@@ -170,6 +190,8 @@ export interface Restaurant {
   description_en?: string;
   description_de?: string;
   featured_image_url?: string;
+  /** Premiumpartner — in der Stadt zuerst in Listen (Admin-Tool). */
+  is_premium_partner?: boolean;
   delivery_links?: DeliveryLink[];
   reservation_links?: ReservationLink[];
 }
