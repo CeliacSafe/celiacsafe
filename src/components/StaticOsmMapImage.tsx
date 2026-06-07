@@ -1,7 +1,7 @@
-import { Image } from 'expo-image';
+import { createElement } from 'react';
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { buildOsmStaticMapUrl } from '../utils/osmStaticMap';
+import { buildOsmEmbedUrl } from '../utils/osmStaticMap';
 
 interface StaticOsmMapImageProps {
   latitude: number;
@@ -15,48 +15,50 @@ interface StaticOsmMapImageProps {
 }
 
 /**
- * Statische OpenStreetMap-Vorschau fuer Web (react-native-maps ist dort nicht verfuegbar).
+ * OpenStreetMap-Vorschau fuer Web (iframe-Embed; react-native-maps fehlt im Browser).
  */
 export default function StaticOsmMapImage({
   latitude,
   longitude,
   height,
-  width = 640,
-  zoom,
   latitudeDelta,
   style,
   onPress,
 }: StaticOsmMapImageProps) {
-  const uri = buildOsmStaticMapUrl({
+  const embedUrl = buildOsmEmbedUrl({
     latitude,
     longitude,
-    width,
-    height,
-    zoom,
     latitudeDelta,
   });
 
-  const image = (
-    <Image source={{ uri }} style={[styles.image, { height }]} contentFit="cover" accessibilityIgnoresInvertColors />
-  );
+  const mapFrame = createElement('iframe', {
+    src: embedUrl,
+    title: 'OpenStreetMap',
+    loading: 'lazy',
+    referrerPolicy: 'no-referrer-when-downgrade',
+    style: {
+      border: 0,
+      width: '100%',
+      height,
+      display: 'block',
+      pointerEvents: onPress ? 'none' : 'auto',
+    },
+  });
 
   if (onPress) {
     return (
       <Pressable onPress={onPress} style={[styles.wrap, style]} accessibilityRole="button">
-        {image}
+        {mapFrame}
       </Pressable>
     );
   }
 
-  return <View style={[styles.wrap, style]}>{image}</View>;
+  return <View style={[styles.wrap, style]}>{mapFrame}</View>;
 }
 
 const styles = StyleSheet.create({
   wrap: {
     overflow: 'hidden',
-    width: '100%',
-  },
-  image: {
     width: '100%',
   },
 });

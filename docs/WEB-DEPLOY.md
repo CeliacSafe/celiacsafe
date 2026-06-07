@@ -71,5 +71,6 @@ Optional die gleichen GitHub Secrets `EXPO_PUBLIC_SUPABASE_URL` und `EXPO_PUBLIC
 ## Hinweise
 
 - `dist/` ist in `.gitignore` — Vercel baut bei jedem Deploy neu.
-- Die Kartenansicht im Web nutzt statische OSM-Vorschauen (kein `react-native-maps`).
+- Nach dem Export kopiert `scripts/post-web-export.mjs` den Ordner `_expo` nach `expo-static`, weil Vercel Dateien unter `_expo/` nicht ausliefert (JS-Bundle wäre sonst 404 → leere Seite).
+- Die Kartenansicht im Web nutzt OpenStreetMap-Embed-Iframes (kein `react-native-maps`; `staticmap.openstreetmap.de` ist offline).
 - Admin-Interface (`admin-web/`) ist ein separates Vite-Projekt und wird von dieser Konfiguration **nicht** mit deployed.
