@@ -38,7 +38,15 @@ if (!fs.existsSync(indexPath)) {
   process.exit(1);
 }
 
-const html = fs.readFileSync(indexPath, 'utf8').replaceAll('/_expo/', '/expo-static/');
+let html = fs.readFileSync(indexPath, 'utf8').replaceAll('/_expo/', '/expo-static/');
+
+// Expo export references the bundle without type="module", but Metro emits import.meta
+// (e.g. from expo-asset). Classic scripts throw → blank page on web.
+html = html.replace(
+  /<script src="(\/expo-static\/[^"]+\.js)"(\s+defer)?><\/script>/,
+  '<script type="module" src="$1"></script>'
+);
+
 fs.writeFileSync(indexPath, html);
 
-console.log('post-web-export: _expo → expo-static kopiert, index.html angepasst.');
+console.log('post-web-export: _expo → expo-static kopiert, index.html angepasst (type=module).');
