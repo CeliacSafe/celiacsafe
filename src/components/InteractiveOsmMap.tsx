@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { colors } from '../theme/colors';
 import type { MapRegion } from '../types/MapRegion';
 import type { Restaurant } from '../types/Restaurant';
 
@@ -55,6 +56,19 @@ function zoomFromDelta(latitudeDelta: number): number {
   return Math.max(3, Math.min(17, Math.round(Math.log2(360 / latitudeDelta))));
 }
 
+/**
+ * Eigener Pin als divIcon — unabhängig von Leaflets PNG-Standard-Icons, die beim
+ * Laden via CDN oft nicht auflösen (→ unsichtbare Marker).
+ */
+function createPinIcon(L: any) {
+  return L.divIcon({
+    className: 'celiacsafe-pin',
+    html: `<div style="width:18px;height:18px;border-radius:50% 50% 50% 0;background:${colors.primary};border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.4);transform:rotate(-45deg)"></div>`,
+    iconSize: [18, 18],
+    iconAnchor: [9, 18],
+  });
+}
+
 interface Props {
   restaurants: Restaurant[];
   region: MapRegion;
@@ -68,6 +82,8 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
   const markersRef = useRef<Map<string, any>>(new Map());
   const onPressRef = useRef(onMarkerPress);
   onPressRef.current = onMarkerPress;
+  const didFitRef = useRef(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +105,9 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
         }).addTo(map);
         mapRef.current = map;
         setTimeout(() => map.invalidateSize(), 0);
+        if (!cancelled) {
+          setReady(true);
+        }
       })
       .catch(() => undefined);
 
@@ -118,6 +137,7 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
     if (!L || !map) {
       return;
     }
+    const icon = createPinIcon(L);
     const existing = markersRef.current;
     const nextIds = new Set<string>();
     for (const r of restaurants) {
@@ -129,7 +149,7 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
       if (current) {
         current.setLatLng([r.latitude, r.longitude]);
       } else {
-        const marker = L.marker([r.latitude, r.longitude], { title: r.name });
+        const marker = L.marker([r.latitude, r.longitude], { title: r.name, icon });
         marker.on('click', () => onPressRef.current(r.id));
         marker.addTo(map);
         existing.set(r.id, marker);
@@ -141,7 +161,19 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
         existing.delete(id);
       }
     }
-  }, [restaurants]);
+
+    // Beim ersten Befüllen auf alle Pins einpassen, damit wirklich jedes
+    // Restaurant sichtbar ist (Daten umfassen mehrere Länder/Regionen).
+    if (!didFitRef.current && existing.size > 0) {
+      const bounds = L.latLngBounds(
+        Array.from(existing.values()).map((m: any) => m.getLatLng())
+      );
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 13 });
+        didFitRef.current = true;
+      }
+    }
+  }, [restaurants, ready]);
 
   return <View ref={containerRef} style={styles.map} />;
 }
