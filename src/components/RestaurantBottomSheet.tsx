@@ -267,7 +267,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     backgroundColor: colors.background,
   },
   handleIndicator: {
-    backgroundColor: colors.textSecondary,
+    backgroundColor: colors.line,
+    width: 36,
   },
   content: {
     paddingHorizontal: spacing.screenPadding,

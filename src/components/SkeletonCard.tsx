@@ -41,6 +41,7 @@ function SkeletonCard() {
       </Animated.View>
 
       <View style={styles.body}>
+        <Animated.View style={[styles.metaPlaceholder, pulseStyle]} />
         <Animated.View style={[styles.titlePlaceholder, pulseStyle]} />
         <Animated.View style={[styles.linePlaceholder, pulseStyle]} />
         <Animated.View style={[styles.linePlaceholderShort, pulseStyle]} />
@@ -51,18 +52,18 @@ function SkeletonCard() {
 
 const createStyles = (colors: AppColors) => StyleSheet.create({
   card: {
-    height: 280,
-    borderRadius: radius.xl,
-    overflow: 'hidden',
-    backgroundColor: colors.surface,
+    marginBottom: spacing.lg + spacing.xs,
   },
   imageArea: {
-    height: 200,
-    backgroundColor: colors.surface,
-    padding: spacing.cardPadding,
-    justifyContent: 'flex-end',
+    height: 220,
+    borderRadius: radius.card,
+    backgroundColor: colors.skeletonMuted,
+    overflow: 'hidden',
   },
   badgeRow: {
+    position: 'absolute',
+    top: spacing.cardPadding,
+    left: spacing.cardPadding,
     flexDirection: 'row',
     gap: spacing.sm,
   },
@@ -79,14 +80,18 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     backgroundColor: colors.skeletonMuted,
   },
   body: {
-    flex: 1,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.cardPadding,
+    paddingTop: spacing.sm + spacing.xs,
     gap: spacing.sm,
   },
+  metaPlaceholder: {
+    height: 10,
+    width: '45%',
+    borderRadius: radius.sm,
+    backgroundColor: colors.skeletonMuted,
+  },
   titlePlaceholder: {
-    height: 18,
-    width: '70%',
+    height: 22,
+    width: '75%',
     borderRadius: radius.sm,
     backgroundColor: colors.skeletonStrong,
   },

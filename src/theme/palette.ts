@@ -41,6 +41,7 @@ export const lightColors = {
   // Linien / Raender
   border: 'rgba(42, 42, 40, 0.12)',
   line: 'rgba(42, 42, 40, 0.12)',
+  lineSoft: 'rgba(42, 42, 40, 0.06)',
 
   // Overlays / Scrims
   overlayDark: 'rgba(42, 42, 40, 0.5)', // Modal-Backdrop
@@ -90,6 +91,7 @@ export const darkColors: Record<keyof typeof lightColors, string> = {
 
   border: 'rgba(245, 241, 232, 0.14)',
   line: 'rgba(245, 241, 232, 0.14)',
+  lineSoft: 'rgba(245, 241, 232, 0.08)',
 
   overlayDark: 'rgba(0, 0, 0, 0.55)',
   scrim: 'rgba(0, 0, 0, 0.6)',

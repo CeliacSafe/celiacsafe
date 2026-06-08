@@ -186,6 +186,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     gap: spacing.xs,
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.lineSoft,
     paddingVertical: spacing.cardPadding,
     paddingHorizontal: spacing.sm,
   },
@@ -204,6 +206,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     gap: spacing.cardPadding,
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.lineSoft,
     padding: spacing.cardPadding,
   },
   actionPressed: {
@@ -212,10 +216,10 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   actionIcon: {
     width: 44,
     height: 44,
-    borderRadius: radius.md,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceAlt,
   },
   actionTextWrap: {
     flex: 1,

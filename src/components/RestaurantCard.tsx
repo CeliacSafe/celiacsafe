@@ -76,11 +76,11 @@ function RestaurantCard({ restaurant, onPress, distanceKm = null }: RestaurantCa
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.name}>{restaurant.name}</Text>
           <Text style={styles.location}>
             {restaurant.city} · {regionLabel}
             {distanceLabel ? ` · ${distanceLabel}` : ''}
           </Text>
+          <Text style={styles.name}>{restaurant.name}</Text>
 
           <RestaurantMiniMap restaurant={restaurant} onPress={onPress} />
 
@@ -111,21 +111,22 @@ function RestaurantCard({ restaurant, onPress, distanceKm = null }: RestaurantCa
 const createStyles = (colors: AppColors) => StyleSheet.create({
   cardWrapper: {
     position: 'relative',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg + spacing.xs,
   },
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    overflow: 'hidden',
-    ...shadows.medium,
+    backgroundColor: 'transparent',
+    overflow: 'visible',
   },
   cardPressed: {
-    opacity: 0.85,
+    opacity: 0.92,
   },
   imageContainer: {
     height: 220,
     position: 'relative',
-    backgroundColor: colors.background,
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radius.card,
+    overflow: 'hidden',
+    ...shadows.small,
   },
   badgeStack: {
     position: 'absolute',
@@ -140,17 +141,17 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     zIndex: 2,
   },
   textContainer: {
-    padding: spacing.md,
+    paddingTop: spacing.sm + spacing.xs,
+    paddingBottom: spacing.xs,
   },
   name: {
-    ...typography.h3,
-    fontWeight: '700',
+    ...typography.h2,
     color: colors.textPrimary,
   },
   location: {
-    ...typography.body,
-    marginTop: spacing.xs,
+    ...typography.overline,
     color: colors.textSecondary,
+    marginBottom: spacing.xs,
   },
   tagRow: {
     flexDirection: 'row',

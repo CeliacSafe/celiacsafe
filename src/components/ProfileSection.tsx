@@ -27,7 +27,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   sectionTitle: {
     ...typography.overline,
-    color: colors.textSecondary,
+    color: colors.primary,
     paddingHorizontal: spacing.sectionGap,
     paddingTop: spacing.sectionGap,
     paddingBottom: spacing.sm,

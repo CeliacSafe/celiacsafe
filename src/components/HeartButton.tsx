@@ -75,7 +75,7 @@ function HeartButton({
     onPressed?.();
   };
 
-  const inactiveColor = variant === 'overlay' ? colors.white : colors.textSecondary;
+  const inactiveColor = variant === 'overlay' ? colors.heart : colors.textSecondary;
 
   return (
     <Pressable
@@ -109,7 +109,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     justifyContent: 'center',
   },
   overlay: {
-    backgroundColor: colors.overlayDark,
+    backgroundColor: colors.overlay,
   },
 });
 

@@ -77,8 +77,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   inputWrap: {
     flex: 1,
     height: spacing.xxl,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceAlt,
     paddingHorizontal: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
@@ -92,13 +92,13 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   filterButton: {
     width: spacing.xxl,
     height: spacing.xxl,
-    borderRadius: radius.lg,
-    backgroundColor: colors.primaryDark,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   filterButtonActive: {
-    backgroundColor: colors.verifiedGreen,
+    backgroundColor: colors.accent,
   },
 });
 

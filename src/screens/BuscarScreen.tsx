@@ -280,7 +280,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         ) : null}
 
         <View style={styles.counterRow}>
-          <MaterialCommunityIcons name="star-four-points" size={14} color={colors.primary} />
           <Text style={styles.counterText}>{counterLabel}</Text>
         </View>
       </View>
@@ -403,7 +402,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     backgroundColor: colors.background,
     paddingTop: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.lineSoft,
   },
   list: {
     flex: 1,
@@ -411,7 +410,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   listHeader: {
     backgroundColor: colors.background,
     paddingTop: spacing.sm,
-    paddingBottom: spacing.cardPadding,
+    paddingBottom: spacing.md,
   },
   header: {
     flexDirection: 'row',
@@ -428,6 +427,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   subtitle: {
     ...typography.bodySmall,
+    fontFamily: typography.h1.fontFamily,
+    fontStyle: 'italic',
     color: colors.textSecondary,
   },
   nearbyBanner: {
@@ -438,8 +439,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     gap: spacing.sm,
     paddingHorizontal: spacing.cardPadding,
     paddingVertical: spacing.sm,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceAlt,
   },
   nearbyBannerPressed: {
     opacity: 0.85,
@@ -453,7 +454,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     paddingHorizontal: spacing.cardPadding,
     paddingVertical: spacing.sm,
     borderRadius: radius.lg,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceAlt,
   },
   staleBannerText: {
     ...typography.bodySmall,
@@ -466,11 +467,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     color: colors.textSecondary,
   },
   counterRow: {
-    marginTop: spacing.cardPadding,
+    marginTop: spacing.md,
     marginHorizontal: spacing.screenPadding,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
   },
   counterText: {
     ...typography.overline,
@@ -490,7 +488,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
-    borderRadius: radius.lg,
+    borderRadius: radius.pill,
     backgroundColor: colors.primary,
     paddingVertical: spacing.md,
     overflow: 'hidden',

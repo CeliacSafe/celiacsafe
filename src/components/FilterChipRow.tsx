@@ -53,20 +53,23 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   chip: {
-    minHeight: 40,
+    minHeight: 36,
     paddingHorizontal: spacing.md,
     borderRadius: radius.pill,
     justifyContent: 'center',
+    borderWidth: 1,
   },
   chipActive: {
-    backgroundColor: colors.primaryDark,
+    backgroundColor: colors.textPrimary,
+    borderColor: colors.textPrimary,
   },
   chipInactive: {
-    backgroundColor: colors.surface,
+    backgroundColor: 'transparent',
+    borderColor: colors.border,
   },
   label: {
     ...typography.bodySmall,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   labelActive: {
     color: colors.onPrimary,

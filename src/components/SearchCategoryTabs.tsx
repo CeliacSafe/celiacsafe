@@ -68,17 +68,20 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   tabActive: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.textPrimary,
+    borderColor: colors.textPrimary,
   },
   label: {
     ...typography.bodySmall,
-    fontWeight: '600',
+    fontWeight: '500',
     color: colors.textSecondary,
   },
   labelActive: {
-    color: colors.textPrimary,
+    color: colors.onPrimary,
   },
   trailing: {
     width: spacing.xs,

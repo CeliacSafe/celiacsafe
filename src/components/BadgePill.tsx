@@ -24,14 +24,14 @@ type VariantStyle = {
 
 const getVariantStyles = (colors: AppColors): Record<BadgeVariant, VariantStyle> => ({
   sinGluten: {
-    backgroundColor: colors.sinGlutenBg,
+    backgroundColor: colors.overlay,
     textColor: colors.primary,
     iconColor: colors.primary,
   },
   verified: {
-    backgroundColor: colors.verifiedGreen,
-    textColor: colors.onPrimary,
-    iconColor: colors.onPrimary,
+    backgroundColor: colors.overlay,
+    textColor: colors.primary,
+    iconColor: colors.primary,
   },
   premium: {
     backgroundColor: colors.premiumBg,
@@ -39,19 +39,19 @@ const getVariantStyles = (colors: AppColors): Record<BadgeVariant, VariantStyle>
     iconColor: colors.premiumText,
   },
   priceRange: {
-    backgroundColor: colors.overlayWhite20,
-    textColor: colors.white,
-    iconColor: colors.white,
+    backgroundColor: colors.overlay,
+    textColor: colors.textPrimary,
+    iconColor: colors.textPrimary,
   },
   cuisine: {
-    backgroundColor: colors.cuisineSurface,
+    backgroundColor: colors.surfaceAlt,
     textColor: colors.textSecondary,
     iconColor: colors.textSecondary,
   },
   neutral: {
-    backgroundColor: colors.overlayWhite15,
-    textColor: colors.white,
-    iconColor: colors.white,
+    backgroundColor: colors.overlay,
+    textColor: colors.textPrimary,
+    iconColor: colors.textPrimary,
   },
 });
 

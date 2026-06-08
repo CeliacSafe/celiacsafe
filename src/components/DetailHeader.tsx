@@ -55,7 +55,7 @@ function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
               accessibilityRole="button"
               style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
             >
-              <MaterialCommunityIcons name="arrow-left" size={22} color={colors.white} />
+              <MaterialCommunityIcons name="arrow-left" size={22} color={colors.textPrimary} />
             </Pressable>
           ) : (
             <View style={styles.iconSpacer} />
@@ -123,8 +123,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   iconButton: {
     width: 40,
     height: 40,
-    borderRadius: radius.lg,
-    backgroundColor: colors.overlayDark,
+    borderRadius: radius.pill,
+    backgroundColor: colors.overlay,
     alignItems: 'center',
     justifyContent: 'center',
   },

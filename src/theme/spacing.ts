@@ -42,6 +42,8 @@ export const radius = {
   lg: 12,
   /** Cards */
   xl: 16,
+  /** Cards, Editorial-Bilder */
+  card: 14,
   /** Hero-Bereiche */
   xxl: 24,
   /** Runde Icon-/Flaggen-Container (20px, wie screenPadding) */
@@ -57,30 +59,30 @@ export const shadows = {
   none: {} satisfies ViewStyle,
   small: Platform.select<ViewStyle>({
     ios: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 4,
+      shadowColor: '#2a2a28',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.06,
+      shadowRadius: 8,
     },
     android: { elevation: 2 },
     default: {},
   }),
   medium: Platform.select<ViewStyle>({
     ios: {
-      shadowColor: '#000',
+      shadowColor: '#2a2a28',
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.12,
-      shadowRadius: 8,
+      shadowOpacity: 0.08,
+      shadowRadius: 12,
     },
     android: { elevation: 4 },
     default: {},
   }),
   large: Platform.select<ViewStyle>({
     ios: {
-      shadowColor: '#000',
+      shadowColor: '#2a2a28',
       shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.16,
-      shadowRadius: 16,
+      shadowOpacity: 0.12,
+      shadowRadius: 20,
     },
     android: { elevation: 8 },
     default: {},

@@ -65,8 +65,8 @@ export function RootTabs() {
           ...typography.tabLabel,
         },
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          backgroundColor: colors.background,
+          borderTopColor: colors.lineSoft,
           borderTopWidth: 1,
           height: 56 + insets.bottom,
           paddingBottom: insets.bottom + spacing.xs,
@@ -79,7 +79,7 @@ export function RootTabs() {
         component={BuscarStack}
         options={{
           headerShown: false,
-          tabBarLabel: t('tabs.search').toUpperCase(),
+          tabBarLabel: t('tabs.search'),
           tabBarIcon: createTabBarIcon('Buscar'),
         }}
       />
@@ -88,7 +88,7 @@ export function RootTabs() {
         component={ComunidadStack}
         options={{
           headerShown: false,
-          tabBarLabel: t('tabs.community').toUpperCase(),
+          tabBarLabel: t('tabs.community'),
           tabBarIcon: createTabBarIcon('Comunidad'),
         }}
       />
@@ -97,7 +97,7 @@ export function RootTabs() {
         component={MapaStack}
         options={{
           headerShown: false,
-          tabBarLabel: t('tabs.map').toUpperCase(),
+          tabBarLabel: t('tabs.map'),
           tabBarIcon: createTabBarIcon('Mapa'),
         }}
       />
@@ -105,7 +105,7 @@ export function RootTabs() {
         name="Favoritos"
         component={FavoritosStack}
         options={{
-          tabBarLabel: t('tabs.favorites').toUpperCase(),
+          tabBarLabel: t('tabs.favorites'),
           tabBarIcon: createTabBarIcon('Favoritos'),
           tabBarBadge: favoriteCount > 0 ? favoriteCount : undefined,
           tabBarBadgeStyle: {
@@ -119,7 +119,7 @@ export function RootTabs() {
         component={PerfilStack}
         options={{
           headerShown: false,
-          tabBarLabel: t('tabs.profile').toUpperCase(),
+          tabBarLabel: t('tabs.profile'),
           tabBarIcon: createTabBarIcon('Perfil'),
         }}
       />
