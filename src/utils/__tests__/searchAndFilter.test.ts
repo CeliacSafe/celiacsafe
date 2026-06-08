@@ -95,6 +95,13 @@ describe('matchesQuery', () => {
     const result = allRestaurants.some((r) => matchesQuery(r, 'tokyo'));
     expect(result).toBe(false);
   });
+
+  it('matcht Ländernamen in der Suche', () => {
+    expect(matchesQuery(avocadoMallorca, 'spanien')).toBe(true);
+    expect(matchesQuery(createRestaurant({ country_code: 'DE', city: 'Berlin' }), 'deutschland')).toBe(
+      true
+    );
+  });
 });
 
 describe('matchesFilter', () => {

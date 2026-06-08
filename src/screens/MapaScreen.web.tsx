@@ -10,11 +10,14 @@ import InteractiveOsmMap from '../components/InteractiveOsmMap';
 import LoadingSpinner from '../components/LoadingSpinner';
 import MapSearchPill from '../components/MapSearchPill';
 import RegionQuickJumps from '../components/RegionQuickJumps';
+import SearchCountryChips from '../components/SearchCountryChips';
 import RestaurantBottomSheet from '../components/RestaurantBottomSheet';
 import { QUICK_JUMPS } from '../data/quickJumps';
 import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { useLocalized } from '../hooks/useLocalized';
+import { COUNTRY_NAMES } from '../i18n/lookups';
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { MapaStackParamList } from '../navigation/MapaStack';
 import { useFilterStore } from '../store/filterStore';
 import { useThemedStyles } from '../theme/useThemedStyles';
@@ -25,6 +28,7 @@ import type { Restaurant } from '../types/Restaurant';
 import { hapticError, hapticMedium } from '../utils/haptics';
 import { toMapFilterCriteria } from '../utils/platformLinks';
 import { applyFilters } from '../utils/searchAndFilter';
+import { isKnownCountryCode } from '../utils/filterTextMatch';
 
 const INITIAL_REGION = QUICK_JUMPS[0].region;
 
@@ -44,6 +48,7 @@ export function MapaScreen() {
   const insets = useSafeAreaInsets();
   const styles = useThemedStyles(createStyles);
   const { regionName } = useLocalized();
+  const language = useAppLanguage();
   const { loading: locationLoading, requestLocation, lastErrorRef } = useUserLocation();
   const { restaurants } = useRestaurants();
   const searchQuery = useFilterStore((state) => state.searchQuery);
@@ -77,8 +82,14 @@ export function MapaScreen() {
     if (selectedRegions.length === 1) {
       return regionName(selectedRegions[0]);
     }
+    if (selectedCountry) {
+      if (isKnownCountryCode(selectedCountry)) {
+        return COUNTRY_NAMES[selectedCountry][language] ?? selectedCountry;
+      }
+      return selectedCountry;
+    }
     return t('map.all_areas');
-  }, [regionName, searchQuery, selectedCity, selectedRegions, t]);
+  }, [language, regionName, searchQuery, selectedCity, selectedCountry, selectedRegions, t]);
 
   const filterCriteria = useMemo(
     () => ({
@@ -200,6 +211,7 @@ export function MapaScreen() {
 
       <View style={[styles.topOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
         <RegionQuickJumps onJumpTo={handleQuickJump} />
+        <SearchCountryChips restaurants={restaurants} compact />
         <MapSearchPill
           areaLabel={areaLabel}
           pinCount={mappableRestaurants.length}

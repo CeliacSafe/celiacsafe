@@ -161,6 +161,21 @@ export function enrichRestaurantsFromBundle(restaurants: Restaurant[]): Restaura
   });
 }
 
+/** Supabase-Einträge überschreiben Bundle; fehlende Länder (z. B. DE) bleiben aus dem Bundle. */
+export function mergeBundledWithRemote(remote: Restaurant[]): Restaurant[] {
+  const enrichedRemote = enrichRestaurantsFromBundle(remote);
+  const byId = new Map<string, Restaurant>();
+
+  for (const restaurant of bundledData.restaurants as Restaurant[]) {
+    byId.set(restaurant.id, restaurant);
+  }
+  for (const restaurant of enrichedRemote) {
+    byId.set(restaurant.id, restaurant);
+  }
+
+  return Array.from(byId.values()).sort((a, b) => a.name.localeCompare(b.name, 'es'));
+}
+
 /** Liest den zuletzt gespeicherten Supabase-Stand (offline-fähig). */
 export async function hydrateRestaurantCache(): Promise<void> {
   if (cacheHydrated) {

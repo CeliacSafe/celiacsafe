@@ -15,6 +15,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
 import SearchCategoryTabs from '../components/SearchCategoryTabs';
+import SearchCountryChips from '../components/SearchCountryChips';
 import SearchFilterPanel from '../components/SearchFilterPanel';
 import SkeletonCard from '../components/SkeletonCard';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
@@ -333,6 +334,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
               onClose={() => setFiltersOpen(false)}
             />
           ) : null}
+          <SearchCountryChips restaurants={restaurants} />
           <SearchCategoryTabs />
           {syncError && restaurants.length > 0 ? (
             <Pressable

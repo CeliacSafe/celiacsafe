@@ -7,6 +7,7 @@
 import type { Restaurant } from '../types/Restaurant';
 
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
+import { COUNTRY_NAMES } from '../i18n/lookups';
 import { compareWithPremiumInCity } from './restaurantSort';
 import { restaurantHasDelivery } from './platformLinks';
 import {
@@ -45,6 +46,11 @@ export function matchesQuery(restaurant: Restaurant, query: string): boolean {
   const normalizedQuery = normalize(query);
   const terms = normalizedQuery.split(/\s+/).filter((t) => t.length > 0);
 
+  const countryLabels = COUNTRY_NAMES[restaurant.country_code];
+  const countryText = countryLabels
+    ? Object.values(countryLabels).join(' ')
+    : restaurant.country_code;
+
   const haystack = normalize(
     [
       restaurant.name,
@@ -53,6 +59,8 @@ export function matchesQuery(restaurant: Restaurant, query: string): boolean {
       restaurant.province ?? '',
       restaurant.district ?? '',
       restaurant.address_street ?? '',
+      restaurant.country_code,
+      countryText,
       ...(restaurant.cuisine_types ?? []),
       restaurant.description_es ?? '',
     ].join(' ')

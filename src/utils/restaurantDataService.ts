@@ -1,8 +1,8 @@
 import data from '../data/restaurants.json';
 import {
-  enrichRestaurantsFromBundle,
   getRemoteRestaurants,
   getRestaurantSyncState,
+  mergeBundledWithRemote,
   type RestaurantDataSource,
 } from '../services/restaurantSync';
 import { useAdminStore } from '../store/adminStore';
@@ -21,7 +21,7 @@ export function loadBundledRestaurants(): Restaurant[] {
 function getBaseRestaurants(): Restaurant[] {
   const remote = getRemoteRestaurants();
   if (remote) {
-    return enrichRestaurantsFromBundle(remote);
+    return mergeBundledWithRemote(remote);
   }
   return loadBundledRestaurants();
 }
