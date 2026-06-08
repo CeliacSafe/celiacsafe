@@ -89,6 +89,30 @@ def nominatim_search(query: str) -> tuple[float, float] | None:
         return None
 
 
+def parse_string(value: Any) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def resolve_coordinate_columns(headers: list[str]) -> tuple[str, str]:
+    if "latitude" in headers and "longitude" in headers:
+        return "latitude", "longitude"
+    if "geo_latitude" in headers and "geo_longitude" in headers:
+        return "geo_latitude", "geo_longitude"
+    raise ValueError(
+        "Spalten 'latitude'/'longitude' oder 'geo_latitude'/'geo_longitude' fehlen im restaurants-Blatt."
+    )
+
+
+def build_search_query(row: dict[str, Any]) -> str:
+    query = parse_string(row.get("geocoding_query"))
+    if query:
+        return query
+    return build_address_query(row)
+
+
 def build_address_query(row: dict[str, Any]) -> str:
     parts: list[str] = []
     street = row.get("address_street")
@@ -127,11 +151,22 @@ def geocode_workbook(
     header_row = next(worksheet.iter_rows(min_row=1, max_row=1, values_only=True))
     headers = [normalize_header(cell) for cell in header_row]
 
-    if "latitude" not in headers or "longitude" not in headers:
-        raise ValueError("Spalten 'latitude' und 'longitude' fehlen im restaurants-Blatt.")
-
-    lat_col = headers.index("latitude") + 1
-    lng_col = headers.index("longitude") + 1
+    lat_key, lng_key = resolve_coordinate_columns(headers)
+    lat_col = headers.index(lat_key) + 1
+    lng_col = headers.index(lng_key) + 1
+    geo_sheet = (
+        workbook["geocoding_all_129"]
+        if "geocoding_all_129" in workbook.sheetnames
+        else None
+    )
+    geo_headers: list[str] = []
+    geo_lat_col = geo_lng_col = None
+    if geo_sheet is not None:
+        geo_header_row = next(geo_sheet.iter_rows(min_row=1, max_row=1, values_only=True))
+        geo_headers = [normalize_header(cell) for cell in geo_header_row]
+        if "geo_latitude" in geo_headers and "geo_longitude" in geo_headers:
+            geo_lat_col = geo_headers.index("geo_latitude") + 1
+            geo_lng_col = geo_headers.index("geo_longitude") + 1
 
     stats = {
         "already_had_coords": 0,
@@ -164,7 +199,7 @@ def geocode_workbook(
         coords: tuple[float, float] | None = None
 
         if not fallback_only:
-            query = build_address_query(row)
+            query = build_search_query(row)
             print(f"[{row_index}] Online: {name} — {query}")
             coords = nominatim_search(query)
             time.sleep(NOMINATIM_DELAY_SEC)
@@ -189,6 +224,23 @@ def geocode_workbook(
         if coords:
             lat_cell.value = round(coords[0], 6)
             lng_cell.value = round(coords[1], 6)
+            if geo_sheet is not None and geo_lat_col and geo_lng_col:
+                restaurant_id = parse_string(row.get("id"))
+                if restaurant_id:
+                    for geo_row_index, geo_values in enumerate(
+                        geo_sheet.iter_rows(min_row=2, values_only=True),
+                        start=2,
+                    ):
+                        geo_row = {
+                            geo_headers[col_index]: geo_values[col_index]
+                            for col_index in range(len(geo_headers))
+                            if geo_headers[col_index]
+                        }
+                        if parse_string(geo_row.get("id")) != restaurant_id:
+                            continue
+                        geo_sheet.cell(row=geo_row_index, column=geo_lat_col).value = lat_cell.value
+                        geo_sheet.cell(row=geo_row_index, column=geo_lng_col).value = lng_cell.value
+                        break
         else:
             stats["failed"] += 1
             print(f"[{row_index}] FEHLGESCHLAGEN: {name}")

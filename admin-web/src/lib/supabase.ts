@@ -26,6 +26,7 @@ export type RestaurantRow = {
   verification_status: string;
   is_published: boolean;
   is_hidden: boolean;
+  is_premium_partner: boolean;
   updated_at: string;
 };
 

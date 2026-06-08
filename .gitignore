@@ -103,3 +103,5 @@ $RECYCLE.BIN/
 
 # Cursor IDE (lokale Agent-/Session-Daten)
 .cursor/
+
+.vercel

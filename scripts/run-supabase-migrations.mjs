@@ -1,6 +1,14 @@
 /**
- * Führt supabase/migrations/*.sql aus (benötigt SUPABASE_DB_PASSWORD in .env).
- * Alternative: supabase/apply_all.sql im Dashboard SQL Editor.
+ * Führt supabase/migrations/*.sql aus.
+ *
+ * Benötigt in .env (eine Option):
+ *   SUPABASE_DB_PASSWORD=...     (Dashboard → Settings → Database)
+ *   SUPABASE_DB_URL=postgresql://...
+ *   SUPABASE_ACCESS_TOKEN=...    (Dashboard → Account → Access Tokens)
+ *
+ * Optionen:
+ *   --from=005   Nur Migrationen ab 005 (für bestehende DB)
+ *   --dry-run    Nur anzeigen, nicht ausführen
  */
 import { readFileSync, readdirSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
@@ -25,45 +33,179 @@ function loadEnv() {
   }
 }
 
-function dbUrl() {
-  if (process.env.SUPABASE_DB_URL) return process.env.SUPABASE_DB_URL;
-  const password = process.env.SUPABASE_DB_PASSWORD;
+function projectRef() {
   const m = (process.env.SUPABASE_URL ?? '').match(/https:\/\/([^.]+)\.supabase\.co/);
-  if (password && m) {
-    const ref = m[1];
-    return `postgresql://postgres.${ref}:${encodeURIComponent(password)}@aws-0-eu-central-1.pooler.supabase.com:6543/postgres`;
+  return m?.[1] ?? null;
+}
+
+function dbUrls() {
+  if (process.env.SUPABASE_DB_URL) {
+    return [process.env.SUPABASE_DB_URL];
   }
-  return null;
+
+  const password = process.env.SUPABASE_DB_PASSWORD;
+  const ref = projectRef();
+  if (!password || !ref) {
+    return [];
+  }
+
+  const encoded = encodeURIComponent(password);
+  return [
+    `postgresql://postgres.${ref}:${encoded}@aws-1-eu-central-1.pooler.supabase.com:6543/postgres`,
+    `postgresql://postgres.${ref}:${encoded}@aws-0-eu-central-1.pooler.supabase.com:6543/postgres`,
+    `postgresql://postgres:${encoded}@db.${ref}.supabase.co:5432/postgres`,
+  ];
+}
+
+async function runViaManagementApi(ref, token, sql) {
+  const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/database/query`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query: sql }),
+  });
+
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = body.message ?? body.error ?? res.statusText;
+    throw new Error(`Management API: ${msg}`);
+  }
+  return body;
+}
+
+async function connectPg() {
+  const urls = dbUrls();
+  let lastError;
+
+  for (const url of urls) {
+    const client = new Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
+    try {
+      await client.connect();
+      return client;
+    } catch (error) {
+      lastError = error;
+      await client.end().catch(() => undefined);
+    }
+  }
+
+  throw lastError ?? new Error('Keine DB-Verbindung möglich');
+}
+
+async function ensureMigrationTable(client) {
+  await client.query(`
+    create table if not exists public._celiacsafe_migrations (
+      id text primary key,
+      applied_at timestamptz not null default now()
+    );
+  `);
+}
+
+async function isApplied(client, id) {
+  const { rows } = await client.query(
+    'select 1 from public._celiacsafe_migrations where id = $1',
+    [id]
+  );
+  return rows.length > 0;
+}
+
+async function markApplied(client, id) {
+  await client.query(
+    'insert into public._celiacsafe_migrations (id) values ($1) on conflict do nothing',
+    [id]
+  );
+}
+
+function parseArgs() {
+  const fromArg = process.argv.find((a) => a.startsWith('--from='));
+  return {
+    from: fromArg ? fromArg.split('=')[1] : null,
+    dryRun: process.argv.includes('--dry-run'),
+  };
+}
+
+async function applyFile(client, file, sql) {
+  // 005 (enum value) muss isoliert laufen — nicht in einer Transaktion mit anderen DDL
+  if (file === '005_add_viewer_role.sql') {
+    await client.query(sql);
+    return;
+  }
+
+  await client.query(sql);
 }
 
 async function main() {
   loadEnv();
-  const url = dbUrl();
-  if (!url) {
-    console.error('SUPABASE_DB_PASSWORD fehlt — nutze SQL Editor mit supabase/apply_all.sql');
-    process.exit(1);
-  }
+  const { from, dryRun } = parseArgs();
 
   const dir = resolve(ROOT, 'supabase/migrations');
-  const files = readdirSync(dir)
+  let files = readdirSync(dir)
     .filter((f) => f.endsWith('.sql'))
     .sort();
 
-  const client = new Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
-  await client.connect();
-  try {
-    for (const file of files) {
-      const sql = readFileSync(resolve(dir, file), 'utf8');
-      console.log(`→ ${file}`);
-      await client.query(sql);
-    }
-    console.log('Migrationen erfolgreich.');
-  } finally {
-    await client.end();
+  if (from) {
+    files = files.filter((f) => f >= `${from}_`);
   }
+
+  if (files.length === 0) {
+    console.log('Keine Migrationen zu applyen.');
+    return;
+  }
+
+  if (dryRun) {
+    console.log('Dry-run — würde anwenden:');
+    for (const file of files) {
+      console.log(`  ${file}`);
+    }
+    return;
+  }
+
+  const ref = projectRef();
+  const accessToken = process.env.SUPABASE_ACCESS_TOKEN;
+  const hasPg = dbUrls().length > 0;
+
+  if (!hasPg && !(ref && accessToken)) {
+    console.error('Fehlt in .env: SUPABASE_DB_PASSWORD oder SUPABASE_DB_URL');
+    console.error('Alternativ: SUPABASE_ACCESS_TOKEN (Account → Access Tokens)');
+    console.error('Oder: supabase/pending_security_hardening.sql im SQL Editor ausführen');
+    process.exit(1);
+  }
+
+  if (hasPg) {
+    const client = await connectPg();
+    try {
+      await ensureMigrationTable(client);
+
+      for (const file of files) {
+        if (await isApplied(client, file)) {
+          console.log(`⏭ ${file} (bereits angewendet)`);
+          continue;
+        }
+
+        const sql = readFileSync(resolve(dir, file), 'utf8');
+        console.log(`→ ${file}`);
+        await applyFile(client, file, sql);
+        await markApplied(client, file);
+      }
+
+      console.log('Migrationen erfolgreich (Postgres).');
+    } finally {
+      await client.end();
+    }
+    return;
+  }
+
+  // Management API (kein Migrations-Tracking — idempotent via IF NOT EXISTS / CREATE OR REPLACE)
+  for (const file of files) {
+    const sql = readFileSync(resolve(dir, file), 'utf8');
+    console.log(`→ ${file} (Management API)`);
+    await runViaManagementApi(ref, accessToken, sql);
+  }
+  console.log('Migrationen erfolgreich (Management API).');
 }
 
-main().catch((e) => {
-  console.error(e.message ?? e);
+main().catch((error) => {
+  console.error(error.message ?? error);
   process.exit(1);
 });

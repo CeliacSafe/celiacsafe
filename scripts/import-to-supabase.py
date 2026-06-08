@@ -40,14 +40,15 @@ def restaurant_row(r: dict) -> dict:
         "region_name": r["region_name"],
         "city": r["city"],
         "verification_status": r.get("verification_status", "to_be_verified"),
-        "is_published": True,
-        "is_hidden": False,
+        "is_published": r.get("is_published", True),
+        "is_hidden": r.get("is_hidden", False),
     }
     optional = [
         "slug", "province", "district", "postal_code", "address_street",
         "latitude", "longitude", "venue_type", "price_range",
         "last_verified_at", "national_authority", "phone", "whatsapp",
-        "email", "website", "menu_url", "instagram", "facebook", "opening_hours",
+        "email", "website", "menu_url", "google_maps_url", "apple_maps_url",
+        "instagram", "facebook", "opening_hours",
         "seasonal_closure", "description_es", "description_en", "description_de",
         "featured_image_url",
     ]

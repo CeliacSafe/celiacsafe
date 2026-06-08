@@ -187,3 +187,13 @@ button.primary {
   color: #b3b3b3;
   font-size: 0.9rem;
 }
+
+.mfa-qr svg {
+  display: block;
+  margin: 0.75rem 0;
+  max-width: 220px;
+  height: auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+}

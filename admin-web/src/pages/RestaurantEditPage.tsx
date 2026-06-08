@@ -2,6 +2,10 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import {
+  validatePlatformLinks,
+  validateRestaurantForm,
+} from '../lib/restaurantValidation';
+import {
   DELIVERY_PLATFORMS,
   formatList,
   mapToLinkRows,
@@ -26,6 +30,8 @@ type FormState = {
   address_street: string;
   latitude: string;
   longitude: string;
+  google_maps_url: string;
+  apple_maps_url: string;
   venue_type: string;
   cuisine_types: string;
   price_range: string;
@@ -51,6 +57,7 @@ type FormState = {
   featured_image_url: string;
   is_published: boolean;
   is_hidden: boolean;
+  is_premium_partner: boolean;
 };
 
 function fromRow(row: RestaurantDetail): FormState {
@@ -67,6 +74,8 @@ function fromRow(row: RestaurantDetail): FormState {
     address_street: row.address_street ?? '',
     latitude: row.latitude != null ? String(row.latitude) : '',
     longitude: row.longitude != null ? String(row.longitude) : '',
+    google_maps_url: row.google_maps_url ?? '',
+    apple_maps_url: row.apple_maps_url ?? '',
     venue_type: row.venue_type ?? '',
     cuisine_types: formatList(row.cuisine_types),
     price_range: row.price_range ?? '',
@@ -92,6 +101,7 @@ function fromRow(row: RestaurantDetail): FormState {
     featured_image_url: row.featured_image_url ?? '',
     is_published: row.is_published,
     is_hidden: row.is_hidden,
+    is_premium_partner: row.is_premium_partner ?? false,
   };
 }
 
@@ -110,6 +120,8 @@ function toPayload(form: FormState) {
     address_street: form.address_street.trim() || null,
     latitude: num(form.latitude),
     longitude: num(form.longitude),
+    google_maps_url: form.google_maps_url.trim() || null,
+    apple_maps_url: form.apple_maps_url.trim() || null,
     venue_type: form.venue_type.trim() || null,
     cuisine_types: parseList(form.cuisine_types),
     price_range: form.price_range.trim() || null,
@@ -135,6 +147,7 @@ function toPayload(form: FormState) {
     featured_image_url: form.featured_image_url.trim() || null,
     is_published: form.is_published,
     is_hidden: form.is_hidden,
+    is_premium_partner: form.is_premium_partner,
   };
 }
 
@@ -254,6 +267,25 @@ export default function RestaurantEditPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!id || !form) return;
+
+    const formError = validateRestaurantForm(form);
+    if (formError) {
+      setError(formError);
+      return;
+    }
+
+    const deliveryError = validatePlatformLinks(deliveryLinks);
+    if (deliveryError) {
+      setError(deliveryError);
+      return;
+    }
+
+    const reservationError = validatePlatformLinks(reservationLinks);
+    if (reservationError) {
+      setError(reservationError);
+      return;
+    }
+
     setSaving(true);
     setError(null);
     setSaved(false);
@@ -401,6 +433,24 @@ export default function RestaurantEditPage() {
                 onChange={(e) => update({ longitude: e.target.value })}
               />
             </label>
+            <label className="span-2">
+              Google Maps (Profil-URL)
+              <input
+                type="url"
+                value={form.google_maps_url}
+                onChange={(e) => update({ google_maps_url: e.target.value })}
+                placeholder="https://www.google.com/maps/place/…"
+              />
+            </label>
+            <label className="span-2">
+              Apple Maps (Profil-URL)
+              <input
+                type="url"
+                value={form.apple_maps_url}
+                onChange={(e) => update({ apple_maps_url: e.target.value })}
+                placeholder="https://maps.apple.com/…"
+              />
+            </label>
           </div>
         </fieldset>
 
@@ -472,6 +522,14 @@ export default function RestaurantEditPage() {
                 onChange={(e) => update({ is_hidden: e.target.checked })}
               />
               Ausgeblendet
+            </label>
+            <label className="checkbox-inline">
+              <input
+                type="checkbox"
+                checked={form.is_premium_partner}
+                onChange={(e) => update({ is_premium_partner: e.target.checked })}
+              />
+              Premiumpartner
             </label>
             <label className="checkbox-inline">
               <input

@@ -17,9 +17,10 @@ const EXPORT_FIELDS = [
   'latitude', 'longitude', 'venue_type', 'cuisine_types', 'price_range',
   'meal_types', 'verification_status', 'verification_methods',
   'last_verified_at', 'face_program', 'aoecs_certified', 'national_authority',
-  'phone', 'whatsapp', 'email', 'website', 'menu_url', 'instagram', 'facebook',
+  'phone', 'whatsapp', 'email', 'website', 'menu_url', 'google_maps_url', 'apple_maps_url',
+  'instagram', 'facebook',
   'opening_hours', 'seasonal_closure', 'description_es', 'description_en',
-  'description_de', 'featured_image_url',
+  'description_de', 'featured_image_url', 'is_premium_partner',
 ];
 
 function loadEnv() {

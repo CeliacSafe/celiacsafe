@@ -18,6 +18,8 @@ export type RestaurantDetail = {
   address_street: string | null;
   latitude: number | null;
   longitude: number | null;
+  google_maps_url: string | null;
+  apple_maps_url: string | null;
   venue_type: string | null;
   cuisine_types: string[] | null;
   price_range: string | null;
@@ -43,6 +45,7 @@ export type RestaurantDetail = {
   featured_image_url: string | null;
   is_published: boolean;
   is_hidden: boolean;
+  is_premium_partner: boolean;
 };
 
 export const VERIFICATION_STATUSES = [

@@ -9,11 +9,17 @@
 import { Alert, Linking, Platform } from 'react-native';
 
 import i18n from '../i18n';
+import { isSafeExternalUrl } from './safeUrl';
 
 /**
  * Oeffnet eine URL extern. Prueft vorher, ob die URL geoeffnet werden kann.
  */
 export async function openUrl(url: string): Promise<void> {
+  if (!isSafeExternalUrl(url)) {
+    Alert.alert(i18n.t('common.error'), i18n.t('errors.cannot_open_url', { url }));
+    return;
+  }
+
   try {
     const supported = await Linking.canOpenURL(url);
     if (supported) {
@@ -57,17 +63,19 @@ export function openEmail(email: string, subject?: string): void {
 }
 
 /**
- * System-Maps mit Routing-Plan oeffnen. Plattform-spezifisch.
+ * @deprecated Nutze openMapsPlace(restaurant) — Profil-Deeplink statt reiner Koordinaten.
  */
 export function openMapsRouting(latitude: number, longitude: number, label?: string): void {
   const labelParam = label ? encodeURIComponent(label) : '';
   const url = Platform.select({
     ios: `maps:?ll=${latitude},${longitude}&q=${labelParam}`,
     android: `geo:${latitude},${longitude}?q=${latitude},${longitude}(${labelParam})`,
-    default: `https://maps.google.com/?q=${latitude},${longitude}`,
+    default: `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`,
   }) as string;
   openUrl(url).catch(() => undefined);
 }
+
+export { openMapsPlace, canOpenExternalMaps } from './mapsPlaceLinks';
 
 /**
  * Instagram-Profil oeffnen. Versucht zuerst die App, faellt auf Web zurueck.

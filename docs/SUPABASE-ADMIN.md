@@ -282,16 +282,20 @@ Admins sehen alles im Web-Admin unter **Vorschläge**.
 
 ## 9. Sicherheit & DSGVO
 
+Ausführliche Checkliste: **[docs/SECURITY.md](./SECURITY.md)** (Migrationen 005–007, MFA, Rate Limits, Sign-up absichern).
+
 | Thema | Maßnahme |
 |-------|----------|
 | Region | **Frankfurt (EU)** |
-| Admin-Zugriff | Supabase Auth, Rollen in `profiles` |
-| Öffentliche App | `anon` key: nur SELECT veröffentlichter Restaurants + INSERT submissions |
+| Admin-Zugriff | Supabase Auth, Rollen in `profiles` (`admin` / `editor` / `viewer`) |
+| Öffentliche App | Publishable key: nur SELECT veröffentlichter Restaurants + INSERT submissions (validiert + rate-limited) |
 | Service Role | Nur lokal für Import/Export |
+| MFA | Empfohlen für Admin-Konten — siehe SECURITY.md |
+| Rate Limits | 3/E-Mail/24h, 30 App/Stunde, keine Duplikate (Name+Stadt/1h) |
 | Audit | Tabelle `audit_log` (optional befüllen) |
 | Datenschutz | Submissions enthalten ggf. E-Mail — Privacy-Text anpassen |
 
-**In-App-PIN-Admin** (`4829`) in Produktion durch Web-Admin ersetzen.
+**In-App-PIN-Admin** nur noch in Dev-Builds; Production über Web-Admin.
 
 ---
 

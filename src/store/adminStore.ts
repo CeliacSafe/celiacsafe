@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { ADMIN_PIN } from '../constants/adminConfig';
+import { ADMIN_PIN, IN_APP_ADMIN_ENABLED } from '../constants/adminConfig';
 import type { RestaurantSubmission } from '../types/Submission';
 import type { CountryCode, RegionCode, Restaurant } from '../types/Restaurant';
 import type { SubmissionData } from '../utils/submitViaEmail';
@@ -103,6 +103,9 @@ export const useAdminStore = create<AdminState>()(
       setHasHydrated: (value) => set({ hasHydrated: value }),
 
       authenticate: (pin) => {
+        if (!IN_APP_ADMIN_ENABLED || !ADMIN_PIN) {
+          return false;
+        }
         if (pin.trim() !== ADMIN_PIN) {
           return false;
         }

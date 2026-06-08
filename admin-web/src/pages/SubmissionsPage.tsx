@@ -19,7 +19,11 @@ export default function SubmissionsPage() {
   }, []);
 
   const promote = async (row: SubmissionRow) => {
-    const restaurantId = `es_admin_${Date.now()}`;
+    const suffix =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID().replace(/-/g, '').slice(0, 12)
+        : Math.random().toString(36).slice(2, 14);
+    const restaurantId = `es_admin_${Date.now()}_${suffix}`.slice(0, 64);
     const { error: insertErr } = await supabase.from('restaurants').insert({
       id: restaurantId,
       name: row.restaurant_name,

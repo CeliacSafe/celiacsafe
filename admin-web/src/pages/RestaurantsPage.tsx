@@ -10,7 +10,8 @@ export default function RestaurantsPage() {
   useEffect(() => {
     supabase
       .from('restaurants')
-      .select('id,name,city,region_code,region_name,verification_status,is_published,is_hidden,updated_at')
+      .select('id,name,city,region_code,region_name,verification_status,is_published,is_hidden,is_premium_partner,updated_at')
+      .order('city')
       .order('name')
       .then(({ data, error: err }) => {
         if (err) setError(err.message);
@@ -18,12 +19,21 @@ export default function RestaurantsPage() {
       });
   }, []);
 
-  const filtered = rows.filter(
-    (r) =>
-      !query ||
-      r.name.toLowerCase().includes(query.toLowerCase()) ||
-      r.city.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = rows
+    .filter(
+      (r) =>
+        !query ||
+        r.name.toLowerCase().includes(query.toLowerCase()) ||
+        r.city.toLowerCase().includes(query.toLowerCase())
+    )
+    .sort((a, b) => {
+      const cityCmp = a.city.localeCompare(b.city, 'de');
+      if (cityCmp !== 0) return cityCmp;
+      if (a.is_premium_partner !== b.is_premium_partner) {
+        return a.is_premium_partner ? -1 : 1;
+      }
+      return a.name.localeCompare(b.name, 'de');
+    });
 
   const toggleHidden = async (row: RestaurantRow) => {
     const { error: err } = await supabase
@@ -53,6 +63,7 @@ export default function RestaurantsPage() {
           <tr>
             <th>Name</th>
             <th>Stadt</th>
+            <th>Premium</th>
             <th>Status</th>
             <th>Sichtbar</th>
             <th></th>
@@ -66,6 +77,7 @@ export default function RestaurantsPage() {
                 <Link to={`/restaurants/${row.id}`}>{row.name}</Link>
               </td>
               <td>{row.city}</td>
+              <td>{row.is_premium_partner ? '⭐ Ja' : '—'}</td>
               <td>{row.verification_status}</td>
               <td>{row.is_hidden ? 'Ausgeblendet' : 'Ja'}</td>
               <td>

@@ -24,7 +24,7 @@ function loadEnv() {
   }
 }
 
-function restaurantRow(r) {
+function restaurantRow(r, { includeMapsUrls = true } = {}) {
   const row = {
     id: r.id,
     name: r.name,
@@ -33,24 +33,28 @@ function restaurantRow(r) {
     region_name: r.region_name,
     city: r.city,
     verification_status: r.verification_status ?? 'to_be_verified',
-    is_published: true,
-    is_hidden: false,
+    is_published: r.is_published ?? true,
+    is_hidden: r.is_hidden ?? false,
   };
-  const optional = [
+  let optional = [
     'slug', 'province', 'district', 'postal_code', 'address_street',
     'latitude', 'longitude', 'venue_type', 'price_range',
     'last_verified_at', 'national_authority', 'phone', 'whatsapp',
-    'email', 'website', 'menu_url', 'instagram', 'facebook', 'opening_hours',
+    'email', 'website', 'menu_url', 'google_maps_url', 'apple_maps_url',
+    'instagram', 'facebook', 'opening_hours',
     'seasonal_closure', 'description_es', 'description_en', 'description_de',
     'featured_image_url',
   ];
+  if (!includeMapsUrls) {
+    optional = optional.filter((k) => k !== 'google_maps_url' && k !== 'apple_maps_url');
+  }
   for (const key of optional) {
     if (r[key] != null && r[key] !== '') row[key] = r[key];
   }
   for (const key of ['cuisine_types', 'meal_types', 'verification_methods']) {
     if (r[key]?.length) row[key] = r[key];
   }
-  for (const key of ['face_program', 'aoecs_certified']) {
+  for (const key of ['face_program', 'aoecs_certified', 'is_premium_partner']) {
     if (r[key] != null) row[key] = r[key];
   }
   return row;
@@ -96,11 +100,24 @@ async function main() {
 
   const client = createClient(url, key);
 
+  let includeMapsUrls = true;
+  const { error: schemaProbe } = await client
+    .from('restaurants')
+    .select('google_maps_url,apple_maps_url')
+    .limit(0);
+  if (schemaProbe) {
+    includeMapsUrls = false;
+    console.warn(
+      'Hinweis: google_maps_url/apple_maps_url fehlen in Supabase — Import ohne Maps-URLs.',
+    );
+    console.warn('Bitte supabase/pending_maps_and_menu.sql ausführen, dann erneut importieren.');
+  }
+
   for (const item of restaurants) {
     const rid = item.id;
     const { error: rErr } = await client
       .from('restaurants')
-      .upsert(restaurantRow(item), { onConflict: 'id' });
+      .upsert(restaurantRow(item, { includeMapsUrls }), { onConflict: 'id' });
     if (rErr) throw new Error(`restaurants ${rid}: ${rErr.message}`);
 
     await upsertLinks(client, rid, item.delivery_links, 'delivery_links');
