@@ -13,6 +13,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
+import { fontFamilies } from '../theme/fonts';
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 import { reportErrorViaEmail } from '../utils/submitViaEmail';
@@ -63,7 +64,10 @@ export function ComunidadScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>{t('community.title')}</Text>
+          <Text style={styles.title}>
+            {t('community.title_line1')}
+            <Text style={styles.titleAccent}>{t('community.title_accent')}</Text>
+          </Text>
           <Text style={styles.intro}>{t('community.intro')}</Text>
         </View>
 
@@ -95,6 +99,7 @@ export function ComunidadScreen() {
               <RestaurantCard
                 key={item.id}
                 restaurant={item}
+                variant="editorial"
                 onPress={() => openDetail(item.id)}
               />
             ))}
@@ -169,8 +174,15 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     gap: spacing.sm,
   },
   title: {
-    ...typography.h1,
+    fontFamily: fontFamilies.serifRegular,
+    fontSize: 32,
+    lineHeight: 36,
+    letterSpacing: -0.64,
     color: colors.textPrimary,
+  },
+  titleAccent: {
+    fontFamily: fontFamilies.serifItalic,
+    color: colors.primary,
   },
   intro: {
     ...typography.bodySmall,

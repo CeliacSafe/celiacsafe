@@ -1,11 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
 
-import { SORT_OPTIONS } from '../data/filterOptions';
-import { useAppLanguage } from '../i18n/useAppLanguage';
-import { useFilterStore } from '../store/filterStore';
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
@@ -13,75 +9,71 @@ import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
 
-function SearchSortButton({
-  alignEnd = false,
-  inline = false,
-}: {
-  alignEnd?: boolean;
-  inline?: boolean;
-}) {
-  const { t } = useTranslation();
+export interface SearchQuickDropdownOption {
+  value: string | null;
+  label: string;
+}
+
+interface SearchQuickDropdownProps {
+  accessibilityLabel: string;
+  displayValue: string;
+  value: string | null;
+  options: SearchQuickDropdownOption[];
+  onChange: (value: string | null) => void;
+  active?: boolean;
+}
+
+function SearchQuickDropdown({
+  accessibilityLabel,
+  displayValue,
+  value,
+  options,
+  onChange,
+  active = false,
+}: SearchQuickDropdownProps) {
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
-  const language = useAppLanguage();
-  const sortBy = useFilterStore((s) => s.sortBy);
-  const setSortBy = useFilterStore((s) => s.setSortBy);
   const [open, setOpen] = useState(false);
-
-  const sortLabel =
-    SORT_OPTIONS.find((option) => option.code === sortBy)?.labels[language] ??
-    SORT_OPTIONS[0].labels[language];
-
-  const isActive = sortBy !== 'name_asc';
 
   return (
     <>
-      <View style={[styles.wrap, alignEnd && styles.wrapEnd, inline && styles.wrapInline]}>
-        <Pressable
-          onPress={() => {
-            hapticLight();
-            setOpen(true);
-          }}
-          style={({ pressed }) => [
-            styles.button,
-            inline && styles.buttonInline,
-            isActive && styles.buttonActive,
-            pressed && styles.buttonPressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t('search.sort_by')}
-        >
-          <MaterialCommunityIcons
-            name="sort"
-            size={18}
-            color={isActive ? colors.primary : colors.textSecondary}
-          />
-          <Text style={[styles.label, isActive && styles.labelActive]} numberOfLines={1}>
-            {sortLabel}
-          </Text>
-          <MaterialCommunityIcons name="chevron-down" size={20} color={colors.textSecondary} />
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={() => {
+          hapticLight();
+          setOpen(true);
+        }}
+        style={({ pressed }) => [
+          styles.button,
+          active && styles.buttonActive,
+          pressed && styles.buttonPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+      >
+        <Text style={[styles.label, active && styles.labelActive]} numberOfLines={1}>
+          {displayValue}
+        </Text>
+        <MaterialCommunityIcons name="chevron-down" size={18} color={colors.textSecondary} />
+      </Pressable>
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
           <Pressable style={styles.sheet} onPress={() => undefined}>
-            <Text style={styles.sheetTitle}>{t('search.sort_by')}</Text>
             <ScrollView keyboardShouldPersistTaps="handled">
-              {SORT_OPTIONS.map((option) => {
-                const selected = sortBy === option.code;
+              {options.map((option) => {
+                const selected = value === option.value;
                 return (
                   <Pressable
-                    key={option.code}
+                    key={option.value ?? '__all__'}
                     onPress={() => {
                       hapticLight();
-                      setSortBy(option.code);
+                      onChange(option.value);
                       setOpen(false);
                     }}
                     style={[styles.option, selected && styles.optionSelected]}
                   >
                     <Text style={[styles.optionText, selected && styles.optionTextSelected]}>
-                      {option.labels[language]}
+                      {option.label}
                     </Text>
                   </Pressable>
                 );
@@ -96,34 +88,20 @@ function SearchSortButton({
 
 const createStyles = (colors: AppColors) =>
   StyleSheet.create({
-    wrap: {
-      paddingHorizontal: spacing.screenPadding,
-    },
-    wrapEnd: {
-      alignItems: 'flex-end',
-    },
-    wrapInline: {
-      flex: 1,
-      paddingHorizontal: 0,
-    },
     button: {
+      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      alignSelf: 'flex-start',
+      justifyContent: 'space-between',
       gap: spacing.xs,
       minHeight: 36,
-      maxWidth: '100%',
+      minWidth: 0,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.xs,
       borderRadius: radius.pill,
       borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surface,
-    },
-    buttonInline: {
-      flex: 1,
-      alignSelf: 'stretch',
-      minWidth: 0,
     },
     buttonActive: {
       borderColor: colors.primary,
@@ -136,7 +114,7 @@ const createStyles = (colors: AppColors) =>
       ...typography.bodySmall,
       fontWeight: '600',
       color: colors.textSecondary,
-      flexShrink: 1,
+      flex: 1,
     },
     labelActive: {
       color: colors.textPrimary,
@@ -151,14 +129,7 @@ const createStyles = (colors: AppColors) =>
       backgroundColor: colors.surface,
       borderTopLeftRadius: radius.xl,
       borderTopRightRadius: radius.xl,
-      paddingTop: spacing.md,
-      paddingBottom: spacing.sm,
-    },
-    sheetTitle: {
-      ...typography.overline,
-      color: colors.textSecondary,
-      paddingHorizontal: spacing.screenPadding,
-      paddingBottom: spacing.sm,
+      paddingVertical: spacing.sm,
     },
     option: {
       paddingHorizontal: spacing.screenPadding,
@@ -179,4 +150,4 @@ const createStyles = (colors: AppColors) =>
     },
   });
 
-export default SearchSortButton;
+export default SearchQuickDropdown;

@@ -127,6 +127,8 @@
   "community": {
     "coming_soon": "Próximamente",
     "title": "Comunidad",
+    "title_line1": "Nuestra ",
+    "title_accent": "comunidad",
     "intro": "CeliacSafe se construye con su comunidad. Cada entrada verificada ayuda a otros a comer sin gluten con seguridad.",
     "stat_restaurants": "Restaurantes",
     "stat_cities": "Ciudades",
@@ -151,6 +153,13 @@
   },
   "profile": {
     "title": "Perfil",
+    "greeting_meta": "— Bienvenido",
+    "greeting_line1": "Tu ",
+    "greeting_accent": "espacio",
+    "greeting_sub": "Ajustes y contribución a la comunidad",
+    "hero_eyebrow": "— Contribuye",
+    "hero_title": "¿Conoces un sitio 100% sin gluten que falte?",
+    "hero_cta": "Sugerir un local",
     "language": "Idioma",
     "appearance": "Apariencia",
     "theme_light": "Claro",

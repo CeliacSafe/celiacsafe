@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type {
@@ -14,14 +14,12 @@ import AppBrandMark from '../components/AppBrandMark';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
-import SearchCountryChips from '../components/SearchCountryChips';
+import SearchQuickFiltersRow from '../components/SearchQuickFiltersRow';
 import SearchFilterPanel from '../components/SearchFilterPanel';
-import SearchSortButton from '../components/SearchSortButton';
-import SearchVenueTypeChips from '../components/SearchVenueTypeChips';
 import SkeletonCard from '../components/SkeletonCard';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useUserLocation } from '../hooks/useUserLocation';
-import { hapticMedium } from '../utils/haptics';
+import { hapticLight, hapticMedium } from '../utils/haptics';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import { useFilterStore } from '../store/filterStore';
@@ -97,6 +95,12 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(NEARBY_PAGE_SIZE);
   const [locationRequested, setLocationRequested] = useState(false);
+  const listRef = useRef<FlatList<Restaurant>>(null);
+
+  const handleHomePress = useCallback(() => {
+    hapticLight();
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, []);
 
   useEffect(() => {
     if (locationRequested) return;
@@ -250,45 +254,89 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   const listHeader = useMemo(
     () => (
-      <View style={styles.feedHeader}>
-        {isBrowsingNearby ? (
-          <Pressable
-            onPress={
-              Platform.OS === 'web' && !locationLoading
-                ? handleRequestLocation
-                : undefined
-            }
-            disabled={locationLoading}
-            style={({ pressed }) => [
-              styles.nearbyBanner,
-              Platform.OS === 'web' && !locationLoading && pressed && styles.nearbyBannerPressed,
-            ]}
-            accessibilityRole={Platform.OS === 'web' ? 'button' : undefined}
-            accessibilityLabel={
-              Platform.OS === 'web' ? t('search.location_tap_to_enable') : undefined
-            }
-          >
-            <MaterialCommunityIcons name="crosshairs-gps" size={16} color={colors.primary} />
-            <Text style={styles.nearbyBannerText}>
-              {locationLoading
-                ? t('search.location_requesting')
-                : locationError
-                  ? t('search.location_denied')
-                  : location
-                    ? t('search.nearby_hint')
-                    : Platform.OS === 'web'
-                      ? t('search.location_tap_to_enable')
-                      : t('search.nearby_hint')}
+      <View style={styles.scrollHeader}>
+        <View style={styles.editorialHeader}>
+          <View style={styles.editorialLeft}>
+            <AppBrandMark />
+            <Text style={styles.greeting}>
+              {t('search.greeting_line1')}
+              <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
             </Text>
+          </View>
+          <LanguageSwitcher variant="header" />
+        </View>
+
+        {filtersOpen ? (
+          <SearchFilterPanel restaurants={restaurants} onClose={() => setFiltersOpen(false)} />
+        ) : null}
+
+        <SearchQuickFiltersRow restaurants={restaurants} />
+
+        {syncError && restaurants.length > 0 ? (
+          <Pressable
+            onPress={onRefresh}
+            style={({ pressed }) => [styles.staleBanner, pressed && styles.nearbyBannerPressed]}
+          >
+            <MaterialCommunityIcons name="cloud-off-outline" size={16} color={colors.textSecondary} />
+            <Text style={styles.staleBannerText} numberOfLines={2}>
+              {t('search.offline_stale')}
+            </Text>
+            <MaterialCommunityIcons name="refresh" size={16} color={colors.primary} />
           </Pressable>
         ) : null}
 
-        <View style={styles.counterRow}>
-          <Text style={styles.counterText}>{counterLabel}</Text>
+        <View style={styles.feedHeader}>
+          {isBrowsingNearby ? (
+            <Pressable
+              onPress={
+                Platform.OS === 'web' && !locationLoading
+                  ? handleRequestLocation
+                  : undefined
+              }
+              disabled={locationLoading}
+              style={({ pressed }) => [
+                styles.nearbyBanner,
+                Platform.OS === 'web' && !locationLoading && pressed && styles.nearbyBannerPressed,
+              ]}
+              accessibilityRole={Platform.OS === 'web' ? 'button' : undefined}
+              accessibilityLabel={
+                Platform.OS === 'web' ? t('search.location_tap_to_enable') : undefined
+              }
+            >
+              <MaterialCommunityIcons name="crosshairs-gps" size={16} color={colors.primary} />
+              <Text style={styles.nearbyBannerText}>
+                {locationLoading
+                  ? t('search.location_requesting')
+                  : locationError
+                    ? t('search.location_denied')
+                    : location
+                      ? t('search.nearby_hint')
+                      : Platform.OS === 'web'
+                        ? t('search.location_tap_to_enable')
+                        : t('search.nearby_hint')}
+              </Text>
+            </Pressable>
+          ) : null}
+
+          <View style={styles.counterRow}>
+            <Text style={styles.counterText}>{counterLabel}</Text>
+          </View>
         </View>
       </View>
     ),
-    [colors, styles, counterLabel, isBrowsingNearby, location, locationError, locationLoading, t]
+    [
+      colors,
+      counterLabel,
+      filtersOpen,
+      isBrowsingNearby,
+      location,
+      locationError,
+      locationLoading,
+      onRefresh,
+      restaurants,
+      styles,
+      t,
+    ]
   );
 
   const listFooter = useMemo(() => {
@@ -309,50 +357,25 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <View style={styles.screenHeader}>
-        <View style={styles.searchBlock}>
-          <SearchBarRow
-            filtersOpen={filtersOpen}
-            onToggleFilters={() => setFiltersOpen((open) => !open)}
-          />
-          <SearchSortButton />
-          {filtersOpen ? (
-            <SearchFilterPanel
-              restaurants={restaurants}
-              onClose={() => setFiltersOpen(false)}
-            />
-          ) : null}
-          <SearchCountryChips restaurants={restaurants} />
-          <SearchVenueTypeChips restaurants={restaurants} />
-          {syncError && restaurants.length > 0 ? (
-            <Pressable
-              onPress={onRefresh}
-              style={({ pressed }) => [styles.staleBanner, pressed && styles.nearbyBannerPressed]}
-            >
-              <MaterialCommunityIcons name="cloud-off-outline" size={16} color={colors.textSecondary} />
-              <Text style={styles.staleBannerText} numberOfLines={2}>
-                {t('search.offline_stale')}
-              </Text>
-              <MaterialCommunityIcons name="refresh" size={16} color={colors.primary} />
-            </Pressable>
-          ) : null}
-        </View>
-
-        <View style={styles.appHeader}>
-          <AppBrandMark />
-          <LanguageSwitcher variant="header" />
-        </View>
-
-        <View style={styles.greetingBlock}>
-          <Text style={styles.greeting}>
-            {t('search.greeting_line1')}
-            <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
-          </Text>
-        </View>
+      <View style={styles.stickyBar}>
+        <Pressable
+          onPress={handleHomePress}
+          style={({ pressed }) => [styles.homeButton, pressed && styles.homeButtonPressed]}
+          accessibilityRole="button"
+          accessibilityLabel={t('search.brand_title')}
+        >
+          <MaterialCommunityIcons name="home-outline" size={22} color={colors.textPrimary} />
+        </Pressable>
+        <SearchBarRow
+          embedded
+          filtersOpen={filtersOpen}
+          onToggleFilters={() => setFiltersOpen((open) => !open)}
+        />
       </View>
 
       {loading ? (
         <FlatList
+          ref={listRef}
           style={styles.list}
           data={Array(5).fill(null)}
           ListHeaderComponent={listHeader}
@@ -364,6 +387,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         />
       ) : (
         <FlatList
+          ref={listRef}
           key={listSortKey}
           style={styles.list}
           data={displayRestaurants}
@@ -417,24 +441,45 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  screenHeader: {
-    backgroundColor: colors.background,
-    paddingBottom: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lineSoft,
-  },
-  appHeader: {
+  stickyBar: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lineSoft,
+    zIndex: 2,
+  },
+  homeButton: {
+    width: spacing.xxl,
+    height: spacing.xxl,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  homeButtonPressed: {
+    opacity: 0.85,
+  },
+  scrollHeader: {
+    gap: spacing.sm,
+    paddingBottom: spacing.sm,
+  },
+  editorialHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
+    gap: spacing.md,
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.md,
-    paddingBottom: spacing.xs,
   },
-  greetingBlock: {
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.md,
+  editorialLeft: {
+    flex: 1,
+    gap: spacing.sm,
+    minWidth: 0,
   },
   greeting: {
     fontFamily: fontFamilies.serifRegular,
@@ -447,16 +492,11 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     fontFamily: fontFamilies.serifItalic,
     color: colors.accent,
   },
-  searchBlock: {
-    gap: spacing.sm,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xs,
-  },
   list: {
     flex: 1,
   },
   feedHeader: {
-    paddingTop: spacing.md,
+    paddingTop: spacing.xs,
     paddingBottom: spacing.sm,
   },
   nearbyBanner: {

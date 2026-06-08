@@ -1,4 +1,5 @@
 import * as Application from 'expo-application';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useRef } from 'react';
@@ -18,8 +19,10 @@ import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../consta
 import { ADMIN_UNLOCK_TAPS, IN_APP_ADMIN_ENABLED } from '../constants/adminConfig';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
 import { useThemedStyles } from '../theme/useThemedStyles';
+import { useTheme } from '../theme/ThemeContext';
 import { type AppColors } from '../theme/palette';
-import { spacing } from '../theme/spacing';
+import { fontFamilies } from '../theme/fonts';
+import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import { openEmail } from '../utils/openExternalUrl';
@@ -28,6 +31,7 @@ type PerfilNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'Per
 
 function PerfilScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const navigation = useNavigation<PerfilNavigationProp>();
   const styles = useThemedStyles(createStyles);
   const appVersion = Application.nativeApplicationVersion ?? '1.0.0';
@@ -54,15 +58,32 @@ function PerfilScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('profile.title')}</Text>
-      </View>
-
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.heroHeader}>
+          <Text style={styles.greetingMeta}>{t('profile.greeting_meta')}</Text>
+          <Text style={styles.greetingTitle}>
+            {t('profile.greeting_line1')}
+            <Text style={styles.greetingAccent}>{t('profile.greeting_accent')}</Text>
+          </Text>
+          <Text style={styles.greetingSub}>{t('profile.greeting_sub')}</Text>
+        </View>
+
+        <Pressable
+          onPress={() => navigation.navigate('SubmitRestaurant')}
+          accessibilityRole="button"
+          style={({ pressed }) => [styles.contributeCard, pressed && styles.contributeCardPressed]}
+        >
+          <Text style={styles.contributeEyebrow}>{t('profile.hero_eyebrow')}</Text>
+          <Text style={styles.contributeTitle}>{t('profile.hero_title')}</Text>
+          <View style={styles.contributeCtaRow}>
+            <Text style={styles.contributeCta}>{t('profile.hero_cta')}</Text>
+            <MaterialCommunityIcons name="arrow-right" size={16} color={colors.onPrimary} />
+          </View>
+        </Pressable>
         <ProfileSection title={t('profile.language')}>
           <View style={styles.languageCardWrap}>
             <LanguageSwitcher variant="full" />
@@ -146,21 +167,76 @@ const createStyles = (colors: AppColors) =>
       flex: 1,
       backgroundColor: colors.background,
     },
-    header: {
-      paddingHorizontal: spacing.screenPadding,
-      paddingTop: 12,
-      paddingBottom: 16,
-      backgroundColor: colors.background,
-    },
-    title: {
-      ...typography.display,
-      color: colors.textPrimary,
-    },
     scroll: {
       flex: 1,
     },
     scrollContent: {
       paddingBottom: spacing.sectionGap,
+    },
+    heroHeader: {
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.md,
+      gap: spacing.sm,
+    },
+    greetingMeta: {
+      fontFamily: fontFamilies.mono,
+      fontSize: 10,
+      letterSpacing: 1.4,
+      textTransform: 'uppercase',
+      color: colors.primary,
+    },
+    greetingTitle: {
+      fontFamily: fontFamilies.serifRegular,
+      fontSize: 30,
+      lineHeight: 33,
+      letterSpacing: -0.6,
+      color: colors.textPrimary,
+    },
+    greetingAccent: {
+      fontFamily: fontFamilies.serifItalic,
+      color: colors.primary,
+    },
+    greetingSub: {
+      ...typography.bodySmall,
+      color: colors.textSecondary,
+    },
+    contributeCard: {
+      marginHorizontal: spacing.screenPadding,
+      marginBottom: spacing.lg,
+      borderRadius: radius.xl,
+      backgroundColor: colors.primary,
+      padding: spacing.lg,
+      gap: spacing.sm,
+      overflow: 'hidden',
+    },
+    contributeCardPressed: {
+      opacity: 0.92,
+    },
+    contributeEyebrow: {
+      fontFamily: fontFamilies.mono,
+      fontSize: 10,
+      letterSpacing: 1.4,
+      textTransform: 'uppercase',
+      color: colors.onPrimary,
+      opacity: 0.85,
+    },
+    contributeTitle: {
+      fontFamily: fontFamilies.serif,
+      fontSize: 20,
+      lineHeight: 24,
+      letterSpacing: -0.4,
+      color: colors.onPrimary,
+    },
+    contributeCtaRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+      marginTop: spacing.xs,
+    },
+    contributeCta: {
+      ...typography.button,
+      color: colors.onPrimary,
     },
     languageCardWrap: {
       marginHorizontal: spacing.screenPadding,

@@ -11,11 +11,20 @@ import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
 
 interface SearchBarRowProps {
-  filtersOpen: boolean;
-  onToggleFilters: () => void;
+  filtersOpen?: boolean;
+  onToggleFilters?: () => void;
+  /** Nur Suchfeld (ohne Filter-Button) */
+  searchOnly?: boolean;
+  /** In sticky Leiste: flex 1, ohne Außen-Padding */
+  embedded?: boolean;
 }
 
-function SearchBarRow({ filtersOpen, onToggleFilters }: SearchBarRowProps) {
+function SearchBarRow({
+  filtersOpen = false,
+  onToggleFilters,
+  searchOnly = false,
+  embedded = false,
+}: SearchBarRowProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
@@ -28,8 +37,8 @@ function SearchBarRow({ filtersOpen, onToggleFilters }: SearchBarRowProps) {
   };
 
   return (
-    <View style={styles.row}>
-      <View style={styles.inputWrap}>
+    <View style={[styles.row, embedded && styles.rowEmbedded, searchOnly && styles.rowSearchOnly]}>
+      <View style={[styles.inputWrap, (searchOnly || embedded) && styles.inputWrapFlex]}>
         <MaterialCommunityIcons name="magnify" size={20} color={colors.textSecondary} />
         <TextInput
           value={searchQuery}
@@ -48,21 +57,23 @@ function SearchBarRow({ filtersOpen, onToggleFilters }: SearchBarRowProps) {
           </Pressable>
         ) : null}
       </View>
-      <Pressable
-        onPress={() => {
-          hapticLight();
-          onToggleFilters();
-        }}
-        style={[styles.filterButton, filtersOpen && styles.filterButtonActive]}
-        accessibilityRole="button"
-        accessibilityLabel={t('filter.title')}
-      >
-        <MaterialCommunityIcons
-          name={filtersOpen ? 'tune-vertical' : 'filter-variant'}
-          size={22}
-          color={colors.onPrimary}
-        />
-      </Pressable>
+      {!searchOnly && onToggleFilters ? (
+        <Pressable
+          onPress={() => {
+            hapticLight();
+            onToggleFilters();
+          }}
+          style={[styles.filterButton, filtersOpen && styles.filterButtonActive]}
+          accessibilityRole="button"
+          accessibilityLabel={t('filter.title')}
+        >
+          <MaterialCommunityIcons
+            name={filtersOpen ? 'tune-vertical' : 'filter-variant'}
+            size={22}
+            color={colors.onPrimary}
+          />
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -74,6 +85,14 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     gap: spacing.sm,
     paddingHorizontal: spacing.screenPadding,
   },
+  rowSearchOnly: {
+    flex: 1,
+    paddingHorizontal: 0,
+  },
+  rowEmbedded: {
+    flex: 1,
+    paddingHorizontal: 0,
+  },
   inputWrap: {
     flex: 1,
     height: spacing.xxl,
@@ -83,6 +102,9 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+  },
+  inputWrapFlex: {
+    flex: 1,
   },
   input: {
     ...typography.body,
