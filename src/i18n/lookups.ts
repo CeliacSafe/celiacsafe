@@ -1,4 +1,4 @@
-import type { VenueType } from '../types/Restaurant';
+import type { CountryCode, VenueType } from '../types/Restaurant';
 
 type Lang = 'es' | 'en' | 'de';
 
@@ -19,6 +19,17 @@ export const VENUE_TYPE_NAMES: Record<VenueType, LocalizedLabel> = {
   brunch_place: { es: 'Brunch', en: 'Brunch', de: 'Brunch' },
   burger_joint: { es: 'Hamburgueserias', en: 'Burger places', de: 'Burgerlokale' },
   asian_restaurant: { es: 'Asiatico', en: 'Asian', de: 'Asiatisch' },
+};
+
+export const COUNTRY_NAMES: Record<CountryCode, LocalizedLabel> = {
+  ES: { es: 'Espana', en: 'Spain', de: 'Spanien' },
+  DE: { es: 'Alemania', en: 'Germany', de: 'Deutschland' },
+  PT: { es: 'Portugal', en: 'Portugal', de: 'Portugal' },
+  IT: { es: 'Italia', en: 'Italy', de: 'Italien' },
+  FR: { es: 'Francia', en: 'France', de: 'Frankreich' },
+  AT: { es: 'Austria', en: 'Austria', de: 'Oesterreich' },
+  CH: { es: 'Suiza', en: 'Switzerland', de: 'Schweiz' },
+  GB: { es: 'Reino Unido', en: 'United Kingdom', de: 'Vereinigtes Koenigreich' },
 };
 
 export const DELIVERY_PLATFORM_NAMES: Record<string, LocalizedLabel> = {

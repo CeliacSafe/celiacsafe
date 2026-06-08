@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState } from 'react';
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
@@ -23,6 +23,10 @@ interface FilterSelectProps {
   active?: boolean;
   /** Nur in horizontalen Zeilen (z. B. Region/Stadt): flex: 1 */
   flex?: boolean;
+  /** Freitext im Modal erlauben */
+  allowCustomInput?: boolean;
+  customInputPlaceholder?: string;
+  customInputApplyLabel?: string;
 }
 
 function FilterSelect({
@@ -33,11 +37,28 @@ function FilterSelect({
   onChange,
   active = false,
   flex = false,
+  allowCustomInput = false,
+  customInputPlaceholder = '',
+  customInputApplyLabel = 'OK',
 }: FilterSelectProps) {
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
   const [open, setOpen] = useState(false);
+  const [customDraft, setCustomDraft] = useState('');
   const hasValue = value != null;
+
+  useEffect(() => {
+    if (open) {
+      setCustomDraft(value ?? '');
+    }
+  }, [open, value]);
+
+  const applyCustomInput = () => {
+    hapticLight();
+    const trimmed = customDraft.trim();
+    onChange(trimmed.length > 0 ? trimmed : null);
+    setOpen(false);
+  };
 
   return (
     <>
@@ -84,7 +105,7 @@ function FilterSelect({
 
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
-          <View style={styles.sheet}>
+          <Pressable style={styles.sheet} onPress={() => undefined}>
             <ScrollView keyboardShouldPersistTaps="handled">
               {options.map((option) => {
                 const selected = value === option.value;
@@ -105,7 +126,29 @@ function FilterSelect({
                 );
               })}
             </ScrollView>
-          </View>
+            {allowCustomInput ? (
+              <View style={styles.customSection}>
+                <Text style={styles.customLabel}>{customInputPlaceholder}</Text>
+                <View style={styles.customRow}>
+                  <TextInput
+                    value={customDraft}
+                    onChangeText={setCustomDraft}
+                    placeholder={customInputPlaceholder}
+                    placeholderTextColor={colors.textSecondary}
+                    selectionColor={colors.primary}
+                    style={styles.customInput}
+                    returnKeyType="done"
+                    onSubmitEditing={applyCustomInput}
+                    autoCapitalize="words"
+                    autoCorrect={false}
+                  />
+                  <Pressable onPress={applyCustomInput} style={styles.customApply}>
+                    <Text style={styles.customApplyLabel}>{customInputApplyLabel}</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : null}
+          </Pressable>
         </Pressable>
       </Modal>
     </>
@@ -174,7 +217,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    maxHeight: '50%',
+    maxHeight: '60%',
     backgroundColor: colors.surface,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
@@ -196,6 +239,47 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   optionTextSelected: {
     color: colors.primary,
     fontWeight: '600',
+  },
+  customSection: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.lineSoft,
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+    gap: spacing.sm,
+  },
+  customLabel: {
+    ...typography.caption,
+    color: colors.textSecondary,
+  },
+  customRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  customInput: {
+    ...typography.body,
+    flex: 1,
+    minHeight: 44,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.cuisineSurface,
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.md,
+    color: colors.textPrimary,
+  },
+  customApply: {
+    minHeight: 44,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  customApplyLabel: {
+    ...typography.bodySmall,
+    fontWeight: '600',
+    color: colors.onPrimary,
   },
 });
 

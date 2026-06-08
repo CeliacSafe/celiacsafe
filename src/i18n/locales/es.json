@@ -47,6 +47,8 @@
     "panel_title": "Filtro",
     "close": "Cerrar",
     "region": "Región",
+    "country": "País",
+    "all_countries": "Todos los países",
     "city": "Ciudad",
     "all_regions": "Todas las regiones",
     "all_cities": "Todas las ciudades",
@@ -68,6 +70,8 @@
     "apply_one": "Aplicar {{count}} resultado",
     "apply_other": "Aplicar {{count}} resultados",
     "all": "Todos",
+    "custom_input": "O escribe texto…",
+    "custom_apply": "Aplicar",
     "more_filters": "Más filtros"
   },
   "detail": {
@@ -115,7 +119,10 @@
     "my_location": "Mi ubicación",
     "locating": "Obteniendo ubicación…",
     "no_pins_title": "Ningún restaurante en el mapa",
-    "no_pins_description": "Ajusta los filtros para ver locales con coordenadas."
+    "no_pins_description": "Ajusta los filtros para ver locales con coordenadas.",
+    "all_areas": "Todas las zonas",
+    "places_one": "{{count}} lugar",
+    "places_other": "{{count}} lugares"
   },
   "community": {
     "coming_soon": "Próximamente",
@@ -132,6 +139,9 @@
   },
   "favorites": {
     "title": "Favoritos",
+    "title_line1": "Tus",
+    "title_accent": "favoritos",
+    "header_count": "— {{count}} lugares guardados",
     "count_one": "{{count}} restaurante guardado",
     "count_other": "{{count}} restaurantes guardados",
     "empty_title": "Aún no hay favoritos",

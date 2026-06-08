@@ -4,11 +4,17 @@
  * dass die Ergebnisliste konsistent und performant berechnet wird.
  */
 
-import type { DeliveryPlatform, Restaurant } from '../types/Restaurant';
+import type { Restaurant } from '../types/Restaurant';
 
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
 import { compareWithPremiumInCity } from './restaurantSort';
-import { getActiveDeliveryLinks } from './platformLinks';
+import { restaurantHasDelivery } from './platformLinks';
+import {
+  matchesCityFilter,
+  matchesCountryFilter,
+  matchesRegionFilter,
+  matchesVenueTypeFilter,
+} from './filterTextMatch';
 import { cuisineMatchesDiet, restaurantMatchesVenueType } from './venueNormalization';
 
 export interface FilterCriteria {
@@ -17,8 +23,9 @@ export interface FilterCriteria {
   selectedPriceRanges: string[];
   onlyFaceCertified: boolean;
   onlyAoecsCertified: boolean;
+  selectedCountry?: string | null;
   selectedCity?: string | null;
-  selectedDeliveryPlatform?: string | null;
+  deliveryAvailable?: boolean | null;
   dietVegan?: boolean;
   dietVegetarian?: boolean;
   minRating?: RatingChip;
@@ -57,11 +64,17 @@ export function matchesQuery(restaurant: Restaurant, query: string): boolean {
 export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolean {
   if (
     c.selectedVenueTypes.length > 0 &&
-    !c.selectedVenueTypes.some((code) => restaurantMatchesVenueType(restaurant, code))
+    !c.selectedVenueTypes.some((code) => matchesVenueTypeFilter(restaurant, code))
   ) {
     return false;
   }
-  if (c.selectedRegions.length > 0 && !c.selectedRegions.includes(restaurant.region_code)) {
+  if (c.selectedCountry && !matchesCountryFilter(restaurant, c.selectedCountry)) {
+    return false;
+  }
+  if (
+    c.selectedRegions.length > 0 &&
+    !c.selectedRegions.some((code) => matchesRegionFilter(restaurant, code))
+  ) {
     return false;
   }
   if (
@@ -76,14 +89,14 @@ export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolea
   if (c.onlyAoecsCertified && !restaurant.aoecs_certified) {
     return false;
   }
-  if (c.selectedCity && restaurant.city !== c.selectedCity) {
+  if (c.selectedCity && !matchesCityFilter(restaurant, c.selectedCity)) {
     return false;
   }
-  if (c.selectedDeliveryPlatform) {
-    const platforms = getActiveDeliveryLinks(restaurant).map((link) => link.platform);
-    if (!platforms.includes(c.selectedDeliveryPlatform as DeliveryPlatform)) {
-      return false;
-    }
+  if (c.deliveryAvailable === true && !restaurantHasDelivery(restaurant)) {
+    return false;
+  }
+  if (c.deliveryAvailable === false && restaurantHasDelivery(restaurant)) {
+    return false;
   }
   if (c.dietVegan && !cuisineMatchesDiet(restaurant.cuisine_types, 'vegan')) {
     return false;

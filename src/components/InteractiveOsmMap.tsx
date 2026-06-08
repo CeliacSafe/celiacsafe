@@ -56,31 +56,50 @@ function zoomFromDelta(latitudeDelta: number): number {
   return Math.max(3, Math.min(17, Math.round(Math.log2(360 / latitudeDelta))));
 }
 
-/**
- * Eigener Pin als divIcon — unabhängig von Leaflets PNG-Standard-Icons, die beim
- * Laden via CDN oft nicht auflösen (→ unsichtbare Marker).
- */
-function createPinIcon(L: any, primary: string) {
+function createPinIcon(
+  L: any,
+  primary: string,
+  accent: string,
+  paper: string,
+  isSelected: boolean,
+  isFeatured: boolean
+) {
+  const highlighted = isSelected || isFeatured;
+  const size = highlighted ? 44 : 36;
+  const dotSize = highlighted ? 14 : 12;
+  const bg = highlighted ? accent : primary;
+  const glow = highlighted
+    ? 'box-shadow:0 0 0 8px rgba(212,134,58,0.28),0 4px 12px rgba(0,0,0,0.25);'
+    : 'box-shadow:0 4px 12px rgba(0,0,0,0.25);';
+
   return L.divIcon({
     className: 'celiacsafe-pin',
-    html: `<div style="width:18px;height:18px;border-radius:50% 50% 50% 0;background:${primary};border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.4);transform:rotate(-45deg)"></div>`,
-    iconSize: [18, 18],
-    iconAnchor: [9, 18],
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;background:${bg};${glow}transform:rotate(-45deg);display:flex;align-items:center;justify-content:center"><div style="width:${dotSize}px;height:${dotSize}px;border-radius:50%;background:${paper};transform:rotate(45deg)"></div></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],
   });
 }
 
 interface Props {
   restaurants: Restaurant[];
   region: MapRegion;
+  selectedRestaurantId?: string | null;
   onMarkerPress: (restaurantId: string) => void;
 }
 
-export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }: Props) {
+export default function InteractiveOsmMap({
+  restaurants,
+  region,
+  selectedRestaurantId = null,
+  onMarkerPress,
+}: Props) {
   const { colors } = useTheme();
   const containerRef = useRef<View>(null);
   const mapRef = useRef<any>(null);
   const leafletRef = useRef<any>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
+  const restaurantsRef = useRef(restaurants);
+  restaurantsRef.current = restaurants;
   const onPressRef = useRef(onMarkerPress);
   onPressRef.current = onMarkerPress;
   const didFitRef = useRef(false);
@@ -138,7 +157,6 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
     if (!L || !map) {
       return;
     }
-    const icon = createPinIcon(L, colors.primary);
     const existing = markersRef.current;
     const nextIds = new Set<string>();
     for (const r of restaurants) {
@@ -146,9 +164,20 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
         continue;
       }
       nextIds.add(r.id);
+      const isSelected = r.id === selectedRestaurantId;
+      const isFeatured = r.is_premium_partner === true;
+      const icon = createPinIcon(
+        L,
+        colors.primary,
+        colors.accent,
+        colors.background,
+        isSelected,
+        isFeatured
+      );
       const current = existing.get(r.id);
       if (current) {
         current.setLatLng([r.latitude, r.longitude]);
+        current.setIcon(icon);
       } else {
         const marker = L.marker([r.latitude, r.longitude], { title: r.name, icon });
         marker.on('click', () => onPressRef.current(r.id));
@@ -163,8 +192,6 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
       }
     }
 
-    // Beim ersten Befüllen auf alle Pins einpassen, damit wirklich jedes
-    // Restaurant sichtbar ist (Daten umfassen mehrere Länder/Regionen).
     if (!didFitRef.current && existing.size > 0) {
       const bounds = L.latLngBounds(
         Array.from(existing.values()).map((m: any) => m.getLatLng())
@@ -174,7 +201,7 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
         didFitRef.current = true;
       }
     }
-  }, [restaurants, ready, colors.primary]);
+  }, [restaurants, ready, selectedRestaurantId, colors.primary, colors.accent, colors.background]);
 
   return <View ref={containerRef} style={styles.map} />;
 }

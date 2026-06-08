@@ -77,12 +77,13 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const searchQuery = useFilterStore((state) => state.searchQuery);
   const debouncedSearchQuery = useDebouncedValue(searchQuery);
   const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
+  const selectedCountry = useFilterStore((state) => state.selectedCountry);
   const selectedRegions = useFilterStore((state) => state.selectedRegions);
   const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const selectedCity = useFilterStore((state) => state.selectedCity);
-  const selectedDeliveryPlatform = useFilterStore((state) => state.selectedDeliveryPlatform);
+  const deliveryAvailable = useFilterStore((state) => state.deliveryAvailable);
   const dietVegan = useFilterStore((state) => state.dietVegan);
   const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
   const minRating = useFilterStore((state) => state.minRating);
@@ -120,8 +121,9 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCountry,
       selectedCity,
-      selectedDeliveryPlatform,
+      deliveryAvailable,
       dietVegan,
       dietVegetarian,
       minRating,
@@ -133,8 +135,9 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCountry,
       selectedCity,
-      selectedDeliveryPlatform,
+      deliveryAvailable,
       dietVegan,
       dietVegetarian,
       minRating,
@@ -178,8 +181,9 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     selectedPriceRanges,
     onlyFaceCertified,
     onlyAoecsCertified,
+    selectedCountry,
     selectedCity,
-    selectedDeliveryPlatform,
+    deliveryAvailable,
     dietVegan,
     dietVegetarian,
     minRating,

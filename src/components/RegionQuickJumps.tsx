@@ -6,7 +6,7 @@ import { useAppLanguage } from '../i18n/useAppLanguage';
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
-import { spacing, radius } from '../theme/spacing';
+import { spacing, radius, shadows } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 
@@ -46,7 +46,7 @@ function RegionQuickJumps({ onJumpTo }: RegionQuickJumpsProps) {
 
 const createStyles = (colors: AppColors) => StyleSheet.create({
   bar: {
-    backgroundColor: colors.scrim,
+    backgroundColor: 'transparent',
   },
   scrollContent: {
     paddingVertical: spacing.sm,
@@ -58,10 +58,11 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     height: spacing.xl,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.sm + spacing.xs,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    ...shadows.small,
   },
   pillPressed: {
     opacity: 0.85,

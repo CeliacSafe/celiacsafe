@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useTranslation } from 'react-i18next';
 
-import RestaurantCard from './RestaurantCard';
+import FavoriteRestaurantRow from './FavoriteRestaurantRow';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
@@ -59,7 +59,7 @@ function SwipeableRestaurantCard({ restaurant, onPress }: SwipeableRestaurantCar
       overshootRight={false}
       friction={2}
     >
-      <RestaurantCard restaurant={restaurant} onPress={onPress} />
+      <FavoriteRestaurantRow restaurant={restaurant} onPress={onPress} />
     </Swipeable>
   );
 }

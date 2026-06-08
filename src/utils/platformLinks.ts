@@ -176,6 +176,10 @@ export function getActiveDeliveryLinks(restaurant: Restaurant): DeliveryLink[] {
     );
 }
 
+export function restaurantHasDelivery(restaurant: Restaurant): boolean {
+  return getActiveDeliveryLinks(restaurant).length > 0;
+}
+
 export function getActiveReservationLinks(restaurant: Restaurant): ReservationLink[] {
   return (restaurant.reservation_links ?? []).filter((link) => {
     if (link.is_active === false) return false;

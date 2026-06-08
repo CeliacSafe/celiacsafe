@@ -9,14 +9,20 @@ import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-na
 import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
+import RestaurantHeroImage from './RestaurantHeroImage';
 import { useLocalized } from '../hooks/useLocalized';
+import { useUserLocation } from '../hooks/useUserLocation';
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
+import { fontFamilies } from '../theme/fonts';
+import { shadows } from '../theme/spacing';
+
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
+import { formatDistanceKm, restaurantDistanceKm } from '../utils/restaurantDistance';
 import {
   getActiveDeliveryLinks,
   getActiveReservationLinks,
@@ -30,6 +36,8 @@ interface RestaurantBottomSheetProps {
   restaurant: Restaurant | null;
   onClose: () => void;
   onDetailPress: (id: string) => void;
+  /** Kompakte Vorschau-Karte (Mapa-Mockup) oder ausfuehrliches Sheet. */
+  variant?: 'compact' | 'full';
 }
 
 export interface RestaurantBottomSheetRef {
@@ -47,13 +55,15 @@ interface ActionItem {
 }
 
 const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBottomSheetProps>(
-  ({ restaurant, onClose, onDetailPress }, ref) => {
-    const { t } = useTranslation();
+  ({ restaurant, onClose, onDetailPress, variant = 'compact' }, ref) => {
+    const { t, i18n } = useTranslation();
     const { colors } = useTheme();
     const styles = useThemedStyles(createStyles);
-    const { regionName, cuisineName } = useLocalized();
+    const { regionName, cuisineName, venueTypeName } = useLocalized();
+    const { location } = useUserLocation();
     const sheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['40%', '70%'], []);
+    const isCompact = variant === 'compact';
+    const snapPoints = useMemo(() => (isCompact ? ['32%'] : ['40%', '70%']), [isCompact]);
 
     useImperativeHandle(ref, () => ({
       expand: () => sheetRef.current?.snapToIndex(0),
@@ -161,6 +171,22 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
 
     const visibleActions = actions.filter((action) => action.visible);
 
+    const showFace = restaurant?.face_program === true;
+    const showAoecs = restaurant?.aoecs_certified === true;
+    const certParts: string[] = [];
+    if (showFace) certParts.push('FACE');
+    if (showAoecs) certParts.push('AOECS');
+    if (restaurant) certParts.push(t('card.badge_sin_gluten'));
+
+    const distanceKm =
+      restaurant && location
+        ? restaurantDistanceKm(restaurant, location.latitude, location.longitude)
+        : null;
+    const distanceLabel =
+      distanceKm != null ? formatDistanceKm(distanceKm, i18n.language) : null;
+    const venueLabel = restaurant?.venue_type ? venueTypeName(restaurant.venue_type) : null;
+    const metaParts = [venueLabel, restaurant?.city, distanceLabel].filter(Boolean);
+
     return (
       <BottomSheet
         ref={sheetRef}
@@ -172,6 +198,47 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
         backgroundStyle={styles.sheetBackground}
       >
         {restaurant ? (
+          isCompact ? (
+            <View style={styles.compactContent}>
+              <Pressable
+                onPress={() => onDetailPress(restaurant.id)}
+                style={({ pressed }) => [styles.compactCard, pressed && styles.compactCardPressed]}
+                accessibilityRole="button"
+                accessibilityLabel={restaurant.name}
+              >
+                <View style={styles.compactThumb}>
+                  <RestaurantHeroImage restaurant={restaurant} iconSize={32} style={styles.compactImage} />
+                </View>
+                <View style={styles.compactInfo}>
+                  <View style={styles.compactCertRow}>
+                    <View style={styles.certDot} />
+                    <Text style={styles.compactCertText} numberOfLines={1}>
+                      {certParts.join(' · ')}
+                    </Text>
+                  </View>
+                  <Text style={styles.compactName} numberOfLines={2}>
+                    {restaurant.name}
+                  </Text>
+                  {metaParts.length > 0 ? (
+                    <Text style={styles.compactMeta} numberOfLines={1}>
+                      {metaParts.join(' · ')}
+                    </Text>
+                  ) : null}
+                </View>
+                <Pressable
+                  onPress={() => onDetailPress(restaurant.id)}
+                  style={({ pressed }) => [
+                    styles.compactAction,
+                    pressed && styles.compactActionPressed,
+                  ]}
+                  accessibilityLabel={t('map.view_detail')}
+                  accessibilityRole="button"
+                >
+                  <MaterialCommunityIcons name="arrow-right" size={16} color={colors.onPrimary} />
+                </Pressable>
+              </Pressable>
+            </View>
+          ) : (
           <BottomSheetScrollView contentContainerStyle={styles.content}>
             <View style={styles.header}>
               <Text style={styles.name}>{restaurant.name}</Text>
@@ -243,6 +310,7 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
               ))}
             </ScrollView>
           </BottomSheetScrollView>
+          )
         ) : null}
       </BottomSheet>
     );
@@ -329,6 +397,80 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     ...typography.tabLabel,
     fontWeight: '600',
     color: colors.textSecondary,
+  },
+  compactContent: {
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+  },
+  compactCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm + 2,
+  },
+  compactCardPressed: {
+    opacity: 0.92,
+  },
+  compactThumb: {
+    width: 78,
+    height: 78,
+    borderRadius: radius.lg,
+    overflow: 'hidden',
+    backgroundColor: colors.surfaceAlt,
+  },
+  compactImage: {
+    width: 78,
+    height: 78,
+    borderRadius: radius.lg,
+  },
+  compactInfo: {
+    flex: 1,
+    minWidth: 0,
+    paddingTop: 2,
+  },
+  compactCertRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginBottom: spacing.xs,
+  },
+  certDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+  },
+  compactCertText: {
+    fontFamily: fontFamilies.mono,
+    fontSize: 9,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    color: colors.primary,
+    flex: 1,
+  },
+  compactName: {
+    fontFamily: fontFamilies.serif,
+    fontSize: 19,
+    letterSpacing: -0.4,
+    lineHeight: 22,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  compactMeta: {
+    ...typography.bodySmall,
+    color: colors.textSecondary,
+  },
+  compactAction: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.lg,
+    ...shadows.small,
+  },
+  compactActionPressed: {
+    opacity: 0.85,
   },
 });
 

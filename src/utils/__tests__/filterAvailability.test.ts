@@ -1,9 +1,10 @@
 import type { DeliveryLink, Restaurant } from '../../types/Restaurant';
 import {
   getAvailableCities,
-  getAvailableDeliveryPlatforms,
+  getAvailableCountryCodes,
   getAvailableRegionCodes,
   getAvailableVenueTypes,
+  getDeliveryFilterAvailability,
 } from '../filterAvailability';
 import { matchesFilter } from '../searchAndFilter';
 
@@ -46,15 +47,25 @@ describe('filterAvailability', () => {
     venue_type: 'pizzeria',
   });
 
-  const all = [madridRestaurant, mallorcaBrunch, madridPizza];
+  const berlinCafe = createRestaurant({
+    id: 'de-1',
+    name: 'Berlin Cafe',
+    country_code: 'DE',
+    region_code: 'DE-BE',
+    city: 'Berlin',
+    venue_type: 'cafe',
+  });
+
+  const all = [madridRestaurant, mallorcaBrunch, madridPizza, berlinCafe];
   const baseCriteria = {
     selectedVenueTypes: [],
     selectedRegions: [],
     selectedPriceRanges: [],
     onlyFaceCertified: false,
     onlyAoecsCertified: false,
+    selectedCountry: null,
     selectedCity: null,
-    selectedDeliveryPlatform: null,
+    deliveryAvailable: null,
     dietVegan: false,
     dietVegetarian: false,
     minRating: 'all' as const,
@@ -81,12 +92,33 @@ describe('filterAvailability', () => {
     expect(types).not.toContain('pizzeria');
   });
 
-  it('lists delivery platforms available in region', () => {
-    const platforms = getAvailableDeliveryPlatforms(all, {
+  it('lists countries available in pool', () => {
+    const countries = getAvailableCountryCodes(all, baseCriteria);
+    expect(countries).toEqual(['DE', 'ES']);
+  });
+
+  it('filters by country code and free text', () => {
+    const byCode = all.filter((r) => matchesFilter(r, { ...baseCriteria, selectedCountry: 'ES' }));
+    expect(byCode.every((r) => r.country_code === 'ES')).toBe(true);
+
+    const byText = all.filter((r) =>
+      matchesFilter(r, { ...baseCriteria, selectedCountry: 'Spanien' })
+    );
+    expect(byText.every((r) => r.country_code === 'ES')).toBe(true);
+  });
+
+  it('filters city by partial text', () => {
+    const result = all.filter((r) => matchesFilter(r, { ...baseCriteria, selectedCity: 'Palma' }));
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('ib-1');
+  });
+
+  it('detects mixed delivery availability in region', () => {
+    const availability = getDeliveryFilterAvailability(all, {
       ...baseCriteria,
       selectedRegions: ['ES-MD'],
     });
-    expect(platforms).toEqual(['glovo']);
+    expect(availability).toEqual({ hasWithDelivery: true, hasWithoutDelivery: true });
   });
 
   it('narrows cities when region is selected', () => {
@@ -97,17 +129,21 @@ describe('filterAvailability', () => {
     expect(cities).toEqual(['Palma de Mallorca']);
   });
 
-  it('filters by delivery platform', () => {
-    const criteria = {
-      ...baseCriteria,
-      selectedDeliveryPlatform: 'glovo',
-    };
-    const result = all.filter((r) => matchesFilter(r, criteria));
-    expect(result).toHaveLength(1);
-    expect(result[0].id).toBe('md-1');
+  it('filters by delivery yes/no', () => {
+    const withDelivery = all.filter((r) =>
+      matchesFilter(r, { ...baseCriteria, deliveryAvailable: true })
+    );
+    expect(withDelivery).toHaveLength(1);
+    expect(withDelivery[0].id).toBe('md-1');
+
+    const withoutDelivery = all.filter((r) =>
+      matchesFilter(r, { ...baseCriteria, deliveryAvailable: false })
+    );
+    expect(withoutDelivery).toHaveLength(3);
+    expect(withoutDelivery.map((r) => r.id).sort()).toEqual(['de-1', 'ib-1', 'md-2']);
   });
 
-  it('normalizes own_takeaway to own_delivery in filter options', () => {
+  it('counts own_takeaway as delivery for yes/no filter', () => {
     const withOwnTakeaway = createRestaurant({
       id: 'de-1',
       delivery_links: [
@@ -118,12 +154,13 @@ describe('filterAvailability', () => {
         },
       ] as unknown as DeliveryLink[],
     });
-    const platforms = getAvailableDeliveryPlatforms([withOwnTakeaway], baseCriteria);
-    expect(platforms).toContain('own_delivery');
+    const availability = getDeliveryFilterAvailability([withOwnTakeaway], baseCriteria);
+    expect(availability.hasWithDelivery).toBe(true);
+    expect(availability.hasWithoutDelivery).toBe(false);
   });
 
   it('lists only regions with restaurants', () => {
     const regions = getAvailableRegionCodes(all, baseCriteria);
-    expect(regions).toEqual(['ES-IB', 'ES-MD']);
+    expect(regions).toEqual(['DE-BE', 'ES-IB', 'ES-MD']);
   });
 });

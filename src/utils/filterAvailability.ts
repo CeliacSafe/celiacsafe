@@ -4,12 +4,13 @@
  */
 
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
-import type { DeliveryPlatform, Restaurant } from '../types/Restaurant';
-import { getActiveDeliveryLinks, normalizeDeliveryPlatform } from './platformLinks';
+import type { Restaurant } from '../types/Restaurant';
+import { restaurantHasDelivery } from './platformLinks';
 import { cuisineMatchesDiet, normalizeVenueTypes } from './venueNormalization';
 import { matchesFilter, matchesQuery, type FilterCriteria } from './searchAndFilter';
 
 export type FilterDimension =
+  | 'country'
   | 'region'
   | 'city'
   | 'venueType'
@@ -20,25 +21,15 @@ export type FilterOptionContext = FilterCriteria & {
   searchQuery?: string;
 };
 
-const DELIVERY_PLATFORM_ORDER: DeliveryPlatform[] = [
-  'glovo',
-  'uber_eats',
-  'just_eat',
-  'wolt',
-  'deliveroo',
-  'lieferando',
-  'foodora',
-  'takeaway',
-  'bolt_food',
-  'own_delivery',
-];
-
 function withoutDimension(
   criteria: FilterOptionContext,
   dimension: FilterDimension
 ): FilterCriteria {
   const next: FilterCriteria = { ...criteria };
   switch (dimension) {
+    case 'country':
+      next.selectedCountry = null;
+      break;
     case 'region':
       next.selectedRegions = [];
       break;
@@ -52,7 +43,7 @@ function withoutDimension(
       next.selectedPriceRanges = [];
       break;
     case 'delivery':
-      next.selectedDeliveryPlatform = null;
+      next.deliveryAvailable = null;
       break;
     default:
       break;
@@ -70,6 +61,18 @@ export function getRestaurantsForFilterOptions(
   return restaurants
     .filter((r) => matchesQuery(r, query))
     .filter((r) => matchesFilter(r, scoped));
+}
+
+export function getAvailableCountryCodes(
+  restaurants: Restaurant[],
+  criteria: FilterOptionContext
+): string[] {
+  const pool = getRestaurantsForFilterOptions(restaurants, criteria, 'country');
+  const codes = new Set<string>();
+  for (const restaurant of pool) {
+    codes.add(restaurant.country_code);
+  }
+  return [...codes].sort((a, b) => a.localeCompare(b, 'es'));
 }
 
 export function getAvailableRegionCodes(
@@ -127,22 +130,24 @@ export function getAvailablePriceRanges(
   return order.filter((p) => prices.has(p));
 }
 
-export function getAvailableDeliveryPlatforms(
+export function getDeliveryFilterAvailability(
   restaurants: Restaurant[],
   criteria: FilterOptionContext
-): string[] {
+): { hasWithDelivery: boolean; hasWithoutDelivery: boolean } {
   const pool = getRestaurantsForFilterOptions(restaurants, criteria, 'delivery');
-  const platforms = new Set<string>();
-  for (const r of pool) {
-    for (const link of getActiveDeliveryLinks(r)) {
-      platforms.add(normalizeDeliveryPlatform(link.platform));
+  let hasWithDelivery = false;
+  let hasWithoutDelivery = false;
+  for (const restaurant of pool) {
+    if (restaurantHasDelivery(restaurant)) {
+      hasWithDelivery = true;
+    } else {
+      hasWithoutDelivery = true;
+    }
+    if (hasWithDelivery && hasWithoutDelivery) {
+      break;
     }
   }
-  const ordered = DELIVERY_PLATFORM_ORDER.filter((p) => platforms.has(p));
-  const extras = [...platforms]
-    .filter((p) => !DELIVERY_PLATFORM_ORDER.includes(p as DeliveryPlatform))
-    .sort((a, b) => a.localeCompare(b, 'es'));
-  return [...ordered, ...extras];
+  return { hasWithDelivery, hasWithoutDelivery };
 }
 
 export function poolHasDietOption(
@@ -168,8 +173,9 @@ export function buildFilterOptionContext(state: {
   selectedVenueTypes: string[];
   selectedRegions: string[];
   selectedPriceRanges: string[];
+  selectedCountry: string | null;
   selectedCity: string | null;
-  selectedDeliveryPlatform: string | null;
+  deliveryAvailable: boolean | null;
   onlyFaceCertified: boolean;
   onlyAoecsCertified: boolean;
   dietVegan: boolean;
@@ -181,8 +187,9 @@ export function buildFilterOptionContext(state: {
     selectedVenueTypes: state.selectedVenueTypes,
     selectedRegions: state.selectedRegions,
     selectedPriceRanges: state.selectedPriceRanges,
+    selectedCountry: state.selectedCountry,
     selectedCity: state.selectedCity,
-    selectedDeliveryPlatform: state.selectedDeliveryPlatform,
+    deliveryAvailable: state.deliveryAvailable,
     onlyFaceCertified: state.onlyFaceCertified,
     onlyAoecsCertified: state.onlyAoecsCertified,
     dietVegan: state.dietVegan,

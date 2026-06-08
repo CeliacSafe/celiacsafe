@@ -12,12 +12,28 @@ import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
+import { fontFamilies } from '../theme/fonts';
 import { spacing } from '../theme/spacing';
-
-import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 type FavoritosNavigationProp = NativeStackNavigationProp<FavoritosStackParamList, 'FavoritosList'>;
+
+function FavoritesHeader({ count }: { count: number }) {
+  const { t } = useTranslation();
+  const styles = useThemedStyles(createHeaderStyles);
+
+  return (
+    <View style={styles.header}>
+      <Text style={styles.count}>
+        {t('favorites.header_count', { count }).toUpperCase()}
+      </Text>
+      <Text style={styles.title}>
+        {t('favorites.title_line1')}{' '}
+        <Text style={styles.titleAccent}>{t('favorites.title_accent')}</Text>
+      </Text>
+    </View>
+  );
+}
 
 export function FavoritosScreen() {
   const { t } = useTranslation();
@@ -50,12 +66,15 @@ export function FavoritosScreen() {
     [openDetail]
   );
 
+  const listHeader = useMemo(
+    () => <FavoritesHeader count={favoriteRestaurants.length} />,
+    [favoriteRestaurants.length]
+  );
+
   if (!loading && favoriteRestaurants.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
-        <View style={styles.header}>
-          <Text style={styles.title}>{t('favorites.title')}</Text>
-        </View>
+        <FavoritesHeader count={0} />
         <EmptyState
           illustration="favorites"
           iconName="heart-outline"
@@ -74,41 +93,47 @@ export function FavoritosScreen() {
         renderItem={renderItem}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <View style={styles.header}>
-            <Text style={styles.title}>{t('favorites.title')}</Text>
-            <Text style={styles.subtitle}>
-              {t('favorites.count', { count: favoriteRestaurants.length })}
-            </Text>
-          </View>
-        }
+        ListHeaderComponent={listHeader}
       />
     </SafeAreaView>
   );
 }
+
+const createHeaderStyles = (colors: AppColors) =>
+  StyleSheet.create({
+    header: {
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: spacing.sm,
+      paddingBottom: spacing.md,
+    },
+    count: {
+      fontFamily: fontFamilies.mono,
+      fontSize: 10,
+      letterSpacing: 1.4,
+      color: colors.primary,
+      marginBottom: spacing.sm + 2,
+    },
+    title: {
+      fontFamily: fontFamilies.serifRegular,
+      fontSize: 36,
+      lineHeight: 38,
+      letterSpacing: -0.9,
+      color: colors.textPrimary,
+    },
+    titleAccent: {
+      fontFamily: fontFamilies.serifItalic,
+      color: colors.heart,
+    },
+  });
 
 const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.cardPadding,
-    paddingBottom: spacing.md,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    ...typography.bodySmall,
-    marginTop: spacing.sm,
-    color: colors.textSecondary,
-  },
   listContent: {
     paddingHorizontal: spacing.screenPadding,
-    paddingBottom: spacing.screenPadding,
+    paddingBottom: spacing.xxl,
   },
 });
 

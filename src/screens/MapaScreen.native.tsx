@@ -8,13 +8,14 @@ import MapView, { PROVIDER_DEFAULT } from 'react-native-maps';
 
 import EmptyState from '../components/EmptyState';
 import LoadingSpinner from '../components/LoadingSpinner';
-import MyLocationButton from '../components/MyLocationButton';
+import MapSearchPill from '../components/MapSearchPill';
 import RegionQuickJumps from '../components/RegionQuickJumps';
 import RestaurantBottomSheet from '../components/RestaurantBottomSheet';
 import RestaurantMapMarker from '../components/RestaurantMapMarker';
 import { QUICK_JUMPS } from '../data/quickJumps';
 import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
+import { useLocalized } from '../hooks/useLocalized';
 import type { MapaStackParamList } from '../navigation/MapaStack';
 import { useFilterStore } from '../store/filterStore';
 import { useThemedStyles } from '../theme/useThemedStyles';
@@ -45,17 +46,19 @@ export function MapaScreen() {
   const navigation = useNavigation<MapaNavigationProp>();
   const insets = useSafeAreaInsets();
   const styles = useThemedStyles(createStyles);
+  const { regionName } = useLocalized();
   const mapRef = useRef<MapView>(null);
   const { location, loading: locationLoading, requestLocation, lastErrorRef } = useUserLocation();
   const { restaurants } = useRestaurants();
   const searchQuery = useFilterStore((state) => state.searchQuery);
   const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
+  const selectedCountry = useFilterStore((state) => state.selectedCountry);
   const selectedRegions = useFilterStore((state) => state.selectedRegions);
   const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const selectedCity = useFilterStore((state) => state.selectedCity);
-  const selectedDeliveryPlatform = useFilterStore((state) => state.selectedDeliveryPlatform);
+  const deliveryAvailable = useFilterStore((state) => state.deliveryAvailable);
   const dietVegan = useFilterStore((state) => state.dietVegan);
   const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
   const categoryTab = useFilterStore((state) => state.categoryTab);
@@ -66,6 +69,20 @@ export function MapaScreen() {
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const selectedRestaurantId = selectedRestaurant?.id ?? null;
 
+  const areaLabel = useMemo(() => {
+    const query = searchQuery.trim();
+    if (query) {
+      return query;
+    }
+    if (selectedCity) {
+      return selectedCity;
+    }
+    if (selectedRegions.length === 1) {
+      return regionName(selectedRegions[0]);
+    }
+    return t('map.all_areas');
+  }, [regionName, searchQuery, selectedCity, selectedRegions, t]);
+
   const filterCriteria = useMemo(
     () => ({
       selectedVenueTypes,
@@ -73,8 +90,9 @@ export function MapaScreen() {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCountry,
       selectedCity,
-      selectedDeliveryPlatform,
+      deliveryAvailable,
       dietVegan,
       dietVegetarian,
       categoryTab,
@@ -85,8 +103,9 @@ export function MapaScreen() {
       selectedPriceRanges,
       onlyFaceCertified,
       onlyAoecsCertified,
+      selectedCountry,
       selectedCity,
-      selectedDeliveryPlatform,
+      deliveryAvailable,
       dietVegan,
       dietVegetarian,
       categoryTab,
@@ -206,15 +225,15 @@ export function MapaScreen() {
         </View>
       ) : null}
 
-      <View style={[styles.quickJumpOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
+      <View style={[styles.topOverlay, { paddingTop: insets.top }]} pointerEvents="box-none">
         <RegionQuickJumps onJumpTo={handleQuickJump} />
+        <MapSearchPill
+          areaLabel={areaLabel}
+          pinCount={mappableRestaurants.length}
+          onMyLocationPress={handleMyLocationPress}
+          locationLoading={locationLoading}
+        />
       </View>
-
-      <MyLocationButton
-        onPress={handleMyLocationPress}
-        loading={locationLoading}
-        style={styles.myLocationButton}
-      />
 
       {locationLoading ? <LoadingSpinner fullscreen message={t('map.locating')} /> : null}
 
@@ -222,6 +241,7 @@ export function MapaScreen() {
         restaurant={selectedRestaurant}
         onClose={() => setSelectedRestaurant(null)}
         onDetailPress={handleDetailPress}
+        variant="compact"
       />
     </View>
   );
@@ -247,17 +267,12 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     minHeight: 0,
     paddingVertical: 0,
   },
-  quickJumpOverlay: {
+  topOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1,
-  },
-  myLocationButton: {
-    position: 'absolute',
-    bottom: 24,
-    right: 16,
   },
 });
 

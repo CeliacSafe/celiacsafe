@@ -4,10 +4,10 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
-import FilterSelect from './FilterSelect';
+import FilterSelect, { type FilterSelectOption } from './FilterSelect';
 import { SORT_OPTIONS } from '../data/filterOptions';
 import { useAppLanguage } from '../i18n/useAppLanguage';
-import { DELIVERY_PLATFORM_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
+import { COUNTRY_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { REGION_NAMES } from '../i18n/regions';
 import { useFilterStore } from '../store/filterStore';
 import type { Restaurant } from '../types/Restaurant';
@@ -20,12 +20,18 @@ import { hapticLight } from '../utils/haptics';
 import {
   buildFilterOptionContext,
   getAvailableCities,
-  getAvailableDeliveryPlatforms,
+  getAvailableCountryCodes,
+  getDeliveryFilterAvailability,
   getAvailablePriceRanges,
   getAvailableRegionCodes,
   getAvailableVenueTypes,
   poolHasDietOption,
 } from '../utils/filterAvailability';
+import {
+  isKnownCountryCode,
+  isKnownRegionCode,
+  isKnownVenueTypeCode,
+} from '../utils/filterTextMatch';
 
 interface SearchFilterPanelProps {
   restaurants: Restaurant[];
@@ -39,11 +45,12 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const language = useAppLanguage();
 
   const searchQuery = useFilterStore((s) => s.searchQuery);
+  const selectedCountry = useFilterStore((s) => s.selectedCountry);
   const selectedRegions = useFilterStore((s) => s.selectedRegions);
   const selectedCity = useFilterStore((s) => s.selectedCity);
   const selectedVenueTypes = useFilterStore((s) => s.selectedVenueTypes);
   const selectedPriceRanges = useFilterStore((s) => s.selectedPriceRanges);
-  const selectedDeliveryPlatform = useFilterStore((s) => s.selectedDeliveryPlatform);
+  const deliveryAvailable = useFilterStore((s) => s.deliveryAvailable);
   const sortBy = useFilterStore((s) => s.sortBy);
   const minRating = useFilterStore((s) => s.minRating);
   const dietVegan = useFilterStore((s) => s.dietVegan);
@@ -52,10 +59,11 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const onlyAoecsCertified = useFilterStore((s) => s.onlyAoecsCertified);
   const categoryTab = useFilterStore((s) => s.categoryTab);
 
+  const setCountrySingle = useFilterStore((s) => s.setCountrySingle);
   const setRegionSingle = useFilterStore((s) => s.setRegionSingle);
   const setSelectedCity = useFilterStore((s) => s.setSelectedCity);
   const setVenueTypeSingle = useFilterStore((s) => s.setVenueTypeSingle);
-  const setDeliveryPlatformSingle = useFilterStore((s) => s.setDeliveryPlatformSingle);
+  const setDeliveryAvailable = useFilterStore((s) => s.setDeliveryAvailable);
   const setSortBy = useFilterStore((s) => s.setSortBy);
   const setPriceRangesAll = useFilterStore((s) => s.setPriceRangesAll);
   const togglePriceRange = useFilterStore((s) => s.togglePriceRange);
@@ -69,8 +77,9 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
         selectedVenueTypes,
         selectedRegions,
         selectedPriceRanges,
+        selectedCountry,
         selectedCity,
-        selectedDeliveryPlatform,
+        deliveryAvailable,
         onlyFaceCertified,
         onlyAoecsCertified,
         dietVegan,
@@ -83,8 +92,9 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
       selectedVenueTypes,
       selectedRegions,
       selectedPriceRanges,
+      selectedCountry,
       selectedCity,
-      selectedDeliveryPlatform,
+      deliveryAvailable,
       onlyFaceCertified,
       onlyAoecsCertified,
       dietVegan,
@@ -94,6 +104,10 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     ]
   );
 
+  const availableCountryCodes = useMemo(
+    () => getAvailableCountryCodes(restaurants, filterContext),
+    [restaurants, filterContext]
+  );
   const availableRegionCodes = useMemo(
     () => getAvailableRegionCodes(restaurants, filterContext),
     [restaurants, filterContext]
@@ -110,8 +124,8 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     () => getAvailablePriceRanges(restaurants, filterContext),
     [restaurants, filterContext]
   );
-  const availableDeliveryPlatforms = useMemo(
-    () => getAvailableDeliveryPlatforms(restaurants, filterContext),
+  const deliveryFilterAvailability = useMemo(
+    () => getDeliveryFilterAvailability(restaurants, filterContext),
     [restaurants, filterContext]
   );
   const hasVeganOption = useMemo(
@@ -123,33 +137,52 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     [restaurants, filterContext]
   );
 
+  const countryCode = selectedCountry;
   const regionCode = selectedRegions[0] ?? null;
   const venueCode = selectedVenueTypes[0] ?? null;
-  const deliveryCode = selectedDeliveryPlatform;
+  const deliveryValue =
+    deliveryAvailable === true ? 'yes' : deliveryAvailable === false ? 'no' : null;
+  const { hasWithDelivery, hasWithoutDelivery } = deliveryFilterAvailability;
+  const showDeliveryFilter = hasWithDelivery && hasWithoutDelivery;
 
   useEffect(() => {
-    if (regionCode && !availableRegionCodes.includes(regionCode)) {
+    if (
+      countryCode &&
+      isKnownCountryCode(countryCode) &&
+      !availableCountryCodes.includes(countryCode)
+    ) {
+      setCountrySingle(null);
+    }
+  }, [availableCountryCodes, countryCode, setCountrySingle]);
+
+  useEffect(() => {
+    if (
+      regionCode &&
+      isKnownRegionCode(regionCode) &&
+      !availableRegionCodes.includes(regionCode)
+    ) {
       setRegionSingle(null);
     }
   }, [availableRegionCodes, regionCode, setRegionSingle]);
 
   useEffect(() => {
-    if (selectedCity && !availableCities.includes(selectedCity)) {
-      setSelectedCity(null);
-    }
-  }, [availableCities, selectedCity, setSelectedCity]);
-
-  useEffect(() => {
-    if (venueCode && !availableVenueTypes.includes(venueCode)) {
+    if (
+      venueCode &&
+      isKnownVenueTypeCode(venueCode) &&
+      !availableVenueTypes.includes(venueCode)
+    ) {
       setVenueTypeSingle(null);
     }
   }, [availableVenueTypes, venueCode, setVenueTypeSingle]);
 
   useEffect(() => {
-    if (deliveryCode && !availableDeliveryPlatforms.includes(deliveryCode)) {
-      setDeliveryPlatformSingle(null);
+    if (deliveryAvailable === true && !hasWithDelivery) {
+      setDeliveryAvailable(null);
     }
-  }, [availableDeliveryPlatforms, deliveryCode, setDeliveryPlatformSingle]);
+    if (deliveryAvailable === false && !hasWithoutDelivery) {
+      setDeliveryAvailable(null);
+    }
+  }, [deliveryAvailable, hasWithDelivery, hasWithoutDelivery, setDeliveryAvailable]);
 
   useEffect(() => {
     if (
@@ -171,6 +204,17 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
       setDietVegetarian(false);
     }
   }, [dietVegetarian, hasVegetarianOption, setDietVegetarian]);
+
+  const countryOptions = useMemo(
+    () => [
+      { value: null, label: t('filter.all_countries') },
+      ...availableCountryCodes.map((code) => ({
+        value: code,
+        label: COUNTRY_NAMES[code as keyof typeof COUNTRY_NAMES]?.[language] ?? code,
+      })),
+    ],
+    [availableCountryCodes, language, t]
+  );
 
   const regionOptions = useMemo(
     () => [
@@ -203,16 +247,16 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     [availableVenueTypes, language, t]
   );
 
-  const deliveryOptions = useMemo(
-    () => [
-      { value: null, label: t('filter.all') },
-      ...availableDeliveryPlatforms.map((code) => ({
-        value: code,
-        label: DELIVERY_PLATFORM_NAMES[code]?.[language] ?? code,
-      })),
-    ],
-    [availableDeliveryPlatforms, language, t]
-  );
+  const deliveryOptions = useMemo((): FilterSelectOption[] => {
+    const options: FilterSelectOption[] = [{ value: null, label: t('filter.all') }];
+    if (hasWithDelivery) {
+      options.push({ value: 'yes', label: t('common.yes') });
+    }
+    if (hasWithoutDelivery) {
+      options.push({ value: 'no', label: t('common.no') });
+    }
+    return options;
+  }, [hasWithDelivery, hasWithoutDelivery, t]);
 
   const priceChipId =
     selectedPriceRanges.length === 0 ? 'all' : selectedPriceRanges[0] ?? 'all';
@@ -222,6 +266,10 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     ...availablePriceRanges.map((p) => ({ id: p, label: p })),
   ];
 
+  const countryLabel = countryCode
+    ? COUNTRY_NAMES[countryCode as keyof typeof COUNTRY_NAMES]?.[language] ?? countryCode
+    : t('filter.all_countries');
+
   const regionLabel = regionCode
     ? REGION_NAMES[regionCode as keyof typeof REGION_NAMES]?.[language] ?? regionCode
     : t('filter.all_regions');
@@ -230,9 +278,12 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
     ? VENUE_TYPE_NAMES[venueCode as keyof typeof VENUE_TYPE_NAMES]?.[language] ?? venueCode
     : t('filter.all');
 
-  const deliveryLabel = deliveryCode
-    ? DELIVERY_PLATFORM_NAMES[deliveryCode]?.[language] ?? deliveryCode
-    : t('filter.all');
+  const deliveryLabel =
+    deliveryAvailable === true
+      ? t('common.yes')
+      : deliveryAvailable === false
+        ? t('common.no')
+        : t('filter.all');
 
   const sortOptions = useMemo(
     () => SORT_OPTIONS.map((option) => ({ value: option.code, label: option.labels[language] })),
@@ -241,6 +292,9 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const sortLabel =
     SORT_OPTIONS.find((option) => option.code === sortBy)?.labels[language] ??
     SORT_OPTIONS[0].labels[language];
+
+  const customInputPlaceholder = t('filter.custom_input');
+  const customInputApplyLabel = t('filter.custom_apply');
 
   return (
     <ScrollView
@@ -269,13 +323,31 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
       <View style={styles.dropdownRow}>
         <FilterSelect
           flex
+          label={t('filter.country')}
+          value={countryCode}
+          displayValue={countryLabel}
+          options={countryOptions}
+          onChange={setCountrySingle}
+          active={countryCode != null}
+          allowCustomInput
+          customInputPlaceholder={customInputPlaceholder}
+          customInputApplyLabel={customInputApplyLabel}
+        />
+        <FilterSelect
+          flex
           label={t('filter.region')}
           value={regionCode}
           displayValue={regionLabel}
           options={regionOptions}
           onChange={setRegionSingle}
           active={regionCode != null}
+          allowCustomInput
+          customInputPlaceholder={customInputPlaceholder}
+          customInputApplyLabel={customInputApplyLabel}
         />
+      </View>
+
+      <View style={styles.dropdownRow}>
         <FilterSelect
           flex
           label={t('filter.city')}
@@ -284,10 +356,10 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
           options={citySelectOptions}
           onChange={setSelectedCity}
           active={selectedCity != null}
+          allowCustomInput
+          customInputPlaceholder={customInputPlaceholder}
+          customInputApplyLabel={customInputApplyLabel}
         />
-      </View>
-
-      <View style={styles.dropdownRow}>
         <FilterSelect
           flex
           label={t('filter.venue_type')}
@@ -296,16 +368,24 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
           options={venueOptions}
           onChange={setVenueTypeSingle}
           active={venueCode != null}
+          allowCustomInput
+          customInputPlaceholder={customInputPlaceholder}
+          customInputApplyLabel={customInputApplyLabel}
         />
-        {availableDeliveryPlatforms.length > 0 ? (
+      </View>
+
+      <View style={styles.dropdownRow}>
+        {showDeliveryFilter ? (
           <FilterSelect
             flex
             label={t('filter.delivery')}
-            value={deliveryCode}
+            value={deliveryValue}
             displayValue={deliveryLabel}
             options={deliveryOptions}
-            onChange={setDeliveryPlatformSingle}
-            active={deliveryCode != null}
+            onChange={(value) =>
+              setDeliveryAvailable(value === 'yes' ? true : value === 'no' ? false : null)
+            }
+            active={deliveryAvailable != null}
           />
         ) : null}
       </View>

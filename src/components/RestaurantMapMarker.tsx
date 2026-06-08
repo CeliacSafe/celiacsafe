@@ -43,8 +43,12 @@ const RestaurantMapMarker = memo(function MapRestaurantMarker({
       coordinate={coordinate}
       onPress={() => onPress(restaurant.id)}
       tracksViewChanges={tracksViewChanges}
+      anchor={{ x: 0.5, y: 1 }}
     >
-      <CustomMarker isSelected={isSelected} />
+      <CustomMarker
+        isSelected={isSelected}
+        isFeatured={restaurant.is_premium_partner === true}
+      />
     </Marker>
   );
 });

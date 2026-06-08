@@ -13,8 +13,10 @@ interface FilterState {
   onlyAoecsCertified: boolean;
   sortBy: 'name_asc' | 'name_desc' | 'recently_verified';
 
+  selectedCountry: string | null;
   selectedCity: string | null;
-  selectedDeliveryPlatform: string | null;
+  /** null = alle, true = mit Lieferung, false = ohne Lieferung */
+  deliveryAvailable: boolean | null;
   dietVegan: boolean;
   dietVegetarian: boolean;
   minRating: RatingChip;
@@ -30,8 +32,9 @@ interface FilterState {
   setFaceFilter: (value: boolean) => void;
   setAoecsFilter: (value: boolean) => void;
   setSortBy: (sort: FilterState['sortBy']) => void;
+  setCountrySingle: (country: string | null) => void;
   setSelectedCity: (city: string | null) => void;
-  setDeliveryPlatformSingle: (platform: string | null) => void;
+  setDeliveryAvailable: (value: boolean | null) => void;
   setDietVegan: (value: boolean) => void;
   setDietVegetarian: (value: boolean) => void;
   setMinRating: (value: RatingChip) => void;
@@ -48,8 +51,9 @@ const initialState = {
   onlyFaceCertified: false,
   onlyAoecsCertified: false,
   sortBy: 'name_asc' as const,
+  selectedCountry: null as string | null,
   selectedCity: null as string | null,
-  selectedDeliveryPlatform: null as string | null,
+  deliveryAvailable: null as boolean | null,
   dietVegan: false,
   dietVegetarian: false,
   minRating: 'all' as RatingChip,
@@ -100,9 +104,16 @@ export const useFilterStore = create<FilterState>((set, get) => ({
   setAoecsFilter: (value) => set({ onlyAoecsCertified: value }),
   setSortBy: (sort) => set({ sortBy: sort }),
 
+  setCountrySingle: (country) =>
+    set({
+      selectedCountry: country,
+      selectedRegions: [],
+      selectedCity: null,
+    }),
+
   setSelectedCity: (city) => set({ selectedCity: city }),
 
-  setDeliveryPlatformSingle: (platform) => set({ selectedDeliveryPlatform: platform }),
+  setDeliveryAvailable: (value) => set({ deliveryAvailable: value }),
 
   setDietVegan: (value) => set({ dietVegan: value }),
 
@@ -135,8 +146,9 @@ export const useFilterStore = create<FilterState>((set, get) => ({
       state.selectedPriceRanges.length > 0 ||
       state.onlyFaceCertified ||
       state.onlyAoecsCertified ||
+      state.selectedCountry != null ||
       state.selectedCity != null ||
-      state.selectedDeliveryPlatform != null ||
+      state.deliveryAvailable != null ||
       state.dietVegan ||
       state.dietVegetarian ||
       state.minRating !== 'all' ||

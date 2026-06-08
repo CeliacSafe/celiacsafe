@@ -47,6 +47,8 @@
     "panel_title": "Filter",
     "close": "Schließen",
     "region": "Region",
+    "country": "Land",
+    "all_countries": "Alle Länder",
     "city": "Stadt",
     "all_regions": "Alle Regionen",
     "all_cities": "Alle Städte",
@@ -68,6 +70,8 @@
     "apply_one": "{{count}} Ergebnis anwenden",
     "apply_other": "{{count}} Ergebnisse anwenden",
     "all": "Alle",
+    "custom_input": "Oder Text eingeben…",
+    "custom_apply": "Übernehmen",
     "more_filters": "Weitere Filter"
   },
   "detail": {
@@ -115,7 +119,10 @@
     "my_location": "Mein Standort",
     "locating": "Standort wird ermittelt…",
     "no_pins_title": "Keine Restaurants auf der Karte",
-    "no_pins_description": "Passen Sie die Filter an, um Treffer mit Koordinaten anzuzeigen."
+    "no_pins_description": "Passen Sie die Filter an, um Treffer mit Koordinaten anzuzeigen.",
+    "all_areas": "Alle Gebiete",
+    "places_one": "{{count}} Ort",
+    "places_other": "{{count}} Orte"
   },
   "community": {
     "coming_soon": "Demnächst verfügbar",
@@ -132,6 +139,9 @@
   },
   "favorites": {
     "title": "Favoriten",
+    "title_line1": "Deine",
+    "title_accent": "Favoriten",
+    "header_count": "— {{count}} gespeicherte Orte",
     "count_one": "{{count}} gespeichertes Restaurant",
     "count_other": "{{count}} gespeicherte Restaurants",
     "empty_title": "Noch keine Favoriten",

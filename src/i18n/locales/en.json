@@ -47,6 +47,8 @@
     "panel_title": "Filter",
     "close": "Close",
     "region": "Region",
+    "country": "Country",
+    "all_countries": "All countries",
     "city": "City",
     "all_regions": "All regions",
     "all_cities": "All cities",
@@ -68,6 +70,8 @@
     "apply_one": "Apply {{count}} result",
     "apply_other": "Apply {{count}} results",
     "all": "All",
+    "custom_input": "Or enter text…",
+    "custom_apply": "Apply",
     "more_filters": "More filters"
   },
   "detail": {
@@ -115,7 +119,10 @@
     "my_location": "My location",
     "locating": "Getting your location…",
     "no_pins_title": "No restaurants on the map",
-    "no_pins_description": "Adjust your filters to show venues with map coordinates."
+    "no_pins_description": "Adjust your filters to show venues with map coordinates.",
+    "all_areas": "All areas",
+    "places_one": "{{count}} place",
+    "places_other": "{{count}} places"
   },
   "community": {
     "coming_soon": "Coming soon",
@@ -132,6 +139,9 @@
   },
   "favorites": {
     "title": "Favourites",
+    "title_line1": "Your",
+    "title_accent": "favourites",
+    "header_count": "— {{count}} saved places",
     "count_one": "{{count}} saved restaurant",
     "count_other": "{{count}} saved restaurants",
     "empty_title": "No favourites yet",
