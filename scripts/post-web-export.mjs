@@ -50,17 +50,3 @@ html = html.replace(
 fs.writeFileSync(indexPath, html);
 
 console.log('post-web-export: _expo → expo-static kopiert, index.html angepasst (type=module).');
-
-// Marketing-Landing auf "/", Expo-App-Shell unter "/app".
-// Die App-Assets liegen weiterhin absolut unter /expo-static, daher funktioniert
-// die Shell auch, wenn sie via Rewrite fuer /app/* ausgeliefert wird.
-const marketingSource = path.resolve('marketing', 'index.html');
-const appShellPath = path.join(distDir, 'app.html');
-
-if (fs.existsSync(marketingSource)) {
-  fs.copyFileSync(indexPath, appShellPath);
-  fs.copyFileSync(marketingSource, indexPath);
-  console.log('post-web-export: Marketing-Landing → dist/index.html, App-Shell → dist/app.html.');
-} else {
-  console.warn('post-web-export: marketing/index.html fehlt — App-Shell bleibt auf "/".');
-}

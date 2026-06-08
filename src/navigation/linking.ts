@@ -9,12 +9,10 @@ import type { PerfilStackParamList } from './PerfilStack';
 /**
  * Deep-Linking-Konfiguration für native (Schema celiacsafe://) und Web.
  *
- * Die Web-App wird unter /app ausgeliefert (Marketing-Landing liegt auf /).
- *
  * Beispiele:
  *   celiacsafe://restaurant/es_md_001
- *   https://celiacsafe.vercel.app/app/restaurant/es_md_001
- *   https://celiacsafe.vercel.app/app/map
+ *   https://celiacsafe.vercel.app/restaurant/es_md_001
+ *   https://celiacsafe.vercel.app/map
  */
 type RootTabParamList = {
   Buscar: NavigatorScreenParams<BuscarStackParamList>;
@@ -27,13 +25,7 @@ type RootTabParamList = {
 export const WEB_URL = 'https://celiacsafe.vercel.app';
 
 export const linking: LinkingOptions<RootTabParamList> = {
-  prefixes: [
-    'celiacsafe://',
-    'https://celiacsafe.app/app',
-    `${WEB_URL}/app`,
-    'https://celiacsafe.app/',
-    `${WEB_URL}/`,
-  ],
+  prefixes: ['celiacsafe://', `${WEB_URL}/`, 'https://celiacsafe.app/'],
   config: {
     screens: {
       Buscar: {
