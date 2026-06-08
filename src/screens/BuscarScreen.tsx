@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
-import AppLogo from '../components/AppLogo';
+import AppBrandMark from '../components/AppBrandMark';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
@@ -29,6 +29,7 @@ import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
+import { fontFamilies } from '../theme/fonts';
 import { typography } from '../theme/typography';
 import { formatResultCount } from '../utils/pluralize';
 import { sortRestaurantsByDistance, restaurantDistanceKm } from '../utils/restaurantDistance';
@@ -54,7 +55,12 @@ const BuscarRestaurantRow = memo(function BuscarRestaurantRow({
     [onPressRestaurant, restaurant.id]
   );
   return (
-    <RestaurantCard restaurant={restaurant} distanceKm={distanceKm} onPress={handlePress} />
+    <RestaurantCard
+      restaurant={restaurant}
+      distanceKm={distanceKm}
+      variant="editorial"
+      onPress={handlePress}
+    />
   );
 }, (prev, next) =>
   prev.restaurant.id === next.restaurant.id && prev.distanceKm === next.distanceKm
@@ -238,15 +244,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   const listHeader = useMemo(
     () => (
-      <View style={styles.listHeader}>
-        <View style={styles.header}>
-          <View style={styles.headerMain}>
-            <AppLogo width={200} />
-            <Text style={styles.subtitle}>{t('search.subtitle')}</Text>
-          </View>
-          <LanguageSwitcher variant="compact" />
-        </View>
-
+      <View style={styles.feedHeader}>
         {isBrowsingNearby ? (
           <Pressable
             onPress={
@@ -305,31 +303,48 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <View style={styles.topChrome}>
-        <SearchBarRow
-          filtersOpen={filtersOpen}
-          onToggleFilters={() => setFiltersOpen((open) => !open)}
-        />
-        {filtersOpen ? (
-          <SearchFilterPanel
-            restaurants={restaurants}
-            onClose={() => setFiltersOpen(false)}
+      <View style={styles.screenHeader}>
+        <View style={styles.appHeader}>
+          <AppBrandMark />
+          <LanguageSwitcher variant="header" />
+        </View>
+
+        <View style={styles.greetingBlock}>
+          <Text style={styles.greetingMeta}>{t('search.greeting_meta')}</Text>
+          <Text style={styles.greeting}>
+            {t('search.greeting_line1')}
+            {'\n'}
+            <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
+          </Text>
+        </View>
+
+        <View style={styles.searchBlock}>
+          <SearchBarRow
+            filtersOpen={filtersOpen}
+            onToggleFilters={() => setFiltersOpen((open) => !open)}
           />
-        ) : null}
-        <SearchCategoryTabs />
-        {syncError && restaurants.length > 0 ? (
-          <Pressable
-            onPress={onRefresh}
-            style={({ pressed }) => [styles.staleBanner, pressed && styles.nearbyBannerPressed]}
-          >
-            <MaterialCommunityIcons name="cloud-off-outline" size={16} color={colors.textSecondary} />
-            <Text style={styles.staleBannerText} numberOfLines={2}>
-              {t('search.offline_stale')}
-            </Text>
-            <MaterialCommunityIcons name="refresh" size={16} color={colors.primary} />
-          </Pressable>
-        ) : null}
+          {filtersOpen ? (
+            <SearchFilterPanel
+              restaurants={restaurants}
+              onClose={() => setFiltersOpen(false)}
+            />
+          ) : null}
+          <SearchCategoryTabs />
+          {syncError && restaurants.length > 0 ? (
+            <Pressable
+              onPress={onRefresh}
+              style={({ pressed }) => [styles.staleBanner, pressed && styles.nearbyBannerPressed]}
+            >
+              <MaterialCommunityIcons name="cloud-off-outline" size={16} color={colors.textSecondary} />
+              <Text style={styles.staleBannerText} numberOfLines={2}>
+                {t('search.offline_stale')}
+              </Text>
+              <MaterialCommunityIcons name="refresh" size={16} color={colors.primary} />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
+
       {loading ? (
         <FlatList
           style={styles.list}
@@ -396,43 +411,54 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  topChrome: {
-    zIndex: 10,
-    elevation: 8,
+  screenHeader: {
     backgroundColor: colors.background,
-    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.lineSoft,
+  },
+  appHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+  },
+  greetingBlock: {
+    paddingHorizontal: spacing.screenPadding,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    gap: spacing.sm + spacing.xs,
+  },
+  greetingMeta: {
+    ...typography.overline,
+    color: colors.primary,
+    letterSpacing: 2.2,
+  },
+  greeting: {
+    fontFamily: fontFamilies.serifRegular,
+    fontSize: 30,
+    lineHeight: 33,
+    letterSpacing: -0.6,
+    color: colors.textPrimary,
+  },
+  greetingAccent: {
+    fontFamily: fontFamilies.serifItalic,
+    color: colors.accent,
+  },
+  searchBlock: {
+    gap: spacing.sm,
+    paddingBottom: spacing.sm,
   },
   list: {
     flex: 1,
   },
-  listHeader: {
-    backgroundColor: colors.background,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.screenPadding,
-    paddingVertical: spacing.md,
-    gap: spacing.sm,
-  },
-  headerMain: {
-    flex: 1,
-    minWidth: 0,
-    gap: spacing.xs,
-  },
-  subtitle: {
-    ...typography.bodySmall,
-    fontFamily: typography.h1.fontFamily,
-    fontStyle: 'italic',
-    color: colors.textSecondary,
+  feedHeader: {
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
   },
   nearbyBanner: {
-    marginHorizontal: spacing.screenPadding,
     marginBottom: spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
@@ -447,7 +473,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   staleBanner: {
     marginHorizontal: spacing.screenPadding,
-    marginBottom: spacing.sm,
+    marginTop: spacing.xs,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
@@ -467,8 +493,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     color: colors.textSecondary,
   },
   counterRow: {
-    marginTop: spacing.md,
-    marginHorizontal: spacing.screenPadding,
+    marginTop: spacing.xs,
   },
   counterText: {
     ...typography.overline,

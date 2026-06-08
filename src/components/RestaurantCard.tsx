@@ -21,23 +21,34 @@ interface RestaurantCardProps {
   onPress: () => void;
   /** Entfernung zum Nutzer in km — wird neben dem Ort angezeigt. */
   distanceKm?: number | null;
+  /** Editorial: Feed-Stil der Design-Vorlage (Buscar). */
+  variant?: 'default' | 'editorial';
 }
 
 const MAX_CUISINE_TAGS = 3;
 
-function RestaurantCard({ restaurant, onPress, distanceKm = null }: RestaurantCardProps) {
+function RestaurantCard({
+  restaurant,
+  onPress,
+  distanceKm = null,
+  variant = 'default',
+}: RestaurantCardProps) {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
-  const { regionName, cuisineName } = useLocalized();
+  const { regionName, cuisineName, venueTypeName, description } = useLocalized();
+  const isEditorial = variant === 'editorial';
   const showVerificationBadge =
     restaurant.face_program === true || restaurant.aoecs_certified === true;
   const regionLabel = regionName(restaurant.region_code);
+  const venueLabel = restaurant.venue_type ? venueTypeName(restaurant.venue_type) : null;
   const cuisineTypes = restaurant.cuisine_types ?? [];
   const visibleCuisines = cuisineTypes.slice(0, MAX_CUISINE_TAGS);
   const hiddenCuisineCount = cuisineTypes.length - visibleCuisines.length;
   const distanceLabel =
     distanceKm != null ? formatDistanceKm(distanceKm, i18n.language) : null;
+  const excerpt = description(restaurant);
+  const metaParts = [venueLabel, restaurant.city, distanceLabel].filter(Boolean);
   const accessibilityLabel = `${restaurant.name}, ${restaurant.city}, 100 Prozent glutenfrei`;
 
   return (
@@ -49,7 +60,7 @@ function RestaurantCard({ restaurant, onPress, distanceKm = null }: RestaurantCa
         onPress={onPress}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, isEditorial && styles.imageEditorial]}>
           <RestaurantHeroImage restaurant={restaurant} iconSize={64} />
 
           <View style={styles.badgeStack}>
@@ -60,11 +71,13 @@ function RestaurantCard({ restaurant, onPress, distanceKm = null }: RestaurantCa
                 iconName="star"
               />
             ) : null}
-            <BadgePill
-              label={t('card.badge_sin_gluten')}
-              variant="sinGluten"
-              iconName="check-circle"
-            />
+            {!isEditorial || !showVerificationBadge ? (
+              <BadgePill
+                label={t('card.badge_sin_gluten')}
+                variant="sinGluten"
+                iconName="check-circle"
+              />
+            ) : null}
             {showVerificationBadge ? (
               <BadgePill
                 label={t('card.badge_verified')}
@@ -76,34 +89,53 @@ function RestaurantCard({ restaurant, onPress, distanceKm = null }: RestaurantCa
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.location}>
-            {restaurant.city} · {regionLabel}
-            {distanceLabel ? ` · ${distanceLabel}` : ''}
-          </Text>
-          <Text style={styles.name}>{restaurant.name}</Text>
-
-          <RestaurantMiniMap restaurant={restaurant} onPress={onPress} />
-
-          {(visibleCuisines.length > 0 || hiddenCuisineCount > 0) && (
-            <View style={styles.tagRow}>
-              {visibleCuisines.map((cuisine) => (
-                <BadgePill key={cuisine} label={cuisineName(cuisine)} variant="cuisine" />
-              ))}
-              {hiddenCuisineCount > 0 ? (
-                <BadgePill label={`+${hiddenCuisineCount}`} variant="cuisine" />
+          {isEditorial ? (
+            <>
+              <Text style={styles.metaLine}>{metaParts.join(' · ')}</Text>
+              <Text style={styles.name}>{restaurant.name}</Text>
+              {excerpt ? (
+                <Text style={styles.excerpt} numberOfLines={2}>
+                  {excerpt}
+                </Text>
               ) : null}
-            </View>
-          )}
+            </>
+          ) : (
+            <>
+              <Text style={styles.location}>
+                {restaurant.city} · {regionLabel}
+                {distanceLabel ? ` · ${distanceLabel}` : ''}
+              </Text>
+              <Text style={styles.name}>{restaurant.name}</Text>
 
-          {restaurant.price_range ? (
-            <View style={styles.priceRow}>
-              <BadgePill label={restaurant.price_range} variant="priceRange" />
-            </View>
-          ) : null}
+              <RestaurantMiniMap restaurant={restaurant} onPress={onPress} />
+
+              {(visibleCuisines.length > 0 || hiddenCuisineCount > 0) && (
+                <View style={styles.tagRow}>
+                  {visibleCuisines.map((cuisine) => (
+                    <BadgePill key={cuisine} label={cuisineName(cuisine)} variant="cuisine" />
+                  ))}
+                  {hiddenCuisineCount > 0 ? (
+                    <BadgePill label={`+${hiddenCuisineCount}`} variant="cuisine" />
+                  ) : null}
+                </View>
+              )}
+
+              {restaurant.price_range ? (
+                <View style={styles.priceRow}>
+                  <BadgePill label={restaurant.price_range} variant="priceRange" />
+                </View>
+              ) : null}
+            </>
+          )}
         </View>
       </Pressable>
 
-      <HeartButton restaurantId={restaurant.id} variant="overlay" style={styles.heartButton} />
+      <HeartButton
+        restaurantId={restaurant.id}
+        variant="overlay"
+        size={isEditorial ? 32 : 40}
+        style={styles.heartButton}
+      />
     </View>
   );
 }
@@ -128,16 +160,20 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     overflow: 'hidden',
     ...shadows.small,
   },
+  imageEditorial: {
+    height: undefined,
+    aspectRatio: 4 / 3,
+  },
   badgeStack: {
     position: 'absolute',
-    top: spacing.cardPadding,
-    left: spacing.cardPadding,
+    top: spacing.sm + spacing.xs,
+    left: spacing.sm + spacing.xs,
     gap: spacing.xs,
   },
   heartButton: {
     position: 'absolute',
-    top: spacing.cardPadding,
-    right: spacing.cardPadding,
+    top: spacing.sm + spacing.xs,
+    right: spacing.sm + spacing.xs,
     zIndex: 2,
   },
   textContainer: {
@@ -153,6 +189,17 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: spacing.xs,
   },
+  metaLine: {
+    ...typography.overline,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
+  },
+  excerpt: {
+    ...typography.bodySmall,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+    lineHeight: 19,
+  },
   tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -166,7 +213,9 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
 });
 
 export default memo(RestaurantCard, (prev, next) =>
-  prev.restaurant.id === next.restaurant.id && prev.distanceKm === next.distanceKm
+  prev.restaurant.id === next.restaurant.id &&
+  prev.distanceKm === next.distanceKm &&
+  prev.variant === next.variant
 );
 
 // i18n-migrated

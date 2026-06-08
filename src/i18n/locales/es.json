@@ -19,6 +19,9 @@
   },
   "search": {
     "brand_title": "Celiac Safe",
+    "greeting_meta": "— Buenos días",
+    "greeting_line1": "Come fuera,",
+    "greeting_accent": "sin miedo.",
     "placeholder": "Buscar restaurantes, cafés o lugares...",
     "subtitle": "Guía sin gluten (Baleares, Valencia y Cataluña)",
     "no_restaurants_title": "Aún no hay restaurantes",

@@ -11,7 +11,7 @@ import type { SupportedLanguage } from '../i18n';
 import { typography } from '../theme/typography';
 
 interface LanguageSwitcherProps {
-  variant?: 'compact' | 'full';
+  variant?: 'compact' | 'full' | 'header';
 }
 
 const LANGUAGE_OPTIONS: { code: SupportedLanguage; flag: string; label: string }[] = [
@@ -29,6 +29,25 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
   const handleSelect = (code: SupportedLanguage) => {
     setLanguage(code);
   };
+
+  const activeOption =
+    LANGUAGE_OPTIONS.find((option) => option.code === language) ?? LANGUAGE_OPTIONS[0];
+
+  if (variant === 'header') {
+    const currentIndex = LANGUAGE_OPTIONS.findIndex((option) => option.code === language);
+    const nextOption = LANGUAGE_OPTIONS[(currentIndex + 1) % LANGUAGE_OPTIONS.length]!;
+
+    return (
+      <Pressable
+        onPress={() => handleSelect(nextOption.code)}
+        accessibilityRole="button"
+        accessibilityLabel={activeOption.label}
+        style={styles.headerButton}
+      >
+        <Text style={styles.headerFlag}>{activeOption.flag}</Text>
+      </Pressable>
+    );
+  }
 
   if (variant === 'compact') {
     return (
@@ -94,6 +113,17 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   compactButtonActive: {
     borderColor: colors.primary,
+  },
+  headerButton: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerFlag: {
+    fontSize: 20,
   },
   flag: {
     fontSize: 24,

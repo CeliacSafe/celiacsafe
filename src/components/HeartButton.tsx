@@ -22,8 +22,6 @@ interface HeartButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const ICON_SIZE = 24;
-
 /**
  * Favoriten-Heart mit Store-Anbindung, Haptik und Bounce-/Wiggle-Animation.
  */
@@ -95,7 +93,7 @@ function HeartButton({
       >
         <MaterialCommunityIcons
           name={isFavorite ? 'heart' : 'heart-outline'}
-          size={ICON_SIZE}
+          size={Math.round(size * 0.55)}
           color={isFavorite ? colors.heart : inactiveColor}
         />
       </Animated.View>

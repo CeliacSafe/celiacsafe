@@ -61,7 +61,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
     paddingHorizontal: spacing.screenPadding,
-    paddingVertical: spacing.sm,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
     alignItems: 'center',
   },
   tab: {
