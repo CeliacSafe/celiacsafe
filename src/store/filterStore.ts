@@ -57,7 +57,7 @@ const initialState = {
   dietVegan: false,
   dietVegetarian: false,
   minRating: 'all' as RatingChip,
-  categoryTab: 'verified' as SearchCategoryTab,
+  categoryTab: 'all' as SearchCategoryTab,
 };
 
 function toggleInArray(items: string[], value: string): string[] {
@@ -72,13 +72,11 @@ export const useFilterStore = create<FilterState>((set, get) => ({
   toggleVenueType: (type) =>
     set((state) => ({
       selectedVenueTypes: toggleInArray(state.selectedVenueTypes, type),
-      categoryTab: 'all',
     })),
 
   setVenueTypeSingle: (type) =>
     set({
       selectedVenueTypes: type ? [type] : [],
-      categoryTab: 'all',
     }),
 
   setRegionSingle: (region) =>
@@ -151,8 +149,7 @@ export const useFilterStore = create<FilterState>((set, get) => ({
       state.deliveryAvailable != null ||
       state.dietVegan ||
       state.dietVegetarian ||
-      state.minRating !== 'all' ||
-      state.categoryTab !== 'verified'
+      state.minRating !== 'all'
     );
   },
 }));

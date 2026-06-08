@@ -14,7 +14,6 @@ import AppBrandMark from '../components/AppBrandMark';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
-import SearchCategoryTabs from '../components/SearchCategoryTabs';
 import SearchCountryChips from '../components/SearchCountryChips';
 import SearchFilterPanel from '../components/SearchFilterPanel';
 import SearchSortButton from '../components/SearchSortButton';
@@ -317,10 +316,8 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         </View>
 
         <View style={styles.greetingBlock}>
-          <Text style={styles.greetingMeta}>{t('search.greeting_meta')}</Text>
           <Text style={styles.greeting}>
             {t('search.greeting_line1')}
-            {'\n'}
             <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
           </Text>
         </View>
@@ -339,7 +336,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           ) : null}
           <SearchCountryChips restaurants={restaurants} />
           <SearchVenueTypeChips restaurants={restaurants} />
-          <SearchCategoryTabs />
           {syncError && restaurants.length > 0 ? (
             <Pressable
               onPress={onRefresh}
@@ -439,12 +435,6 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
-    gap: spacing.sm + spacing.xs,
-  },
-  greetingMeta: {
-    ...typography.overline,
-    color: colors.primary,
-    letterSpacing: 2.2,
   },
   greeting: {
     fontFamily: fontFamilies.serifRegular,
