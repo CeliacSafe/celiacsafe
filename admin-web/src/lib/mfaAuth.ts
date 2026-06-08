@@ -1,6 +1,10 @@
 import { supabase } from './supabase';
+import { isDevAuthBypassEnabled } from './devAuthBypass';
 
 export async function needsMfaVerification(): Promise<boolean> {
+  if (isDevAuthBypassEnabled()) {
+    return false;
+  }
   const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (error || !data) {
     return false;
@@ -87,6 +91,9 @@ export async function listVerifiedTotpFactors() {
 }
 
 export async function hasVerifiedMfa(): Promise<boolean> {
+  if (isDevAuthBypassEnabled()) {
+    return true;
+  }
   const factors = await listVerifiedTotpFactors();
   return factors.length > 0;
 }

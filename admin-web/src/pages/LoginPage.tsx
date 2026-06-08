@@ -13,6 +13,8 @@ import {
   needsMfaVerification,
   verifyTotpLoginCode,
 } from '../lib/mfaAuth';
+import { getDevAutoLoginCredentials, isDevAuthBypassEnabled } from '../lib/devAuthBypass';
+import { ensureDevAutoLogin } from '../lib/devAutoLogin';
 import { supabase } from '../lib/supabase';
 
 type LoginStep = 'credentials' | 'totp';
@@ -48,6 +50,26 @@ export default function LoginPage() {
     let cancelled = false;
 
     void (async () => {
+      if (isDevAuthBypassEnabled()) {
+        await ensureDevAutoLogin();
+        const { data: afterDev } = await supabase.auth.getSession();
+        if (cancelled) {
+          return;
+        }
+        if (afterDev.session) {
+          navigate('/', { replace: true });
+          setCheckingSession(false);
+          return;
+        }
+        if (!getDevAutoLoginCredentials()) {
+          setError(
+            'Localhost-Dev: VITE_ADMIN_DEV_EMAIL und VITE_ADMIN_DEV_PASSWORD in admin-web/.env setzen.',
+          );
+          setCheckingSession(false);
+          return;
+        }
+      }
+
       const { data } = await supabase.auth.getSession();
       if (cancelled) {
         return;
@@ -71,6 +93,9 @@ export default function LoginPage() {
 
   const handleCredentialsSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (isDevAuthBypassEnabled()) {
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -197,7 +222,12 @@ export default function LoginPage() {
   return (
     <div className="layout" style={{ maxWidth: 420 }}>
       <h1 style={{ color: '#a5d6a7' }}>CeliacSafe Admin</h1>
-      <p className="muted">Anmeldung über Supabase Auth (EU).</p>
+      {isDevAuthBypassEnabled() ? (
+        <p className="dev-banner">Localhost-Dev: automatischer Login, 2FA aus</p>
+      ) : (
+        <p className="muted">Anmeldung über Supabase Auth (EU).</p>
+      )}
+      {!isDevAuthBypassEnabled() ? (
       <form onSubmit={handleCredentialsSubmit}>
         <label htmlFor="email">E-Mail</label>
         <input
@@ -224,6 +254,8 @@ export default function LoginPage() {
           {loading ? 'Anmelden…' : 'Anmelden'}
         </button>
       </form>
+      ) : null}
+      {error ? <p className="error">{error}</p> : null}
     </div>
   );
 }

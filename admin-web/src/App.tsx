@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { hasVerifiedMfa, isMfaSatisfied } from './lib/mfaAuth';
+import { isDevAuthBypassEnabled } from './lib/devAuthBypass';
+import { ensureDevAutoLogin } from './lib/devAutoLogin';
 import { supabase } from './lib/supabase';
 import { fetchProfileRole, isAdminRole, isStaffRole, type AppRole } from './lib/staffAuth';
 import { useIdleLogout } from './hooks/useIdleLogout';
@@ -49,9 +51,9 @@ function Shell({
   onMfaEnrolled: () => void;
   onLogout: () => void;
 }) {
-  useIdleLogout(onLogout, true);
+  useIdleLogout(onLogout, !isDevAuthBypassEnabled());
 
-  if (!mfaEnrolled) {
+  if (!mfaEnrolled && !isDevAuthBypassEnabled()) {
     return (
       <div className="layout">
         <header className="nav">
@@ -71,6 +73,9 @@ function Shell({
 
   return (
     <div className="layout">
+      {isDevAuthBypassEnabled() ? (
+        <p className="dev-banner">Localhost-Dev: Login &amp; 2FA deaktiviert</p>
+      ) : null}
       <header className="nav">
         <strong style={{ color: '#a5d6a7' }}>CeliacSafe Admin</strong>
         <Link to="/">Dashboard</Link>
@@ -135,6 +140,9 @@ export default function App() {
     let cancelled = false;
 
     const loadSession = async () => {
+      if (isDevAuthBypassEnabled()) {
+        await ensureDevAutoLogin();
+      }
       const { data } = await supabase.auth.getSession();
       if (cancelled) {
         return;
@@ -193,7 +201,7 @@ export default function App() {
             <MfaRequired />
           ) : !isStaff ? (
             <AccessDenied role={role} />
-          ) : !mfaEnrolled && !onSecurityPage ? (
+          ) : !mfaEnrolled && !onSecurityPage && !isDevAuthBypassEnabled() ? (
             <MfaEnrollmentRequired />
           ) : (
             <Shell

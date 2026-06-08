@@ -179,6 +179,16 @@ button.primary {
   cursor: pointer;
 }
 
+.dev-banner {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(165, 214, 167, 0.12);
+  border: 1px solid rgba(165, 214, 167, 0.35);
+  color: #c8e6c9;
+  font-size: 0.875rem;
+}
+
 .error {
   color: #e57373;
 }
