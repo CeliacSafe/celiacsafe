@@ -1,9 +1,7 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import LanguageFlag from './LanguageFlag';
 import { useLanguageStore } from '../store/languageStore';
-import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
@@ -21,7 +19,6 @@ const LANGUAGE_OPTIONS: { code: SupportedLanguage; label: string }[] = [
 ];
 
 function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
-  const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
@@ -30,22 +27,25 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
     setLanguage(code);
   };
 
-  const activeOption =
-    LANGUAGE_OPTIONS.find((option) => option.code === language) ?? LANGUAGE_OPTIONS[0];
-
   if (variant === 'header') {
-    const currentIndex = LANGUAGE_OPTIONS.findIndex((option) => option.code === language);
-    const nextOption = LANGUAGE_OPTIONS[(currentIndex + 1) % LANGUAGE_OPTIONS.length]!;
-
     return (
-      <Pressable
-        onPress={() => handleSelect(nextOption.code)}
-        accessibilityRole="button"
-        accessibilityLabel={activeOption.label}
-        style={styles.headerButton}
-      >
-        <LanguageFlag code={language} size={18} />
-      </Pressable>
+      <View style={styles.headerRow}>
+        {LANGUAGE_OPTIONS.map((option) => {
+          const active = language === option.code;
+          return (
+            <Pressable
+              key={option.code}
+              onPress={() => handleSelect(option.code)}
+              accessibilityRole="button"
+              accessibilityLabel={option.label}
+              accessibilityState={{ selected: active }}
+              style={[styles.headerFlagButton, active && styles.headerFlagButtonActive]}
+            >
+              <LanguageFlag code={option.code} size={16} />
+            </Pressable>
+          );
+        })}
+      </View>
     );
   }
 
@@ -55,7 +55,7 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
     const activeStyle = variant === 'full' ? styles.fullButtonActive : styles.compactButtonActive;
 
     return (
-      <View style={variant === 'full' ? styles.fullRow : styles.compactRow}>
+      <View style={styles.flagRow}>
         {LANGUAGE_OPTIONS.map((option) => {
           const active = language === option.code;
           return (
@@ -68,9 +68,6 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
               style={[buttonStyle, active && activeStyle]}
             >
               <LanguageFlag code={option.code} size={flagSize} />
-              {variant === 'full' && active ? (
-                <MaterialCommunityIcons name="check" size={16} color={colors.primary} />
-              ) : null}
             </Pressable>
           );
         })}
@@ -83,13 +80,29 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
 
 const createStyles = (colors: AppColors) =>
   StyleSheet.create({
-    compactRow: {
+    flagRow: {
       flexDirection: 'row',
-      gap: spacing.cardPadding,
+      alignItems: 'center',
+      gap: spacing.sm,
     },
-    fullRow: {
+    headerRow: {
       flexDirection: 'row',
-      gap: spacing.md,
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    headerFlagButton: {
+      width: 32,
+      height: 32,
+      borderRadius: radius.pill,
+      backgroundColor: colors.surfaceAlt,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: 'transparent',
+      overflow: 'hidden',
+    },
+    headerFlagButtonActive: {
+      borderColor: colors.primary,
     },
     compactButton: {
       width: 40,
@@ -106,27 +119,17 @@ const createStyles = (colors: AppColors) =>
     },
     fullButton: {
       flex: 1,
-      minHeight: 52,
+      height: 48,
       borderRadius: radius.lg,
       backgroundColor: colors.surface,
       alignItems: 'center',
       justifyContent: 'center',
-      gap: spacing.xs,
       borderWidth: 2,
       borderColor: 'transparent',
     },
     fullButtonActive: {
       borderColor: colors.primary,
       backgroundColor: colors.surfaceAlt,
-    },
-    headerButton: {
-      width: 36,
-      height: 36,
-      borderRadius: radius.pill,
-      backgroundColor: colors.surfaceAlt,
-      alignItems: 'center',
-      justifyContent: 'center',
-      overflow: 'hidden',
     },
   });
 
