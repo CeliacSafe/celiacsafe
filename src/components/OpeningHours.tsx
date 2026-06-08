@@ -1,13 +1,11 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
-import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
-import { spacing } from '../theme/spacing';
+import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
@@ -44,7 +42,6 @@ function isClosedLine(line: string): boolean {
  */
 function OpeningHours({ restaurant }: OpeningHoursProps) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
   const language = useAppLanguage();
   const hoursText = restaurant.opening_hours?.trim();
@@ -56,12 +53,9 @@ function OpeningHours({ restaurant }: OpeningHoursProps) {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.titleRow}>
-        <MaterialCommunityIcons name="clock-outline" size={18} color={colors.primary} />
-        <Text style={styles.title}>{t('detail.opening_hours')}</Text>
-      </View>
+      <Text style={styles.title}>{`— ${t('detail.opening_hours')}`}</Text>
 
-      <View style={styles.lines}>
+      <View style={styles.linesBox}>
         {hoursText.split('\n').map((line, index) => {
           const trimmed = line.trim();
           if (!trimmed) {
@@ -91,28 +85,26 @@ function OpeningHours({ restaurant }: OpeningHoursProps) {
 const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
-    paddingVertical: spacing.cardPadding,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginBottom: spacing.cardPadding,
+    paddingBottom: spacing.lg,
   },
   title: {
-    ...typography.h4,
-    fontWeight: '700',
+    ...typography.overline,
     color: colors.primary,
+    letterSpacing: 1.6,
+    marginBottom: spacing.sm + spacing.xs,
   },
-  lines: {
-    gap: spacing.sm,
+  linesBox: {
+    gap: spacing.xs + 2,
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radius.lg,
+    padding: spacing.sm + spacing.xs,
   },
   line: {
-    ...typography.body,
+    ...typography.bodySmall,
     color: colors.textPrimary,
   },
   lineToday: {
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.primary,
   },
   lineClosedToday: {

@@ -4,16 +4,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
 import RestaurantHeroImage from './RestaurantHeroImage';
-import { useLocalized } from '../hooks/useLocalized';
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
-import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
 interface DetailHeaderProps {
@@ -22,28 +19,25 @@ interface DetailHeaderProps {
 }
 
 const HERO_HEIGHT = 280;
-const GRADIENT_HEIGHT = 100;
 
 /**
- * Hero-Bereich der Detail-Seite: Bild, Badges, Favoriten- und Zurueck-Buttons, Name.
+ * Hero-Bereich der Detail-Seite: Vollblech-Foto mit frosted Controls.
  */
 function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
   const { t } = useTranslation();
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
-  const { regionName } = useLocalized();
   const insets = useSafeAreaInsets();
-  const showVerificationBadge =
-    restaurant.face_program === true || restaurant.aoecs_certified === true;
-  const regionLabel = regionName(restaurant.region_code);
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.imageContainer}>
         <RestaurantHeroImage restaurant={restaurant} iconSize={96} />
 
         <LinearGradient
-          colors={['transparent', colors.background]}
-          style={styles.bottomGradient}
+          colors={['rgba(0,0,0,0.22)', 'transparent', 'transparent']}
+          locations={[0, 0.35, 1]}
+          style={styles.topGradient}
           pointerEvents="none"
         />
 
@@ -55,41 +49,13 @@ function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
               accessibilityRole="button"
               style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
             >
-              <MaterialCommunityIcons name="arrow-left" size={22} color={colors.textPrimary} />
+              <MaterialCommunityIcons name="arrow-left" size={20} color={colors.textPrimary} />
             </Pressable>
           ) : (
             <View style={styles.iconSpacer} />
           )}
 
           <HeartButton restaurantId={restaurant.id} variant="overlay" />
-        </View>
-
-        <View style={styles.badgeOverlay}>
-          <BadgePill
-            label={t('card.badge_sin_gluten')}
-            variant="sinGluten"
-            iconName="check-circle"
-          />
-          {showVerificationBadge ? (
-            <BadgePill
-              label={t('card.badge_verified')}
-              variant="verified"
-              iconName="shield-check"
-            />
-          ) : null}
-          {restaurant.price_range ? (
-            <BadgePill label={restaurant.price_range} variant="priceRange" />
-          ) : null}
-        </View>
-      </View>
-
-      <View style={styles.textBlock}>
-        <Text style={styles.name}>{restaurant.name}</Text>
-        <View style={styles.locationRow}>
-          <MaterialCommunityIcons name="map-marker" size={16} color={colors.primary} />
-          <Text style={styles.locationText}>
-            {restaurant.city} · {regionLabel}
-          </Text>
         </View>
       </View>
     </View>
@@ -103,14 +69,14 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   imageContainer: {
     height: HERO_HEIGHT,
     position: 'relative',
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceAlt,
   },
-  bottomGradient: {
+  topGradient: {
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 0,
-    height: GRADIENT_HEIGHT,
+    top: 0,
+    height: 120,
   },
   topControls: {
     position: 'absolute',
@@ -134,34 +100,6 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   iconPressed: {
     opacity: 0.85,
-  },
-  badgeOverlay: {
-    position: 'absolute',
-    left: spacing.screenPadding,
-    right: spacing.screenPadding,
-    bottom: spacing.cardPadding,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  textBlock: {
-    paddingHorizontal: spacing.screenPadding,
-    paddingVertical: spacing.md,
-  },
-  name: {
-    ...typography.h1,
-    color: colors.textPrimary,
-  },
-  locationRow: {
-    marginTop: spacing.sm,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  locationText: {
-    ...typography.bodyLarge,
-    flex: 1,
-    color: colors.textSecondary,
   },
 });
 

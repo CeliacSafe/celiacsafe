@@ -22,6 +22,7 @@ import { openPhone, openUrl, openWhatsApp } from '../utils/openExternalUrl';
 
 interface QuickActionsBarProps {
   restaurant: Restaurant;
+  layout?: 'scroll' | 'grid';
 }
 
 type ActionIconName = keyof typeof MaterialCommunityIcons.glyphMap;
@@ -38,7 +39,7 @@ function normalizeWebsiteUrl(url: string): string {
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
-function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
+function QuickActionsBar({ restaurant, layout = 'scroll' }: QuickActionsBarProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
@@ -121,6 +122,28 @@ function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
     return null;
   }
 
+  if (layout === 'grid') {
+    return (
+      <View style={styles.gridWrapper}>
+        <View style={styles.grid}>
+          {actions.map((action) => (
+            <Pressable
+              key={action.key}
+              onPress={action.onPress}
+              android_ripple={{ color: colors.rippleLight, borderless: false }}
+              style={({ pressed }) => [styles.gridButton, pressed && styles.actionPressed]}
+            >
+              <MaterialCommunityIcons name={action.icon} size={18} color={colors.primary} />
+              <Text style={styles.gridLabel} numberOfLines={2}>
+                {action.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.wrapper}>
       <ScrollView
@@ -148,6 +171,35 @@ function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
 const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingVertical: spacing.cardPadding,
+  },
+  gridWrapper: {
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.lg + spacing.xs,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm + 2,
+  },
+  gridButton: {
+    width: '23.5%',
+    flexGrow: 1,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm + spacing.xs,
+    paddingHorizontal: spacing.xs,
+    gap: spacing.xs,
+    overflow: 'hidden',
+  },
+  gridLabel: {
+    ...typography.caption,
+    fontWeight: '500',
+    textAlign: 'center',
+    color: colors.textPrimary,
+    fontSize: 10,
+    lineHeight: 13,
   },
   scrollContent: {
     paddingHorizontal: spacing.screenPadding,

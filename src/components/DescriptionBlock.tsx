@@ -1,14 +1,13 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useLocalized } from '../hooks/useLocalized';
-import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
+import { fontFamilies } from '../theme/fonts';
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 
@@ -21,7 +20,6 @@ const COLLAPSED_LENGTH = 150;
 function DescriptionBlock({ restaurant }: DescriptionBlockProps) {
   const { t } = useTranslation();
   const styles = useThemedStyles(createStyles);
-  const { colors } = useTheme();
   const { description } = useLocalized();
   const [expanded, setExpanded] = useState(false);
   const descriptionText = useMemo(() => description(restaurant), [description, restaurant]);
@@ -36,10 +34,7 @@ function DescriptionBlock({ restaurant }: DescriptionBlockProps) {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.titleRow}>
-        <MaterialCommunityIcons name="text-box-outline" size={18} color={colors.primary} />
-        <Text style={styles.title}>{t('detail.about')}</Text>
-      </View>
+      <Text style={styles.title}>{`— ${t('detail.about')}`}</Text>
       <Text style={styles.body}>{displayText}</Text>
       {isLong ? (
         <Pressable onPress={() => setExpanded((value) => !value)} hitSlop={8}>
@@ -55,21 +50,19 @@ function DescriptionBlock({ restaurant }: DescriptionBlockProps) {
 const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
-    paddingVertical: spacing.cardPadding,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginBottom: spacing.cardPadding,
+    paddingBottom: spacing.lg,
   },
   title: {
-    ...typography.h4,
-    fontWeight: '700',
+    ...typography.overline,
     color: colors.primary,
+    letterSpacing: 1.6,
+    marginBottom: spacing.sm + spacing.xs,
   },
   body: {
-    ...typography.body,
+    fontFamily: fontFamilies.serifLight,
+    fontSize: 17,
+    lineHeight: 26,
+    fontStyle: 'italic',
     color: colors.textPrimary,
   },
   toggle: {
