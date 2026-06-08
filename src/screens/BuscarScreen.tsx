@@ -310,18 +310,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       <View style={styles.screenHeader}>
-        <View style={styles.appHeader}>
-          <AppBrandMark />
-          <LanguageSwitcher variant="header" />
-        </View>
-
-        <View style={styles.greetingBlock}>
-          <Text style={styles.greeting}>
-            {t('search.greeting_line1')}
-            <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
-          </Text>
-        </View>
-
         <View style={styles.searchBlock}>
           <SearchBarRow
             filtersOpen={filtersOpen}
@@ -348,6 +336,18 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
               <MaterialCommunityIcons name="refresh" size={16} color={colors.primary} />
             </Pressable>
           ) : null}
+        </View>
+
+        <View style={styles.appHeader}>
+          <AppBrandMark />
+          <LanguageSwitcher variant="header" />
+        </View>
+
+        <View style={styles.greetingBlock}>
+          <Text style={styles.greeting}>
+            {t('search.greeting_line1')}
+            <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
+          </Text>
         </View>
       </View>
 
@@ -428,13 +428,13 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xs,
   },
   greetingBlock: {
     paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.md,
   },
   greeting: {
     fontFamily: fontFamilies.serifRegular,
@@ -449,7 +449,8 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   searchBlock: {
     gap: spacing.sm,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xs,
   },
   list: {
     flex: 1,
