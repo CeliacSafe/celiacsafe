@@ -67,6 +67,7 @@
     "only_face": "Nur FACE-zertifiziert",
     "only_aoecs": "Nur AOECS-zertifiziert",
     "reset": "Zurücksetzen",
+    "confirm": "Bestätigen",
     "apply_one": "{{count}} Ergebnis anwenden",
     "apply_other": "{{count}} Ergebnisse anwenden",
     "all": "Alle",

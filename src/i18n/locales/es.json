@@ -67,6 +67,7 @@
     "only_face": "Solo FACE certificados",
     "only_aoecs": "Solo AOECS certificados",
     "reset": "Limpiar",
+    "confirm": "Confirmar",
     "apply_one": "Aplicar {{count}} resultado",
     "apply_other": "Aplicar {{count}} resultados",
     "all": "Todos",

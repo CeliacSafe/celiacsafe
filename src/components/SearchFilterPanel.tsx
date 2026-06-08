@@ -16,7 +16,9 @@ import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
-import { hapticLight } from '../utils/haptics';
+import { hapticLight, hapticMedium } from '../utils/haptics';
+import { applyFilters } from '../utils/searchAndFilter';
+import { formatResultCount } from '../utils/pluralize';
 import {
   buildFilterOptionContext,
   getAvailableCities,
@@ -69,6 +71,8 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const togglePriceRange = useFilterStore((s) => s.togglePriceRange);
   const setDietVegan = useFilterStore((s) => s.setDietVegan);
   const setDietVegetarian = useFilterStore((s) => s.setDietVegetarian);
+  const resetFilters = useFilterStore((s) => s.resetFilters);
+  const hasActiveFilters = useFilterStore((s) => s.hasActiveFilters);
 
   const filterContext = useMemo(
     () =>
@@ -296,29 +300,78 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const customInputPlaceholder = t('filter.custom_input');
   const customInputApplyLabel = t('filter.custom_apply');
 
+  const filterCriteria = useMemo(
+    () => ({
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+      selectedCountry,
+      selectedCity,
+      deliveryAvailable,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
+    }),
+    [
+      selectedVenueTypes,
+      selectedRegions,
+      selectedPriceRanges,
+      onlyFaceCertified,
+      onlyAoecsCertified,
+      selectedCountry,
+      selectedCity,
+      deliveryAvailable,
+      dietVegan,
+      dietVegetarian,
+      minRating,
+      categoryTab,
+    ]
+  );
+
+  const resultCount = useMemo(
+    () => applyFilters(restaurants, searchQuery, filterCriteria, sortBy).length,
+    [restaurants, searchQuery, filterCriteria, sortBy]
+  );
+
+  const filtersActive = hasActiveFilters();
+
+  const handleReset = () => {
+    hapticMedium();
+    resetFilters();
+  };
+
+  const handleConfirm = () => {
+    hapticMedium();
+    onClose();
+  };
+
   return (
-    <ScrollView
-      style={styles.panelScroll}
-      contentContainerStyle={styles.panelContent}
-      nestedScrollEnabled
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <MaterialCommunityIcons name="tune-vertical" size={18} color={colors.textSecondary} />
-          <Text style={styles.headerTitle}>{t('filter.panel_title')}</Text>
+    <View style={styles.panel}>
+      <ScrollView
+        style={styles.panelScroll}
+        contentContainerStyle={styles.panelContent}
+        nestedScrollEnabled
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <MaterialCommunityIcons name="tune-vertical" size={18} color={colors.textSecondary} />
+            <Text style={styles.headerTitle}>{t('filter.panel_title')}</Text>
+          </View>
+          <Pressable
+            onPress={() => {
+              hapticLight();
+              onClose();
+            }}
+            hitSlop={8}
+          >
+            <Text style={styles.close}>{t('filter.close')}</Text>
+          </Pressable>
         </View>
-        <Pressable
-          onPress={() => {
-            hapticLight();
-            onClose();
-          }}
-          hitSlop={8}
-        >
-          <Text style={styles.close}>{t('filter.close')}</Text>
-        </Pressable>
-      </View>
 
       <View style={styles.dropdownRow}>
         <FilterSelect
@@ -463,17 +516,59 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
           </View>
         </View>
       ) : null}
-    </ScrollView>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <Pressable
+          onPress={handleReset}
+          disabled={!filtersActive}
+          style={({ pressed }) => [
+            styles.footerButton,
+            styles.resetButton,
+            !filtersActive && styles.footerButtonDisabled,
+            pressed && filtersActive && styles.resetButtonPressed,
+          ]}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !filtersActive }}
+        >
+          <MaterialCommunityIcons
+            name="filter-off-outline"
+            size={18}
+            color={filtersActive ? colors.textPrimary : colors.textSecondary}
+          />
+          <Text style={[styles.resetLabel, !filtersActive && styles.footerLabelDisabled]}>
+            {t('search.clear_filters')}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={handleConfirm}
+          style={({ pressed }) => [
+            styles.footerButton,
+            styles.confirmButton,
+            pressed && styles.confirmButtonPressed,
+          ]}
+          accessibilityRole="button"
+        >
+          <Text style={styles.confirmLabel}>{t('filter.confirm')}</Text>
+          <Text style={styles.confirmHint}>{formatResultCount(resultCount)}</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
 const createStyles = (colors: AppColors) => StyleSheet.create({
-  panelScroll: {
-    maxHeight: 400,
+  panel: {
+    maxHeight: 480,
     marginHorizontal: spacing.screenPadding,
     marginTop: spacing.sm,
     borderRadius: radius.xl,
     backgroundColor: colors.surface,
+    overflow: 'hidden',
+  },
+  panelScroll: {
+    flexGrow: 0,
   },
   panelContent: {
     padding: spacing.cardPadding,
@@ -497,6 +592,64 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   headerTitle: {
     ...typography.overline,
+    color: colors.textSecondary,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.cardPadding,
+    paddingVertical: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.lineSoft,
+    backgroundColor: colors.surface,
+  },
+  footerButton: {
+    minHeight: 48,
+    borderRadius: radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  resetButton: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
+  },
+  resetButtonPressed: {
+    opacity: 0.85,
+  },
+  resetLabel: {
+    ...typography.bodySmall,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  confirmButton: {
+    flex: 1.2,
+    backgroundColor: colors.primary,
+  },
+  confirmButtonPressed: {
+    opacity: 0.9,
+  },
+  confirmLabel: {
+    ...typography.bodySmall,
+    fontWeight: '700',
+    color: colors.onPrimary,
+  },
+  confirmHint: {
+    ...typography.caption,
+    color: colors.onPrimary,
+    opacity: 0.9,
+    marginTop: 2,
+  },
+  footerButtonDisabled: {
+    opacity: 0.45,
+  },
+  footerLabelDisabled: {
     color: colors.textSecondary,
   },
   close: {

@@ -67,6 +67,7 @@
     "only_face": "FACE certified only",
     "only_aoecs": "AOECS certified only",
     "reset": "Clear",
+    "confirm": "Confirm",
     "apply_one": "Apply {{count}} result",
     "apply_other": "Apply {{count}} results",
     "all": "All",
