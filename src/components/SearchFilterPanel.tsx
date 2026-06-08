@@ -11,7 +11,9 @@ import { DELIVERY_PLATFORM_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { REGION_NAMES } from '../i18n/regions';
 import { useFilterStore } from '../store/filterStore';
 import type { Restaurant } from '../types/Restaurant';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
@@ -32,6 +34,8 @@ interface SearchFilterPanelProps {
 
 function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const language = useAppLanguage();
 
   const searchQuery = useFilterStore((s) => s.searchQuery);
@@ -383,7 +387,7 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   panelScroll: {
     maxHeight: 400,
     marginHorizontal: spacing.screenPadding,

@@ -11,7 +11,7 @@ import MapaStack from './MapaStack';
 import PerfilStack from './PerfilStack';
 import TabBarButton from './TabBarButton';
 import { useFavoritesStore } from '../store/favoritesStore';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 import { spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 
@@ -49,6 +49,7 @@ function createTabBarIcon(routeName: keyof RootTabParamList) {
 export function RootTabs() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   const favoriteCount = useFavoritesStore((state) => Object.keys(state.favorites).length);
 
   return (
@@ -65,7 +66,7 @@ export function RootTabs() {
         },
         tabBarStyle: {
           backgroundColor: colors.surface,
-          borderTopColor: colors.primaryDark,
+          borderTopColor: colors.border,
           borderTopWidth: 1,
           height: 56 + insets.bottom,
           paddingBottom: insets.bottom + spacing.xs,

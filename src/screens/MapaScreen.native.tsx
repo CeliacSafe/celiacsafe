@@ -17,6 +17,8 @@ import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
 import type { MapaStackParamList } from '../navigation/MapaStack';
 import { useFilterStore } from '../store/filterStore';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import type { MapRegion } from '../types/MapRegion';
 import type { Restaurant } from '../types/Restaurant';
@@ -42,6 +44,7 @@ export function MapaScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<MapaNavigationProp>();
   const insets = useSafeAreaInsets();
+  const styles = useThemedStyles(createStyles);
   const mapRef = useRef<MapView>(null);
   const { location, loading: locationLoading, requestLocation, lastErrorRef } = useUserLocation();
   const { restaurants } = useRestaurants();
@@ -52,6 +55,7 @@ export function MapaScreen() {
   const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const selectedCity = useFilterStore((state) => state.selectedCity);
+  const selectedDeliveryPlatform = useFilterStore((state) => state.selectedDeliveryPlatform);
   const dietVegan = useFilterStore((state) => state.dietVegan);
   const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
   const categoryTab = useFilterStore((state) => state.categoryTab);
@@ -70,6 +74,7 @@ export function MapaScreen() {
       onlyFaceCertified,
       onlyAoecsCertified,
       selectedCity,
+      selectedDeliveryPlatform,
       dietVegan,
       dietVegetarian,
       categoryTab,
@@ -81,6 +86,7 @@ export function MapaScreen() {
       onlyFaceCertified,
       onlyAoecsCertified,
       selectedCity,
+      selectedDeliveryPlatform,
       dietVegan,
       dietVegetarian,
       categoryTab,
@@ -221,7 +227,7 @@ export function MapaScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -232,7 +238,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(18, 18, 18, 0.55)',
+    backgroundColor: colors.scrim,
     zIndex: 2,
     paddingHorizontal: spacing.lg,
   },

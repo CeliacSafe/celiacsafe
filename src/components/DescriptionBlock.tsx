@@ -4,7 +4,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useLocalized } from '../hooks/useLocalized';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -18,6 +20,8 @@ const COLLAPSED_LENGTH = 150;
 
 function DescriptionBlock({ restaurant }: DescriptionBlockProps) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const { description } = useLocalized();
   const [expanded, setExpanded] = useState(false);
   const descriptionText = useMemo(() => description(restaurant), [description, restaurant]);
@@ -48,7 +52,7 @@ function DescriptionBlock({ restaurant }: DescriptionBlockProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,

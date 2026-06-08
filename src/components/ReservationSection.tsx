@@ -2,7 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -16,7 +18,9 @@ interface ReservationSectionProps {
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
-const RESERVATION_PLATFORMS: Record<string, { label: string; color: string; icon: IconName }> = {
+const createReservationPlatforms = (
+  colors: AppColors
+): Record<string, { label: string; color: string; icon: IconName }> => ({
   thefork: { label: 'TheFork', color: colors.verifiedGreen, icon: 'silverware-fork-knife' },
   opentable: { label: 'OpenTable', color: '#DA3743', icon: 'calendar' },
   quandoo: { label: 'Quandoo', color: '#FFC72C', icon: 'calendar-check' },
@@ -24,11 +28,11 @@ const RESERVATION_PLATFORMS: Record<string, { label: string; color: string; icon
   phone_only: { label: 'Por teléfono', color: colors.primaryDark, icon: 'phone' },
   walk_in_only: { label: 'Sin reserva', color: '#757575', icon: 'walk' },
   instagram_dm: { label: 'Instagram DM', color: '#E1306C', icon: 'instagram' },
-};
+});
 
-function getPlatformMeta(platform: string) {
+function getPlatformMeta(platform: string, colors: AppColors) {
   return (
-    RESERVATION_PLATFORMS[platform] ?? {
+    createReservationPlatforms(colors)[platform] ?? {
       label: platform,
       color: colors.primary,
       icon: 'calendar' as IconName,
@@ -48,12 +52,13 @@ interface ReservationAction {
 function buildActions(
   restaurant: Restaurant,
   links: ReservationLink[],
-  t: (key: string) => string
+  t: (key: string) => string,
+  colors: AppColors
 ): ReservationAction[] {
   const actions: ReservationAction[] = [];
 
   for (const link of links) {
-    const meta = getPlatformMeta(link.platform);
+    const meta = getPlatformMeta(link.platform, colors);
 
     if (link.platform === 'walk_in_only') {
       actions.push({
@@ -100,8 +105,10 @@ function buildActions(
  */
 function ReservationSection({ restaurant }: ReservationSectionProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const activeLinks = getActiveReservationLinks(restaurant);
-  const actions = buildActions(restaurant, activeLinks, t);
+  const actions = buildActions(restaurant, activeLinks, t, colors);
 
   if (actions.length === 0) {
     return null;
@@ -130,14 +137,14 @@ function ReservationSection({ restaurant }: ReservationSectionProps) {
           android_ripple={{ color: colors.rippleLight }}
           style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
         >
-          <MaterialCommunityIcons name={singleAction.icon} size={22} color={colors.background} />
+          <MaterialCommunityIcons name={singleAction.icon} size={22} color={colors.onPrimary} />
           <View style={styles.buttonTextBlock}>
             <Text style={styles.primaryLabel}>{singleAction.label}</Text>
             {singleAction.subtitle ? (
               <Text style={styles.primarySubtitle}>{singleAction.subtitle}</Text>
             ) : null}
           </View>
-          <MaterialCommunityIcons name="chevron-right" size={22} color={colors.background} />
+          <MaterialCommunityIcons name="chevron-right" size={22} color={colors.onPrimary} />
         </Pressable>
       ) : null}
 
@@ -189,7 +196,7 @@ function ReservationSection({ restaurant }: ReservationSectionProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,
@@ -233,12 +240,12 @@ const styles = StyleSheet.create({
   primaryLabel: {
     ...typography.button,
     fontWeight: '700',
-    color: colors.background,
+    color: colors.onPrimary,
   },
   primarySubtitle: {
     ...typography.caption,
     marginTop: 2,
-    color: colors.background,
+    color: colors.onPrimary,
     opacity: 0.9,
   },
   secondaryLabel: {

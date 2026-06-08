@@ -1,7 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 
@@ -44,6 +46,8 @@ function EmptyState({
   inline = false,
   style,
 }: EmptyStateProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const showThemedIllustration = illustration !== 'default';
   const displayIcon = showThemedIllustration ? ILLUSTRATION_ICON[illustration] : iconName;
 
@@ -72,7 +76,7 @@ function EmptyState({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -111,7 +115,7 @@ const styles = StyleSheet.create({
   },
   actionLabel: {
     ...typography.button,
-    color: colors.white,
+    color: colors.onPrimary,
   },
 });
 

@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 import { WHATSAPP_DEFAULT_MESSAGES } from '../i18n/contact';
 import { useAppLanguage } from '../i18n/useAppLanguage';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -15,7 +17,8 @@ import {
   resolveDeliveryUrl,
   resolveReservationUrl,
 } from '../utils/platformLinks';
-import { openMapsRouting, openPhone, openUrl, openWhatsApp } from '../utils/openExternalUrl';
+import { canOpenExternalMaps, openMapsPlace } from '../utils/mapsPlaceLinks';
+import { openPhone, openUrl, openWhatsApp } from '../utils/openExternalUrl';
 
 interface QuickActionsBarProps {
   restaurant: Restaurant;
@@ -37,6 +40,8 @@ function normalizeWebsiteUrl(url: string): string {
 
 function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const language = useAppLanguage();
   const actions: QuickAction[] = [];
 
@@ -80,12 +85,12 @@ function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
     });
   }
 
-  if (restaurant.latitude != null && restaurant.longitude != null) {
+  if (canOpenExternalMaps(restaurant)) {
     actions.push({
-      key: 'route',
+      key: 'maps',
       icon: 'map-marker-radius',
-      label: t('detail.route'),
-      onPress: () => openMapsRouting(restaurant.latitude!, restaurant.longitude!, restaurant.name),
+      label: t('detail.open_in_maps'),
+      onPress: () => openMapsPlace(restaurant),
     });
   }
 
@@ -140,7 +145,7 @@ function QuickActionsBar({ restaurant }: QuickActionsBarProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingVertical: spacing.cardPadding,
   },

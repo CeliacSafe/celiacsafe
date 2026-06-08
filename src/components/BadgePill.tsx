@@ -1,12 +1,14 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 
-type BadgeVariant = 'sinGluten' | 'verified' | 'priceRange' | 'cuisine' | 'neutral';
+type BadgeVariant = 'sinGluten' | 'verified' | 'premium' | 'priceRange' | 'cuisine' | 'neutral';
 
 interface BadgePillProps {
   label: string;
@@ -20,7 +22,7 @@ type VariantStyle = {
   iconColor: string;
 };
 
-const variantStyles: Record<BadgeVariant, VariantStyle> = {
+const getVariantStyles = (colors: AppColors): Record<BadgeVariant, VariantStyle> => ({
   sinGluten: {
     backgroundColor: colors.sinGlutenBg,
     textColor: colors.primary,
@@ -28,8 +30,13 @@ const variantStyles: Record<BadgeVariant, VariantStyle> = {
   },
   verified: {
     backgroundColor: colors.verifiedGreen,
-    textColor: colors.white,
-    iconColor: colors.white,
+    textColor: colors.onPrimary,
+    iconColor: colors.onPrimary,
+  },
+  premium: {
+    backgroundColor: colors.premiumBg,
+    textColor: colors.premiumText,
+    iconColor: colors.premiumText,
   },
   priceRange: {
     backgroundColor: colors.overlayWhite20,
@@ -46,10 +53,12 @@ const variantStyles: Record<BadgeVariant, VariantStyle> = {
     textColor: colors.white,
     iconColor: colors.white,
   },
-};
+});
 
 function BadgePill({ label, variant = 'neutral', iconName }: BadgePillProps) {
-  const scheme = variantStyles[variant];
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
+  const scheme = getVariantStyles(colors)[variant];
 
   return (
     <View style={[styles.pill, { backgroundColor: scheme.backgroundColor }]}>
@@ -66,7 +75,7 @@ function BadgePill({ label, variant = 'neutral', iconName }: BadgePillProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   pill: {
     flexDirection: 'row',
     alignItems: 'center',

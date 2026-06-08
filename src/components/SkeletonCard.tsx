@@ -8,13 +8,15 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 // Nur kurz beim ersten Laden sichtbar; bei statischem JSON-Asset reicht es,
 // 3–5 Skeleton-Cards fuer ca. 200 ms zu zeigen.
 
 function SkeletonCard() {
+  const styles = useThemedStyles(createStyles);
   const opacity = useSharedValue(0.6);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ function SkeletonCard() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   card: {
     height: 280,
     borderRadius: radius.xl,

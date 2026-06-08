@@ -4,7 +4,9 @@ import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 
@@ -16,6 +18,8 @@ interface AdminScreenLayoutProps {
 
 export default function AdminScreenLayout({ title, children, rightAction }: AdminScreenLayoutProps) {
   const navigation = useNavigation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -33,7 +37,7 @@ export default function AdminScreenLayout({ title, children, rightAction }: Admi
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: colors.background,

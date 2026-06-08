@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import { useLocalized } from '../hooks/useLocalized';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -19,6 +21,8 @@ interface CuisineTagsRowProps {
  */
 function CuisineTagsRow({ restaurant }: CuisineTagsRowProps) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const { cuisineName } = useLocalized();
   const cuisines = restaurant.cuisine_types ?? [];
 
@@ -46,7 +50,7 @@ function CuisineTagsRow({ restaurant }: CuisineTagsRowProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,

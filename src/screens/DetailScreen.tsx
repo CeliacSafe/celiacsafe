@@ -22,7 +22,8 @@ import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import type { ComunidadStackParamList } from '../navigation/ComunidadStack';
 import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
 import type { MapaStackParamList } from '../navigation/MapaStack';
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 
 type Props = NativeStackScreenProps<
   BuscarStackParamList | MapaStackParamList | FavoritosStackParamList | ComunidadStackParamList,
@@ -31,6 +32,7 @@ type Props = NativeStackScreenProps<
 
 export default function DetailScreen({ route, navigation }: Props) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
   const { restaurantId } = route.params;
   const { restaurant, loading } = useRestaurantById(restaurantId);
 
@@ -75,7 +77,7 @@ export default function DetailScreen({ route, navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,

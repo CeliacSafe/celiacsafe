@@ -11,7 +11,7 @@ import ImpressumScreen from '../screens/ImpressumScreen';
 import PerfilScreen from '../screens/PerfilScreen';
 import PrivacyScreen from '../screens/PrivacyScreen';
 import SubmitRestaurantScreen from '../screens/SubmitRestaurantScreen';
-import { stackScreenOptions } from './stackScreenOptions';
+import { useStackScreenOptions } from './stackScreenOptions';
 
 export type PerfilStackParamList = {
   PerfilMain: undefined;
@@ -30,8 +30,9 @@ export type PerfilStackParamList = {
 const Stack = createNativeStackNavigator<PerfilStackParamList>();
 
 export default function PerfilStack() {
+  const screenOptions = useStackScreenOptions();
   return (
-    <Stack.Navigator screenOptions={stackScreenOptions}>
+    <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen name="PerfilMain" component={PerfilScreen} options={{ headerShown: false }} />
       <Stack.Screen name="About" component={AboutScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Privacy" component={PrivacyScreen} options={{ headerShown: false }} />

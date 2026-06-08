@@ -7,7 +7,9 @@ import { useTranslation } from 'react-i18next';
 import AdminScreenLayout from '../../components/AdminScreenLayout';
 import type { PerfilStackParamList } from '../../navigation/PerfilStack';
 import { useAdminStore } from '../../store/adminStore';
-import { colors } from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
+import { useThemedStyles } from '../../theme/useThemedStyles';
+import { type AppColors } from '../../theme/palette';
 import { radius, spacing } from '../../theme/spacing';
 import { typography } from '../../theme/typography';
 import { getMergedRestaurants } from '../../utils/restaurantDataService';
@@ -30,6 +32,8 @@ interface MenuItem {
 
 export default function AdminDashboardScreen() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const navigation = useNavigation<Nav>();
   const logout = useAdminStore((s) => s.logout);
   const pendingCount = useAdminStore((s) => s.getPendingSubmissionCount());
@@ -120,7 +124,7 @@ export default function AdminDashboardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   content: {
     padding: spacing.screenPadding,
     gap: spacing.sm,

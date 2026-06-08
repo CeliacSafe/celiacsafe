@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -11,6 +12,7 @@ interface ProfileSectionProps {
 }
 
 function ProfileSection({ title, children }: ProfileSectionProps) {
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -19,7 +21,7 @@ function ProfileSection({ title, children }: ProfileSectionProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   section: {
     marginBottom: spacing.sm,
   },

@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import type { SearchCategoryTab } from '../data/filterOptions';
 import { useFilterStore } from '../store/filterStore';
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
@@ -12,6 +13,7 @@ const TABS: SearchCategoryTab[] = ['verified', 'community', 'bakery'];
 
 function SearchCategoryTabs() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
   const categoryTab = useFilterStore((s) => s.categoryTab);
   const setCategoryTab = useFilterStore((s) => s.setCategoryTab);
 
@@ -54,7 +56,7 @@ function SearchCategoryTabs() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: spacing.sm,

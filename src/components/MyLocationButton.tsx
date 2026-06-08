@@ -10,7 +10,9 @@ import {
 
 import { useTranslation } from 'react-i18next';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 
 interface MyLocationButtonProps {
   onPress: () => void;
@@ -23,6 +25,8 @@ interface MyLocationButtonProps {
  */
 function MyLocationButton({ onPress, loading = false, style }: MyLocationButtonProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
   return (
     <Pressable
@@ -42,7 +46,7 @@ function MyLocationButton({ onPress, loading = false, style }: MyLocationButtonP
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   button: {
     width: 48,
     height: 48,

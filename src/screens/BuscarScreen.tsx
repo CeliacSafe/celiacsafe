@@ -24,7 +24,9 @@ import { useRestaurants } from '../hooks/useRestaurants';
 import type { BuscarStackParamList } from '../navigation/BuscarStack';
 import { useFilterStore } from '../store/filterStore';
 import type { Restaurant } from '../types/Restaurant';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -61,6 +63,8 @@ const BuscarRestaurantRow = memo(function BuscarRestaurantRow({
 export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const { t } = useTranslation();
   const navigation = useNavigation<BuscarNavigationProp>();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const { restaurants, loading, error, syncError, refetch } = useRestaurants();
   const { location, loading: locationLoading, error: locationError, requestLocation } =
     useUserLocation();
@@ -281,7 +285,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         </View>
       </View>
     ),
-    [counterLabel, isBrowsingNearby, location, locationError, locationLoading, t]
+    [colors, styles, counterLabel, isBrowsingNearby, location, locationError, locationLoading, t]
   );
 
   const listFooter = useMemo(() => {
@@ -295,10 +299,10 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         style={({ pressed }) => [styles.loadMoreButton, pressed && styles.loadMorePressed]}
       >
         <Text style={styles.loadMoreLabel}>{t('search.load_more')}</Text>
-        <MaterialCommunityIcons name="chevron-down" size={22} color={colors.background} />
+        <MaterialCommunityIcons name="chevron-down" size={22} color={colors.onPrimary} />
       </Pressable>
     );
-  }, [hasMoreNearby, loadMore, t]);
+  }, [colors, styles, hasMoreNearby, loadMore, t]);
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
@@ -388,7 +392,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -399,7 +403,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingTop: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.surface,
+    borderBottomColor: colors.border,
   },
   list: {
     flex: 1,
@@ -496,8 +500,7 @@ const styles = StyleSheet.create({
   },
   loadMoreLabel: {
     ...typography.button,
-    fontWeight: '700',
-    color: colors.background,
+    color: colors.onPrimary,
   },
 });
 

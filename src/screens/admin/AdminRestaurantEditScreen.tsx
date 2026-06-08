@@ -8,7 +8,9 @@ import { useTranslation } from 'react-i18next';
 import AdminScreenLayout from '../../components/AdminScreenLayout';
 import type { PerfilStackParamList } from '../../navigation/PerfilStack';
 import { useAdminStore } from '../../store/adminStore';
-import { colors } from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
+import { useThemedStyles } from '../../theme/useThemedStyles';
+import { type AppColors } from '../../theme/palette';
 import { radius, spacing } from '../../theme/spacing';
 import { typography } from '../../theme/typography';
 import type { CountryCode, RegionCode, Restaurant } from '../../types/Restaurant';
@@ -29,6 +31,8 @@ function Field({
   onChangeText: (v: string) => void;
   multiline?: boolean;
 }) {
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
@@ -45,6 +49,7 @@ function Field({
 
 export default function AdminRestaurantEditScreen() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const upsertRestaurant = useAdminStore((s) => s.upsertRestaurant);
@@ -172,7 +177,7 @@ export default function AdminRestaurantEditScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   content: {
     padding: spacing.screenPadding,
     gap: spacing.sm,
@@ -206,7 +211,7 @@ const styles = StyleSheet.create({
   },
   saveLabel: {
     ...typography.button,
-    color: colors.white,
+    color: colors.onPrimary,
     fontWeight: '700',
   },
   hideButton: {

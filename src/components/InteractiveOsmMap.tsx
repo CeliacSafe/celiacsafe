@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 import type { MapRegion } from '../types/MapRegion';
 import type { Restaurant } from '../types/Restaurant';
 
@@ -60,10 +60,10 @@ function zoomFromDelta(latitudeDelta: number): number {
  * Eigener Pin als divIcon — unabhängig von Leaflets PNG-Standard-Icons, die beim
  * Laden via CDN oft nicht auflösen (→ unsichtbare Marker).
  */
-function createPinIcon(L: any) {
+function createPinIcon(L: any, primary: string) {
   return L.divIcon({
     className: 'celiacsafe-pin',
-    html: `<div style="width:18px;height:18px;border-radius:50% 50% 50% 0;background:${colors.primary};border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.4);transform:rotate(-45deg)"></div>`,
+    html: `<div style="width:18px;height:18px;border-radius:50% 50% 50% 0;background:${primary};border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.4);transform:rotate(-45deg)"></div>`,
     iconSize: [18, 18],
     iconAnchor: [9, 18],
   });
@@ -76,6 +76,7 @@ interface Props {
 }
 
 export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }: Props) {
+  const { colors } = useTheme();
   const containerRef = useRef<View>(null);
   const mapRef = useRef<any>(null);
   const leafletRef = useRef<any>(null);
@@ -137,7 +138,7 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
     if (!L || !map) {
       return;
     }
-    const icon = createPinIcon(L);
+    const icon = createPinIcon(L, colors.primary);
     const existing = markersRef.current;
     const nextIds = new Set<string>();
     for (const r of restaurants) {
@@ -173,7 +174,7 @@ export default function InteractiveOsmMap({ restaurants, region, onMarkerPress }
         didFitRef.current = true;
       }
     }
-  }, [restaurants, ready]);
+  }, [restaurants, ready, colors.primary]);
 
   return <View ref={containerRef} style={styles.map} />;
 }

@@ -6,13 +6,15 @@ import { useTranslation } from 'react-i18next';
 
 import AdminScreenLayout from '../../components/AdminScreenLayout';
 import { useAdminStore } from '../../store/adminStore';
-import { colors } from '../../theme/colors';
+import { useThemedStyles } from '../../theme/useThemedStyles';
+import { type AppColors } from '../../theme/palette';
 import { radius, spacing } from '../../theme/spacing';
 import { typography } from '../../theme/typography';
 import { hapticLight, hapticSuccess } from '../../utils/haptics';
 
 export default function AdminImportScreen() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
   const importCsvText = useAdminStore((s) => s.importCsvText);
   const [lastResult, setLastResult] = useState<string | null>(null);
 
@@ -73,7 +75,7 @@ export default function AdminImportScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   content: {
     padding: spacing.screenPadding,
     gap: spacing.md,
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     ...typography.button,
-    color: colors.white,
+    color: colors.onPrimary,
     fontWeight: '700',
   },
   buttonLabelSecondary: {

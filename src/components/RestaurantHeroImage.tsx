@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { StyleSheet, type ImageStyle, type StyleProp, type ViewStyle } from 'react-native';
 
 import type { Restaurant } from '../types/Restaurant';
 import { getRestaurantDisplayImage } from '../utils/restaurantDisplayImage';
@@ -19,7 +19,7 @@ function RestaurantHeroImage({ restaurant, iconSize, style }: RestaurantHeroImag
     return (
       <Image
         source={source}
-        style={[styles.fill, style]}
+        style={[styles.fill, style as StyleProp<ImageStyle>]}
         contentFit="cover"
         transition={200}
       />

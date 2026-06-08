@@ -1,7 +1,9 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 
@@ -15,6 +17,8 @@ export interface LoadingSpinnerProps {
 
 function LoadingSpinner({ message, size = 'large', fullscreen = false }: LoadingSpinnerProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const displayMessage = message ?? (fullscreen ? t('common.loading') : undefined);
 
   const content = (
@@ -43,10 +47,10 @@ function LoadingSpinner({ message, size = 'large', fullscreen = false }: Loading
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   fullscreen: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(18, 18, 18, 0.9)',
+    backgroundColor: colors.scrim,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,

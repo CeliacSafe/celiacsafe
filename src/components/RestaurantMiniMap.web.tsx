@@ -2,7 +2,8 @@ import { memo } from 'react';
 import { StyleSheet } from 'react-native';
 
 import StaticOsmMapImage from './StaticOsmMapImage';
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
 import { restaurantHasMapCoordinates } from '../utils/platformLinks';
@@ -18,6 +19,8 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
   restaurant,
   onPress,
 }: RestaurantMiniMapProps) {
+  const styles = useThemedStyles(createStyles);
+
   if (!restaurantHasMapCoordinates(restaurant)) {
     return null;
   }
@@ -34,7 +37,7 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
   );
 });
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrap: {
     marginTop: spacing.sm,
     borderRadius: radius.lg,

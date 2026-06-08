@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 import AddressMapPreview from './AddressMapPreview';
 import { useLocalized } from '../hooks/useLocalized';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -35,6 +37,8 @@ function formatAddress(restaurant: Restaurant, regionLabel: string): string {
  */
 function AddressSection({ restaurant }: AddressSectionProps) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const { regionName } = useLocalized();
   const regionLabel = regionName(restaurant.region_code);
   const addressText = formatAddress(restaurant, regionLabel);
@@ -78,7 +82,7 @@ function AddressSection({ restaurant }: AddressSectionProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
   routeLabel: {
     ...typography.button,
     fontWeight: '700',
-    color: colors.background,
+    color: colors.onPrimary,
   },
 });
 

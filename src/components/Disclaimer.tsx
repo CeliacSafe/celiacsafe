@@ -2,7 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -15,6 +17,8 @@ interface DisclaimerProps {
 
 function Disclaimer({ variant = 'full', embedded = false }: DisclaimerProps) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const text = t(variant === 'full' ? 'disclaimer.full' : 'disclaimer.short');
 
   const content = (
@@ -40,7 +44,7 @@ function Disclaimer({ variant = 'full', embedded = false }: DisclaimerProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.screenPadding,

@@ -19,7 +19,9 @@ import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '../components/LoadingSpinner';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
 import { useAdminStore } from '../store/adminStore';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -32,6 +34,8 @@ type SubmitNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'Sub
 
 function SubmitRestaurantScreen() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const navigation = useNavigation<SubmitNavigationProp>();
 
   const [restaurantName, setRestaurantName] = useState('');
@@ -316,6 +320,8 @@ function FormField({
   hasError,
   errorText,
 }: FormFieldProps) {
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   return (
     <View style={styles.field}>
       <Text style={styles.label}>
@@ -339,7 +345,7 @@ function FormField({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: colors.background,
@@ -433,7 +439,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   countryChipTextActive: {
-    color: colors.background,
+    color: colors.onPrimary,
   },
   label: {
     ...typography.h4,
@@ -476,7 +482,7 @@ const styles = StyleSheet.create({
   submitLabel: {
     ...typography.button,
     fontWeight: '700',
-    color: colors.background,
+    color: colors.onPrimary,
   },
 });
 

@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -42,6 +44,8 @@ function isClosedLine(line: string): boolean {
  */
 function OpeningHours({ restaurant }: OpeningHoursProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const language = useAppLanguage();
   const hoursText = restaurant.opening_hours?.trim();
   const todayName = getTodayName(language);
@@ -84,7 +88,7 @@ function OpeningHours({ restaurant }: OpeningHoursProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,

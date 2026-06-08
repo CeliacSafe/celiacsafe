@@ -2,7 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
@@ -15,18 +17,20 @@ interface DeliveryButtonsProps {
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
-const DELIVERY_PLATFORMS: Record<string, { label: string; color: string; icon: IconName }> = {
+const getDeliveryPlatforms = (
+  colors: AppColors,
+): Record<string, { label: string; color: string; icon: IconName }> => ({
   glovo: { label: 'Glovo', color: '#FFC107', icon: 'bike-fast' },
   just_eat: { label: 'Just Eat', color: '#FF8000', icon: 'food' },
   uber_eats: { label: 'Uber Eats', color: '#06C167', icon: 'silverware-fork-knife' },
   wolt: { label: 'Wolt', color: '#009DE0', icon: 'bike' },
   deliveroo: { label: 'Deliveroo', color: '#00CCBC', icon: 'bike' },
   own_delivery: { label: 'Lieferung', color: colors.primaryDark, icon: 'home' },
-};
+});
 
-function getPlatformMeta(platform: string) {
+function getPlatformMeta(platform: string, colors: AppColors) {
   return (
-    DELIVERY_PLATFORMS[platform] ?? {
+    getDeliveryPlatforms(colors)[platform] ?? {
       label: platform,
       color: colors.primary,
       icon: 'truck-delivery' as IconName,
@@ -36,6 +40,8 @@ function getPlatformMeta(platform: string) {
 
 function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const activeLinks = getActiveDeliveryLinks(restaurant);
 
   if (activeLinks.length === 0) {
@@ -50,7 +56,7 @@ function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
       </View>
 
       {activeLinks.map((link) => {
-        const meta = getPlatformMeta(link.platform);
+        const meta = getPlatformMeta(link.platform, colors);
         const targetUrl = resolveDeliveryUrl(restaurant, link);
         if (!targetUrl) {
           return null;
@@ -68,7 +74,7 @@ function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
             accessibilityLabel={`${meta.label}, ${restaurant.name}`}
           >
             <View style={[styles.iconBadge, { backgroundColor: meta.color }]}>
-              <MaterialCommunityIcons name={meta.icon} size={18} color={colors.white} />
+              <MaterialCommunityIcons name={meta.icon} size={18} color={colors.onPrimary} />
             </View>
             <View style={styles.labelBlock}>
               <Text style={styles.platformLabel}>{meta.label}</Text>
@@ -82,7 +88,7 @@ function DeliveryButtons({ restaurant }: DeliveryButtonsProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,

@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { BuscarScreen } from '../screens/BuscarScreen';
 import DetailScreen from '../screens/DetailScreen';
-import { stackScreenOptions } from './stackScreenOptions';
+import { useStackScreenOptions } from './stackScreenOptions';
 
 export type BuscarStackParamList = {
   BuscarList: undefined;
@@ -12,8 +12,9 @@ export type BuscarStackParamList = {
 const Stack = createNativeStackNavigator<BuscarStackParamList>();
 
 export default function BuscarStack() {
+  const screenOptions = useStackScreenOptions();
   return (
-    <Stack.Navigator screenOptions={stackScreenOptions}>
+    <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen name="BuscarList" component={BuscarScreen} options={{ headerShown: false }} />
       <Stack.Screen
         name="RestaurantDetail"

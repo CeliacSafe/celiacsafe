@@ -2,7 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 
 interface CustomMarkerProps {
   isFavorite?: boolean;
@@ -17,6 +19,8 @@ const CustomMarker = memo(function MarkerPin({
   isFavorite = false,
   isSelected = false,
 }: CustomMarkerProps) {
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const iconName = isFavorite ? 'heart' : 'silverware-fork-knife';
 
   return (
@@ -25,7 +29,7 @@ const CustomMarker = memo(function MarkerPin({
 
       <View style={styles.markerColumn}>
         <View style={styles.circle}>
-          <MaterialCommunityIcons name={iconName} size={16} color={colors.background} />
+          <MaterialCommunityIcons name={iconName} size={16} color={colors.onPrimary} />
         </View>
         <View style={styles.pinTip} />
       </View>
@@ -35,7 +39,7 @@ const CustomMarker = memo(function MarkerPin({
 
 CustomMarker.displayName = 'CustomMarker';
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   outer: {
     width: 36,
     height: 36,
@@ -58,7 +62,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: colors.primary,
     borderWidth: 3,
-    borderColor: colors.background,
+    borderColor: colors.onPrimary,
     alignItems: 'center',
     justifyContent: 'center',
     ...Platform.select({

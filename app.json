@@ -6,13 +6,13 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#121212"
+      "backgroundColor": "#5a6850"
     },
-    "backgroundColor": "#121212",
+    "backgroundColor": "#fdfaf2",
     "updates": {
       "enabled": false
     },
@@ -27,7 +27,7 @@
       "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-fg.png",
-        "backgroundColor": "#1F6B73",
+        "backgroundColor": "#5a6850",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
@@ -38,8 +38,8 @@
       "favicon": "./assets/favicon.png",
       "name": "Celiac Safe",
       "shortName": "CeliacSafe",
-      "themeColor": "#1F6B73",
-      "backgroundColor": "#121212"
+      "themeColor": "#5a6850",
+      "backgroundColor": "#fdfaf2"
     },
     "plugins": [
       "expo-font",
@@ -51,7 +51,7 @@
         {
           "image": "./assets/splash.png",
           "resizeMode": "contain",
-          "backgroundColor": "#121212"
+          "backgroundColor": "#5a6850"
         }
       ]
     ]

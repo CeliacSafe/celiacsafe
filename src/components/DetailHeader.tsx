@@ -8,7 +8,9 @@ import BadgePill from './BadgePill';
 import HeartButton from './HeartButton';
 import RestaurantHeroImage from './RestaurantHeroImage';
 import { useLocalized } from '../hooks/useLocalized';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -27,6 +29,8 @@ const GRADIENT_HEIGHT = 100;
  */
 function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const { regionName } = useLocalized();
   const insets = useSafeAreaInsets();
   const showVerificationBadge =
@@ -92,7 +96,7 @@ function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     width: '100%',
   },

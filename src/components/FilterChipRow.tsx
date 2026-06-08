@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
@@ -17,6 +18,7 @@ interface FilterChipRowProps {
 }
 
 function FilterChipRow({ options, selectedId, onSelect }: FilterChipRowProps) {
+  const styles = useThemedStyles(createStyles);
   return (
     <ScrollView
       horizontal
@@ -45,7 +47,7 @@ function FilterChipRow({ options, selectedId, onSelect }: FilterChipRowProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   row: {
     gap: spacing.sm,
     paddingVertical: spacing.xs,
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   labelActive: {
-    color: colors.white,
+    color: colors.onPrimary,
   },
   labelInactive: {
     color: colors.textSecondary,

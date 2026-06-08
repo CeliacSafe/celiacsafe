@@ -2,7 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useLanguageStore } from '../store/languageStore';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import type { SupportedLanguage } from '../i18n';
@@ -19,6 +21,8 @@ const LANGUAGE_OPTIONS: { code: SupportedLanguage; flag: string; label: string }
 ];
 
 function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
@@ -73,7 +77,7 @@ function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   compactRow: {
     flexDirection: 'row',
     gap: spacing.cardPadding,
@@ -108,7 +112,7 @@ const styles = StyleSheet.create({
   },
   fullRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.background,
+    borderBottomColor: colors.border,
   },
   fullLabel: {
     ...typography.body,

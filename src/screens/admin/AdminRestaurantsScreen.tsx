@@ -7,7 +7,9 @@ import { useTranslation } from 'react-i18next';
 import AdminScreenLayout from '../../components/AdminScreenLayout';
 import type { PerfilStackParamList } from '../../navigation/PerfilStack';
 import { useAdminStore } from '../../store/adminStore';
-import { colors } from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
+import { useThemedStyles } from '../../theme/useThemedStyles';
+import { type AppColors } from '../../theme/palette';
 import { radius, spacing } from '../../theme/spacing';
 import { typography } from '../../theme/typography';
 import { getMergedRestaurants } from '../../utils/restaurantDataService';
@@ -17,6 +19,8 @@ type Nav = NativeStackNavigationProp<PerfilStackParamList, 'AdminRestaurants'>;
 
 export default function AdminRestaurantsScreen() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const navigation = useNavigation<Nav>();
   const dataRevision = useAdminStore((s) => s.dataRevision);
   const [query, setQuery] = useState('');
@@ -83,7 +87,7 @@ export default function AdminRestaurantsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   searchWrap: {
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.sm,

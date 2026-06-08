@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 
 /** Gemeinsames Item-Layout fuer Profil-Menuezeilen und plain Action-Buttons. */
-export const profileMenuStyles = StyleSheet.create({
+export const createProfileMenuStyles = (colors: AppColors) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -13,10 +13,12 @@ import ProfileMenuRow, { ProfileMenuStaticRow } from '../components/ProfileMenuR
 import ProfileSection from '../components/ProfileSection';
 import RateAppButton from '../components/RateAppButton';
 import ShareAppButton from '../components/ShareAppButton';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../constants/appContact';
-import { ADMIN_UNLOCK_TAPS } from '../constants/adminConfig';
+import { ADMIN_UNLOCK_TAPS, IN_APP_ADMIN_ENABLED } from '../constants/adminConfig';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -27,11 +29,15 @@ type PerfilNavigationProp = NativeStackNavigationProp<PerfilStackParamList, 'Per
 function PerfilScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<PerfilNavigationProp>();
+  const styles = useThemedStyles(createStyles);
   const appVersion = Application.nativeApplicationVersion ?? '1.0.0';
   const adminTapCount = useRef(0);
   const adminTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleVersionPress = () => {
+    if (!IN_APP_ADMIN_ENABLED) {
+      return;
+    }
     adminTapCount.current += 1;
     if (adminTapTimer.current) {
       clearTimeout(adminTapTimer.current);
@@ -60,6 +66,12 @@ function PerfilScreen() {
         <ProfileSection title={t('profile.language')}>
           <View style={styles.languageCardWrap}>
             <LanguageSwitcher variant="full" />
+          </View>
+        </ProfileSection>
+
+        <ProfileSection title={t('profile.appearance')}>
+          <View style={styles.languageCardWrap}>
+            <ThemeSwitcher />
           </View>
         </ProfileSection>
 
@@ -128,36 +140,37 @@ function PerfilScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: 12,
-    paddingBottom: 16,
-    backgroundColor: colors.background,
-  },
-  title: {
-    ...typography.display,
-    color: colors.primary,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: spacing.sectionGap,
-  },
-  languageCardWrap: {
-    marginHorizontal: spacing.screenPadding,
-    marginVertical: spacing.sm,
-  },
-  disclaimerWrap: {
-    marginHorizontal: spacing.screenPadding,
-    marginTop: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-});
+const createStyles = (colors: AppColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: 12,
+      paddingBottom: 16,
+      backgroundColor: colors.background,
+    },
+    title: {
+      ...typography.display,
+      color: colors.textPrimary,
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: spacing.sectionGap,
+    },
+    languageCardWrap: {
+      marginHorizontal: spacing.screenPadding,
+      marginVertical: spacing.sm,
+    },
+    disclaimerWrap: {
+      marginHorizontal: spacing.screenPadding,
+      marginTop: spacing.sm,
+      marginBottom: spacing.sm,
+    },
+  });
 
 export default PerfilScreen;

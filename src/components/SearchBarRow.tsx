@@ -3,7 +3,9 @@ import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useFilterStore } from '../store/filterStore';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
@@ -15,6 +17,8 @@ interface SearchBarRowProps {
 
 function SearchBarRow({ filtersOpen, onToggleFilters }: SearchBarRowProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const searchQuery = useFilterStore((state) => state.searchQuery);
   const setSearchQuery = useFilterStore((state) => state.setSearchQuery);
 
@@ -56,14 +60,14 @@ function SearchBarRow({ filtersOpen, onToggleFilters }: SearchBarRowProps) {
         <MaterialCommunityIcons
           name={filtersOpen ? 'tune-vertical' : 'filter-variant'}
           size={22}
-          color={colors.white}
+          color={colors.onPrimary}
         />
       </Pressable>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',

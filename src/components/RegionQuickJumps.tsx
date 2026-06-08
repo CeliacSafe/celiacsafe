@@ -3,7 +3,9 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { QUICK_JUMPS } from '../data/quickJumps';
 import type { MapRegion } from '../types/MapRegion';
 import { useAppLanguage } from '../i18n/useAppLanguage';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -16,6 +18,8 @@ interface RegionQuickJumpsProps {
  * Horizontale Shortcut-Pills zum schnellen Springen auf Kartenregionen.
  */
 function RegionQuickJumps({ onJumpTo }: RegionQuickJumpsProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const language = useAppLanguage();
   return (
     <View style={styles.bar}>
@@ -40,9 +44,9 @@ function RegionQuickJumps({ onJumpTo }: RegionQuickJumpsProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   bar: {
-    backgroundColor: 'rgba(18, 18, 18, 0.88)',
+    backgroundColor: colors.scrim,
   },
   scrollContent: {
     paddingVertical: spacing.sm,

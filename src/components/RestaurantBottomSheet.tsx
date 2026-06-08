@@ -5,12 +5,14 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
-import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import BadgePill from './BadgePill';
 import { useLocalized } from '../hooks/useLocalized';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -21,6 +23,7 @@ import {
   resolveDeliveryUrl,
   resolveReservationUrl,
 } from '../utils/platformLinks';
+import { canOpenExternalMaps, openMapsPlace } from '../utils/mapsPlaceLinks';
 import { openUrl } from '../utils/openExternalUrl';
 
 interface RestaurantBottomSheetProps {
@@ -46,6 +49,8 @@ interface ActionItem {
 const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBottomSheetProps>(
   ({ restaurant, onClose, onDetailPress }, ref) => {
     const { t } = useTranslation();
+    const { colors } = useTheme();
+    const styles = useThemedStyles(createStyles);
     const { regionName, cuisineName } = useLocalized();
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ['40%', '70%'], []);
@@ -141,9 +146,9 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
           },
           {
             icon: 'map',
-            label: t('detail.route'),
-            visible: restaurant.latitude != null && restaurant.longitude != null,
-            onPress: () => openMaps(restaurant.latitude!, restaurant.longitude!),
+            label: t('detail.open_in_maps'),
+            visible: canOpenExternalMaps(restaurant),
+            onPress: () => openMapsPlace(restaurant),
           },
           {
             icon: 'information',
@@ -176,6 +181,13 @@ const RestaurantBottomSheet = forwardRef<RestaurantBottomSheetRef, RestaurantBot
             </View>
 
             <View style={styles.badgeRow}>
+              {restaurant.is_premium_partner === true ? (
+                <BadgePill
+                  label={t('card.badge_premium')}
+                  variant="premium"
+                  iconName="star"
+                />
+              ) : null}
               <BadgePill
                 label={t('card.badge_sin_gluten')}
                 variant="sinGluten"
@@ -250,13 +262,7 @@ function openExternalUrl(url: string): void {
   Linking.openURL(withProtocol).catch(() => undefined);
 }
 
-function openMaps(lat: number, lng: number): void {
-  const url =
-    Platform.OS === 'ios' ? `maps:?ll=${lat},${lng}` : `geo:${lat},${lng}?q=${lat},${lng}`;
-  Linking.openURL(url).catch(() => undefined);
-}
-
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   sheetBackground: {
     backgroundColor: colors.background,
   },

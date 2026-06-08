@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import DetailScreen from '../screens/DetailScreen';
 import { FavoritosScreen } from '../screens/FavoritosScreen';
-import { stackScreenOptions } from './stackScreenOptions';
+import { useStackScreenOptions } from './stackScreenOptions';
 
 export type FavoritosStackParamList = {
   FavoritosList: undefined;
@@ -12,8 +12,9 @@ export type FavoritosStackParamList = {
 const Stack = createNativeStackNavigator<FavoritosStackParamList>();
 
 export default function FavoritosStack() {
+  const screenOptions = useStackScreenOptions();
   return (
-    <Stack.Navigator screenOptions={stackScreenOptions}>
+    <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
         name="FavoritosList"
         component={FavoritosScreen}

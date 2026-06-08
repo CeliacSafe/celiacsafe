@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { WHATSAPP_DEFAULT_MESSAGES } from '../i18n/contact';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -63,6 +65,8 @@ function formatInstagramLabel(handle: string): string {
  */
 function ContactDetailsSection({ restaurant }: ContactDetailsSectionProps) {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const language = useAppLanguage();
   const rows: ContactRow[] = [];
 
@@ -181,7 +185,7 @@ function ContactDetailsSection({ restaurant }: ContactDetailsSectionProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,

@@ -2,7 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
@@ -32,6 +34,8 @@ function FilterSelect({
   active = false,
   flex = false,
 }: FilterSelectProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const [open, setOpen] = useState(false);
   const hasValue = value != null;
 
@@ -108,7 +112,7 @@ function FilterSelect({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrap: {
     alignSelf: 'stretch',
     minWidth: 0,
@@ -154,7 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   fieldActive: {
-    borderColor: colors.primaryDark,
+    borderColor: colors.border,
   },
   value: {
     ...typography.body,

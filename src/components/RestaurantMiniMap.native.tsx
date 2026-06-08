@@ -3,7 +3,8 @@ import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 
 import CustomMarker from './CustomMarker';
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
 import { restaurantHasMapCoordinates } from '../utils/platformLinks';
@@ -22,6 +23,7 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
   restaurant,
   onPress,
 }: RestaurantMiniMapProps) {
+  const styles = useThemedStyles(createStyles);
   const region = useMemo(() => {
     if (!restaurantHasMapCoordinates(restaurant)) {
       return null;
@@ -76,7 +78,7 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
   return <View style={styles.wrap}>{map}</View>;
 });
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrap: {
     height: 120,
     marginTop: spacing.sm,

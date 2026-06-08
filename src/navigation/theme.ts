@@ -1,18 +1,21 @@
-import { DarkTheme, type Theme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, type Theme } from '@react-navigation/native';
 
-import { colors } from '../theme/colors';
+import { type AppColors } from '../theme/palette';
 
-/** Einheitliches Dark-Theme fuer NavigationContainer und Header. */
-export const navigationTheme: Theme = {
-  ...DarkTheme,
-  dark: true,
-  colors: {
-    ...DarkTheme.colors,
-    primary: colors.primary,
-    background: colors.background,
-    card: colors.surface,
-    text: colors.textPrimary,
-    border: colors.primaryDark,
-    notification: colors.heart,
-  },
-};
+/** Baut das NavigationContainer-Theme aus der aktiven Palette. */
+export function buildNavigationTheme(colors: AppColors, isDark: boolean): Theme {
+  const base = isDark ? DarkTheme : DefaultTheme;
+  return {
+    ...base,
+    dark: isDark,
+    colors: {
+      ...base.colors,
+      primary: colors.primary,
+      background: colors.background,
+      card: colors.surface,
+      text: colors.textPrimary,
+      border: colors.border,
+      notification: colors.heart,
+    },
+  };
+}

@@ -1,7 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import type { ReactElement } from 'react';
 
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 interface ProfileMenuCardProps {
@@ -9,6 +10,7 @@ interface ProfileMenuCardProps {
 }
 
 function ProfileMenuCard({ children }: ProfileMenuCardProps) {
+  const styles = useThemedStyles(createStyles);
   const items = Array.isArray(children) ? children : [children];
 
   return (
@@ -23,7 +25,7 @@ function ProfileMenuCard({ children }: ProfileMenuCardProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,

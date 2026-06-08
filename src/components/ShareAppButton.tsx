@@ -6,10 +6,12 @@ import { useTranslation } from 'react-i18next';
 import {
   PROFILE_MENU_CHEVRON_SIZE,
   PROFILE_MENU_ICON_SIZE,
-  profileMenuStyles,
+  createProfileMenuStyles,
 } from './profileMenuStyles';
 import { getShareUrl } from '../constants/storeUrls';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -20,6 +22,9 @@ interface ShareAppButtonProps {
 
 function ShareAppButton({ variant = 'plain' }: ShareAppButtonProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
+  const profileMenuStyles = useThemedStyles(createProfileMenuStyles);
   const [loading, setLoading] = useState(false);
 
   const handlePress = useCallback(async () => {
@@ -60,7 +65,7 @@ function ShareAppButton({ variant = 'plain' }: ShareAppButtonProps) {
     >
       {loading ? (
         <ActivityIndicator
-          color={isPrimary ? colors.white : colors.primary}
+          color={isPrimary ? colors.onPrimary : colors.primary}
           style={isPrimary ? styles.primarySpinner : styles.plainSpinner}
         />
       ) : (
@@ -68,7 +73,7 @@ function ShareAppButton({ variant = 'plain' }: ShareAppButtonProps) {
           <MaterialCommunityIcons
             name="share-variant-outline"
             size={isPrimary ? 22 : PROFILE_MENU_ICON_SIZE}
-            color={isPrimary ? colors.white : colors.primary}
+            color={isPrimary ? colors.onPrimary : colors.primary}
           />
           <Text style={isPrimary ? styles.primaryLabel : profileMenuStyles.label}>{label}</Text>
           {isPrimary ? null : (
@@ -84,7 +89,7 @@ function ShareAppButton({ variant = 'plain' }: ShareAppButtonProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   primaryButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -100,7 +105,7 @@ const styles = StyleSheet.create({
   primaryLabel: {
     ...typography.button,
     fontWeight: '700',
-    color: colors.white,
+    color: colors.onPrimary,
   },
   disabled: {
     opacity: 0.6,

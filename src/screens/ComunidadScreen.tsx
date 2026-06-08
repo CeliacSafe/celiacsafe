@@ -9,7 +9,9 @@ import { useTranslation } from 'react-i18next';
 import RestaurantCard from '../components/RestaurantCard';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { ComunidadStackParamList } from '../navigation/ComunidadStack';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
@@ -22,6 +24,7 @@ const RECENT_LIMIT = 6;
 export function ComunidadScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<ComunidadNavigationProp>();
+  const styles = useThemedStyles(createStyles);
   const { restaurants } = useRestaurants();
 
   const stats = useMemo(() => {
@@ -109,6 +112,8 @@ interface StatCardProps {
 }
 
 function StatCard({ value, label, icon }: StatCardProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.statCard}>
       <MaterialCommunityIcons name={icon} size={22} color={colors.primary} />
@@ -128,6 +133,8 @@ interface ActionCardProps {
 }
 
 function ActionCard({ icon, title, description, onPress }: ActionCardProps) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   return (
     <Pressable
       onPress={onPress}
@@ -147,7 +154,7 @@ function ActionCard({ icon, title, description, onPress }: ActionCardProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,

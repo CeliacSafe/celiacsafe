@@ -10,7 +10,8 @@ import SwipeableRestaurantCard from '../components/SwipeableRestaurantCard';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
 import { useFavoritesStore } from '../store/favoritesStore';
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -21,6 +22,7 @@ type FavoritosNavigationProp = NativeStackNavigationProp<FavoritosStackParamList
 export function FavoritosScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<FavoritosNavigationProp>();
+  const styles = useThemedStyles(createStyles);
   const { restaurants, loading } = useRestaurants();
   const favorites = useFavoritesStore((state) => state.favorites);
 
@@ -85,7 +87,7 @@ export function FavoritosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,

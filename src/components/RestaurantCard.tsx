@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -6,21 +7,28 @@ import HeartButton from './HeartButton';
 import RestaurantHeroImage from './RestaurantHeroImage';
 import RestaurantMiniMap from './RestaurantMiniMap';
 import { useLocalized } from '../hooks/useLocalized';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { radius, shadows, spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
+import { formatDistanceKm } from '../utils/restaurantDistance';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
   onPress: () => void;
+  /** Entfernung zum Nutzer in km — wird neben dem Ort angezeigt. */
+  distanceKm?: number | null;
 }
 
 const MAX_CUISINE_TAGS = 3;
 
-function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
-  const { t } = useTranslation();
+function RestaurantCard({ restaurant, onPress, distanceKm = null }: RestaurantCardProps) {
+  const { t, i18n } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const { regionName, cuisineName } = useLocalized();
   const showVerificationBadge =
     restaurant.face_program === true || restaurant.aoecs_certified === true;
@@ -28,6 +36,8 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
   const cuisineTypes = restaurant.cuisine_types ?? [];
   const visibleCuisines = cuisineTypes.slice(0, MAX_CUISINE_TAGS);
   const hiddenCuisineCount = cuisineTypes.length - visibleCuisines.length;
+  const distanceLabel =
+    distanceKm != null ? formatDistanceKm(distanceKm, i18n.language) : null;
   const accessibilityLabel = `${restaurant.name}, ${restaurant.city}, 100 Prozent glutenfrei`;
 
   return (
@@ -43,6 +53,13 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
           <RestaurantHeroImage restaurant={restaurant} iconSize={64} />
 
           <View style={styles.badgeStack}>
+            {restaurant.is_premium_partner === true ? (
+              <BadgePill
+                label={t('card.badge_premium')}
+                variant="premium"
+                iconName="star"
+              />
+            ) : null}
             <BadgePill
               label={t('card.badge_sin_gluten')}
               variant="sinGluten"
@@ -62,6 +79,7 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
           <Text style={styles.name}>{restaurant.name}</Text>
           <Text style={styles.location}>
             {restaurant.city} · {regionLabel}
+            {distanceLabel ? ` · ${distanceLabel}` : ''}
           </Text>
 
           <RestaurantMiniMap restaurant={restaurant} onPress={onPress} />
@@ -90,7 +108,7 @@ function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   cardWrapper: {
     position: 'relative',
     marginBottom: spacing.md,
@@ -146,6 +164,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RestaurantCard;
+export default memo(RestaurantCard, (prev, next) =>
+  prev.restaurant.id === next.restaurant.id && prev.distanceKm === next.distanceKm
+);
 
 // i18n-migrated

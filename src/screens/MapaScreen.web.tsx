@@ -16,7 +16,8 @@ import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
 import type { MapaStackParamList } from '../navigation/MapaStack';
 import { useFilterStore } from '../store/filterStore';
-import { colors } from '../theme/colors';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import type { MapRegion } from '../types/MapRegion';
 import type { Restaurant } from '../types/Restaurant';
@@ -40,6 +41,7 @@ export function MapaScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<MapaNavigationProp>();
   const insets = useSafeAreaInsets();
+  const styles = useThemedStyles(createStyles);
   const { loading: locationLoading, requestLocation, lastErrorRef } = useUserLocation();
   const { restaurants } = useRestaurants();
   const searchQuery = useFilterStore((state) => state.searchQuery);
@@ -196,7 +198,7 @@ export function MapaScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -212,7 +214,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(18, 18, 18, 0.55)',
+    backgroundColor: colors.scrim,
     zIndex: 2,
     paddingHorizontal: spacing.lg,
   },

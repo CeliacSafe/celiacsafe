@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ComunidadScreen } from '../screens/ComunidadScreen';
 import DetailScreen from '../screens/DetailScreen';
 import SubmitRestaurantScreen from '../screens/SubmitRestaurantScreen';
-import { stackScreenOptions } from './stackScreenOptions';
+import { useStackScreenOptions } from './stackScreenOptions';
 
 export type ComunidadStackParamList = {
   ComunidadMain: undefined;
@@ -14,8 +14,9 @@ export type ComunidadStackParamList = {
 const Stack = createNativeStackNavigator<ComunidadStackParamList>();
 
 export default function ComunidadStack() {
+  const screenOptions = useStackScreenOptions();
   return (
-    <Stack.Navigator screenOptions={stackScreenOptions}>
+    <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
         name="ComunidadMain"
         component={ComunidadScreen}

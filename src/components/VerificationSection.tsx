@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import type { AppLanguage } from '../i18n/getLocalizedName';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -86,6 +88,8 @@ function isOlderThanMonths(isoDate: string, months: number): boolean {
  */
 function VerificationSection({ restaurant }: VerificationSectionProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const language = useAppLanguage();
   const fmt = useFormatDate();
   const methods = restaurant.verification_methods ?? [];
@@ -159,7 +163,7 @@ function VerificationSection({ restaurant }: VerificationSectionProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.screenPadding,
     paddingVertical: spacing.cardPadding,

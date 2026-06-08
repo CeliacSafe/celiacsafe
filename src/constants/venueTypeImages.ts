@@ -3,7 +3,7 @@ import type { ImageSource } from 'expo-image';
 import type { VenueType } from '../types/Restaurant';
 
 /** Gebündelte Standardfotos pro Restaurant-Art (ohne eigenes featured_image). */
-const VENUE_TYPE_IMAGE_MODULES: Record<VenueType, number> = {
+const VENUE_TYPE_IMAGE_MODULES = {
   restaurant: require('../../assets/venue-types/restaurant.jpg'),
   cafe: require('../../assets/venue-types/cafe.jpg'),
   bakery: require('../../assets/venue-types/bakery.jpg'),
@@ -18,7 +18,7 @@ const VENUE_TYPE_IMAGE_MODULES: Record<VenueType, number> = {
   brunch_place: require('../../assets/venue-types/brunch_place.jpg'),
   burger_joint: require('../../assets/venue-types/burger_joint.jpg'),
   asian_restaurant: require('../../assets/venue-types/asian_restaurant.jpg'),
-};
+} satisfies Record<VenueType, ImageSource>;
 
 export function getVenueTypeImageSource(venueType?: VenueType): ImageSource | null {
   if (!venueType) {

@@ -3,7 +3,9 @@ import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useFilterStore } from '../store/filterStore';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -14,6 +16,8 @@ interface SearchBarProps {
 
 function SearchBar({ onSearchChange }: SearchBarProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const searchQuery = useFilterStore((state) => state.searchQuery);
   const setSearchQuery = useFilterStore((state) => state.setSearchQuery);
 
@@ -51,7 +55,7 @@ function SearchBar({ onSearchChange }: SearchBarProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   container: {
     height: spacing.xxl,
     borderRadius: radius.lg,

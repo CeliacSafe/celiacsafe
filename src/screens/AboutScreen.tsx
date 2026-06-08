@@ -11,7 +11,9 @@ import LegalSubScreenLayout, { LegalSectionBlock } from '../components/LegalSubS
 import { BUG_REPORT_EMAIL_SUBJECT, CONTACT_EMAIL, ERRORS_EMAIL } from '../constants/appContact';
 import { getShareUrl } from '../constants/storeUrls';
 import type { PerfilStackParamList } from '../navigation/PerfilStack';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -30,6 +32,8 @@ interface HelpAction {
 
 function AboutScreen() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const navigation = useNavigation<AboutNavigationProp>();
   const appVersion = Application.nativeApplicationVersion ?? '1.0.0';
 
@@ -137,7 +141,7 @@ function AboutScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   hero: {
     alignItems: 'center',
     gap: spacing.sm,

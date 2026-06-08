@@ -5,7 +5,9 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -27,6 +29,8 @@ export default function LegalSubScreenLayout({
   notice,
 }: LegalSubScreenLayoutProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const navigation = useNavigation();
 
   return (
@@ -76,6 +80,7 @@ export default function LegalSubScreenLayout({
 }
 
 export function LegalSectionBlock({ title, body }: { title: string; body: string }) {
+  const styles = useThemedStyles(createStyles);
   return (
     <View style={styles.block}>
       <Text style={styles.heading}>{title}</Text>
@@ -84,7 +89,7 @@ export function LegalSectionBlock({ title, body }: { title: string; body: string
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: colors.background,

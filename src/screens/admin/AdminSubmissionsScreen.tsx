@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next';
 import AdminScreenLayout from '../../components/AdminScreenLayout';
 import type { PerfilStackParamList } from '../../navigation/PerfilStack';
 import { useAdminStore } from '../../store/adminStore';
-import { colors } from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
+import { useThemedStyles } from '../../theme/useThemedStyles';
+import { type AppColors } from '../../theme/palette';
 import { radius, spacing } from '../../theme/spacing';
 import { typography } from '../../theme/typography';
 import type { RestaurantSubmission } from '../../types/Submission';
@@ -14,7 +16,7 @@ import { hapticLight } from '../../utils/haptics';
 
 type Nav = NativeStackNavigationProp<PerfilStackParamList, 'AdminSubmissions'>;
 
-function statusColor(status: RestaurantSubmission['status']) {
+function statusColor(status: RestaurantSubmission['status'], colors: AppColors) {
   switch (status) {
     case 'pending':
       return colors.warning;
@@ -29,6 +31,8 @@ function statusColor(status: RestaurantSubmission['status']) {
 
 export default function AdminSubmissionsScreen() {
   const { t } = useTranslation();
+  const styles = useThemedStyles(createStyles);
+  const { colors } = useTheme();
   const navigation = useNavigation<Nav>();
   const submissions = useAdminStore((s) => s.submissions);
   const updateSubmissionStatus = useAdminStore((s) => s.updateSubmissionStatus);
@@ -47,7 +51,7 @@ export default function AdminSubmissionsScreen() {
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Text style={styles.name}>{item.restaurantName}</Text>
-              <Text style={[styles.status, { color: statusColor(item.status) }]}>
+              <Text style={[styles.status, { color: statusColor(item.status, colors) }]}>
                 {item.status}
               </Text>
             </View>
@@ -97,7 +101,7 @@ export default function AdminSubmissionsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   list: {
     padding: spacing.screenPadding,
     paddingBottom: spacing.sectionGap,

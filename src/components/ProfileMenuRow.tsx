@@ -4,9 +4,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   PROFILE_MENU_CHEVRON_SIZE,
   PROFILE_MENU_ICON_SIZE,
-  profileMenuStyles,
+  createProfileMenuStyles,
 } from './profileMenuStyles';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
 interface ProfileMenuRowProps {
@@ -24,6 +26,9 @@ function ProfileMenuRow({
   showChevron = true,
   disabled = false,
 }: ProfileMenuRowProps) {
+  const { colors } = useTheme();
+  const profileMenuStyles = useThemedStyles(createProfileMenuStyles);
+  const styles = useThemedStyles(createStyles);
   const interactive = Boolean(onPress) && !disabled;
 
   return (
@@ -64,6 +69,8 @@ interface ProfileMenuStaticRowProps {
 
 /** Statische Zeile ohne Tap (z. B. Versionsnummer). */
 export function ProfileMenuStaticRow({ icon, label }: ProfileMenuStaticRowProps) {
+  const { colors } = useTheme();
+  const profileMenuStyles = useThemedStyles(createProfileMenuStyles);
   return (
     <View style={profileMenuStyles.row} accessibilityRole="text" accessibilityLabel={label}>
       <MaterialCommunityIcons name={icon} size={PROFILE_MENU_ICON_SIZE} color={colors.primary} />
@@ -73,7 +80,7 @@ export function ProfileMenuStaticRow({ icon, label }: ProfileMenuStaticRowProps)
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   labelDisabled: {
     color: colors.textSecondary,
     opacity: 0.5,

@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next';
 
 import RestaurantCard from './RestaurantCard';
 import { useFavoritesStore } from '../store/favoritesStore';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 
 import { typography } from '../theme/typography';
@@ -24,6 +26,8 @@ const ACTION_WIDTH = 80;
  */
 function SwipeableRestaurantCard({ restaurant, onPress }: SwipeableRestaurantCardProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const swipeRef = useRef<Swipeable>(null);
   const removeFavorite = useFavoritesStore((state) => state.removeFavorite);
 
@@ -60,7 +64,7 @@ function SwipeableRestaurantCard({ restaurant, onPress }: SwipeableRestaurantCar
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   deleteAction: {
     width: ACTION_WIDTH,
     backgroundColor: colors.error,

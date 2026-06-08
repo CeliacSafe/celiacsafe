@@ -2,30 +2,52 @@ import 'react-native-gesture-handler';
 import './src/i18n';
 
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StyleSheet, View } from 'react-native';
 
 import LoadingSpinner from './src/components/LoadingSpinner';
 import { linking } from './src/navigation/linking';
-import { navigationTheme } from './src/navigation/theme';
 import { RootTabs } from './src/navigation/RootTabs';
-import { colors } from './src/theme/colors';
+import { buildNavigationTheme } from './src/navigation/theme';
 import { useFavoritesStore } from './src/store/favoritesStore';
 import { useLanguageStore } from './src/store/languageStore';
+import { useThemeStore } from './src/store/themeStore';
+import { fontAssets } from './src/theme/fonts';
+import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
   /* Beim Hot-Reload kann der Splash bereits ausgeblendet sein */
 });
 
+function AppContent() {
+  const { colors, isDark } = useTheme();
+  const navigationTheme = useMemo(() => buildNavigationTheme(colors, isDark), [colors, isDark]);
+
+  return (
+    <BottomSheetModalProvider>
+      <SafeAreaProvider>
+        <NavigationContainer theme={navigationTheme} linking={linking}>
+          <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
+          <RootTabs />
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </BottomSheetModalProvider>
+  );
+}
+
 export default function App() {
   const favoritesHydrated = useFavoritesStore((state) => state.hasHydrated);
   const languageHydrated = useLanguageStore((state) => state.hasHydrated);
-  const isReady = favoritesHydrated && languageHydrated;
+  const themeHydrated = useThemeStore((state) => state.hasHydrated);
+  const [fontsLoaded] = useFonts(fontAssets);
+
+  const isReady = favoritesHydrated && languageHydrated && themeHydrated && fontsLoaded;
 
   useEffect(() => {
     if (isReady) {
@@ -33,36 +55,26 @@ export default function App() {
     }
   }, [isReady]);
 
-  if (!isReady) {
-    return (
-      <View style={styles.boot}>
-        <LoadingSpinner fullscreen />
-        <StatusBar style="light" backgroundColor={colors.background} />
-      </View>
-    );
-  }
-
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <BottomSheetModalProvider>
-        <SafeAreaProvider>
-          <NavigationContainer theme={navigationTheme} linking={linking}>
-            <StatusBar style="light" backgroundColor={colors.background} />
-            <RootTabs />
-          </NavigationContainer>
-        </SafeAreaProvider>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <ThemeProvider>
+      <GestureHandlerRootView style={styles.root}>
+        {isReady ? (
+          <AppContent />
+        ) : (
+          <View style={styles.boot}>
+            <LoadingSpinner fullscreen />
+          </View>
+        )}
+      </GestureHandlerRootView>
+    </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   boot: {
     flex: 1,
-    backgroundColor: colors.background,
   },
 });

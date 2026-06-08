@@ -139,6 +139,10 @@
   "profile": {
     "title": "Perfil",
     "language": "Idioma",
+    "appearance": "Apariencia",
+    "theme_light": "Claro",
+    "theme_dark": "Oscuro",
+    "theme_system": "Sistema",
     "section_contribute": "Contribuir",
     "section_about": "Sobre la app",
     "section_legal": "Legal",

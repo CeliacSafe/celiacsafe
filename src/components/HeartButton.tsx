@@ -10,7 +10,9 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useFavoritesStore } from '../store/favoritesStore';
-import { colors } from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
+import { useThemedStyles } from '../theme/useThemedStyles';
+import { type AppColors } from '../theme/palette';
 
 interface HeartButtonProps {
   restaurantId: string;
@@ -33,6 +35,8 @@ function HeartButton({
   style,
 }: HeartButtonProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const isFavorite = useFavoritesStore((state) =>
     Object.prototype.hasOwnProperty.call(state.favorites, restaurantId)
   );
@@ -99,7 +103,7 @@ function HeartButton({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: AppColors) => StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
