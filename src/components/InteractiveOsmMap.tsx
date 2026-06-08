@@ -180,7 +180,12 @@ export default function InteractiveOsmMap({
         current.setIcon(icon);
       } else {
         const marker = L.marker([r.latitude, r.longitude], { title: r.name, icon });
-        marker.on('click', () => onPressRef.current(r.id));
+        marker.on('click', (event: { originalEvent?: Event }) => {
+          if (event.originalEvent) {
+            L.DomEvent.stopPropagation(event.originalEvent);
+          }
+          onPressRef.current(r.id);
+        });
         marker.addTo(map);
         existing.set(r.id, marker);
       }

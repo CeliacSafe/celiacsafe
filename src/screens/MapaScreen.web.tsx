@@ -11,7 +11,6 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import MapSearchPill from '../components/MapSearchPill';
 import RegionQuickJumps from '../components/RegionQuickJumps';
 import SearchCountryChips from '../components/SearchCountryChips';
-import RestaurantBottomSheet from '../components/RestaurantBottomSheet';
 import { QUICK_JUMPS } from '../data/quickJumps';
 import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
@@ -24,7 +23,6 @@ import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import type { MapRegion } from '../types/MapRegion';
-import type { Restaurant } from '../types/Restaurant';
 import { hapticError, hapticMedium } from '../utils/haptics';
 import { toMapFilterCriteria } from '../utils/platformLinks';
 import { applyFilters } from '../utils/searchAndFilter';
@@ -68,8 +66,6 @@ export function MapaScreen() {
   const resetFilters = useFilterStore((state) => state.resetFilters);
 
   const [viewRegion, setViewRegion] = useState<MapRegion>(INITIAL_REGION);
-  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
-  const selectedRestaurantId = selectedRestaurant?.id ?? null;
 
   const areaLabel = useMemo(() => {
     const query = searchQuery.trim();
@@ -142,27 +138,12 @@ export function MapaScreen() {
     resetFilters();
   }, [resetFilters]);
 
-  const handleDetailPress = useCallback(
+  const handleMarkerPress = useCallback(
     (restaurantId: string) => {
-      setSelectedRestaurant(null);
+      hapticMedium();
       navigation.navigate('RestaurantDetail', { restaurantId });
     },
     [navigation]
-  );
-
-  const restaurantById = useMemo(
-    () => new Map(mappableRestaurants.map((restaurant) => [restaurant.id, restaurant])),
-    [mappableRestaurants]
-  );
-
-  const handleMarkerPress = useCallback(
-    (restaurantId: string) => {
-      const restaurant = restaurantById.get(restaurantId);
-      if (restaurant) {
-        setSelectedRestaurant(restaurant);
-      }
-    },
-    [restaurantById]
   );
 
   const handleMyLocationPress = useCallback(async () => {
@@ -191,7 +172,6 @@ export function MapaScreen() {
       <InteractiveOsmMap
         restaurants={mappableRestaurants}
         region={viewRegion}
-        selectedRestaurantId={selectedRestaurantId}
         onMarkerPress={handleMarkerPress}
       />
 
@@ -221,13 +201,6 @@ export function MapaScreen() {
       </View>
 
       {locationLoading ? <LoadingSpinner fullscreen message={t('map.locating')} /> : null}
-
-      <RestaurantBottomSheet
-        restaurant={selectedRestaurant}
-        onClose={() => setSelectedRestaurant(null)}
-        onDetailPress={handleDetailPress}
-        variant="compact"
-      />
     </View>
   );
 }
