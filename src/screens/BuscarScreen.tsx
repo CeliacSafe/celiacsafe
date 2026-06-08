@@ -17,6 +17,8 @@ import SearchBarRow from '../components/SearchBarRow';
 import SearchCategoryTabs from '../components/SearchCategoryTabs';
 import SearchCountryChips from '../components/SearchCountryChips';
 import SearchFilterPanel from '../components/SearchFilterPanel';
+import SearchSortButton from '../components/SearchSortButton';
+import SearchVenueTypeChips from '../components/SearchVenueTypeChips';
 import SkeletonCard from '../components/SkeletonCard';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { useUserLocation } from '../hooks/useUserLocation';
@@ -328,6 +330,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
             filtersOpen={filtersOpen}
             onToggleFilters={() => setFiltersOpen((open) => !open)}
           />
+          <SearchSortButton />
           {filtersOpen ? (
             <SearchFilterPanel
               restaurants={restaurants}
@@ -335,6 +338,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
             />
           ) : null}
           <SearchCountryChips restaurants={restaurants} />
+          <SearchVenueTypeChips restaurants={restaurants} />
           <SearchCategoryTabs />
           {syncError && restaurants.length > 0 ? (
             <Pressable

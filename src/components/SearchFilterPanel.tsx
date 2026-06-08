@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
 import FilterSelect, { type FilterSelectOption } from './FilterSelect';
-import { SORT_OPTIONS } from '../data/filterOptions';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { COUNTRY_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { REGION_NAMES } from '../i18n/regions';
@@ -66,7 +65,6 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const setSelectedCity = useFilterStore((s) => s.setSelectedCity);
   const setVenueTypeSingle = useFilterStore((s) => s.setVenueTypeSingle);
   const setDeliveryAvailable = useFilterStore((s) => s.setDeliveryAvailable);
-  const setSortBy = useFilterStore((s) => s.setSortBy);
   const setPriceRangesAll = useFilterStore((s) => s.setPriceRangesAll);
   const togglePriceRange = useFilterStore((s) => s.togglePriceRange);
   const setDietVegan = useFilterStore((s) => s.setDietVegan);
@@ -289,14 +287,6 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
         ? t('common.no')
         : t('filter.all');
 
-  const sortOptions = useMemo(
-    () => SORT_OPTIONS.map((option) => ({ value: option.code, label: option.labels[language] })),
-    [language]
-  );
-  const sortLabel =
-    SORT_OPTIONS.find((option) => option.code === sortBy)?.labels[language] ??
-    SORT_OPTIONS[0].labels[language];
-
   const customInputPlaceholder = t('filter.custom_input');
   const customInputApplyLabel = t('filter.custom_apply');
 
@@ -441,18 +431,6 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
             active={deliveryAvailable != null}
           />
         ) : null}
-      </View>
-
-      <View style={styles.dropdownRow}>
-        <FilterSelect
-          flex
-          label={t('search.sort_by')}
-          value={sortBy}
-          displayValue={sortLabel}
-          options={sortOptions}
-          onChange={(value) => setSortBy((value ?? 'name_asc') as typeof sortBy)}
-          active={sortBy !== 'name_asc'}
-        />
       </View>
 
       {availablePriceRanges.length > 0 ? (
