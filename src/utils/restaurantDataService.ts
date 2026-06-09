@@ -7,6 +7,12 @@ import {
 } from '../services/restaurantSync';
 import { useAdminStore } from '../store/adminStore';
 import type { Restaurant } from '../types/Restaurant';
+import { isPubliclyVisibleRestaurant } from './searchAndFilter';
+
+export interface MergedRestaurantsOptions {
+  /** Admin: auch to_be_verified / pending anzeigen. Standard: nur verified. */
+  includeUnverified?: boolean;
+}
 
 let bundledCache: Restaurant[] | null = null;
 
@@ -27,7 +33,7 @@ function getBaseRestaurants(): Restaurant[] {
 }
 
 /** Supabase/Cache/Bundled + Admin-Overrides */
-export function getMergedRestaurants(): Restaurant[] {
+export function getMergedRestaurants(options?: MergedRestaurantsOptions): Restaurant[] {
   const { overrides, addedRestaurants, removedIds } = useAdminStore.getState();
   const removed = new Set(removedIds);
   const byId = new Map<string, Restaurant>();
@@ -54,11 +60,18 @@ export function getMergedRestaurants(): Restaurant[] {
     }
   }
 
-  return Array.from(byId.values()).sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  const merged = Array.from(byId.values()).sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  if (options?.includeUnverified) {
+    return merged;
+  }
+  return merged.filter(isPubliclyVisibleRestaurant);
 }
 
-export function getMergedRestaurantById(id: string): Restaurant | undefined {
-  return getMergedRestaurants().find((restaurant) => restaurant.id === id);
+export function getMergedRestaurantById(
+  id: string,
+  options?: MergedRestaurantsOptions
+): Restaurant | undefined {
+  return getMergedRestaurants(options).find((restaurant) => restaurant.id === id);
 }
 
 export function getRestaurantDataSource(): RestaurantDataSource {

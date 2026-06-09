@@ -58,7 +58,7 @@ export default function AdminRestaurantEditScreen() {
   const submissions = useAdminStore((s) => s.submissions);
 
   const existing = route.params.restaurantId
-    ? getMergedRestaurantById(route.params.restaurantId)
+    ? getMergedRestaurantById(route.params.restaurantId, { includeUnverified: true })
     : undefined;
 
   const fromSubmission = route.params.submissionId

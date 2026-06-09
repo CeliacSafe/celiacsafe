@@ -33,7 +33,7 @@ export default function AdminRestaurantsScreen() {
   const [query, setQuery] = useState('');
   const { focused, onFocus, onBlur, dismiss } = useSearchFieldFocus();
 
-  const restaurants = useMemo(() => getMergedRestaurants(), [dataRevision]);
+  const restaurants = useMemo(() => getMergedRestaurants({ includeUnverified: true }), [dataRevision]);
   const suggestions = useSearchSuggestions(query, restaurants);
   const showSuggestions = focused && query.trim().length >= 1 && suggestions.length > 0;
 

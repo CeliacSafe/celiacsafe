@@ -53,8 +53,8 @@ DEFAULT_OUTPUT = ROOT / "src" / "data" / "restaurants.json"
 DEFAULT_SHEET = "restaurants"
 META_VERSION = "1.0.0"
 
-# Während der Entwicklung: auch pending_verification exportieren
-INCLUDE_PENDING_FOR_DEV = True
+# Nur verified in die App exportieren (to_be_verified etc. bleiben in Excel/Admin)
+INCLUDE_PENDING_FOR_DEV = False
 
 # ─── Felddefinitionen (entspricht src/types/Restaurant.ts) ───────────────────
 

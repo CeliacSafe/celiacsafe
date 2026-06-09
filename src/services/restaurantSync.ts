@@ -217,7 +217,7 @@ export async function syncRestaurantsFromSupabase(): Promise<boolean> {
       .select(RESTAURANT_SELECT)
       .eq('is_published', true)
       .eq('is_hidden', false)
-      .neq('verification_status', 'rejected')
+      .eq('verification_status', 'verified')
       .order('name');
 
     if (error) {

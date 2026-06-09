@@ -1,5 +1,5 @@
 import type { Restaurant } from '../../types/Restaurant';
-import { applyFilters, matchesFilter, matchesQuery, sortRestaurants } from '../searchAndFilter';
+import { applyFilters, isPubliclyVisibleRestaurant, matchesFilter, matchesQuery, sortRestaurants } from '../searchAndFilter';
 
 function createRestaurant(overrides: Partial<Restaurant>): Restaurant {
   return {
@@ -65,6 +65,26 @@ const gocceDiLatte = createRestaurant({
 });
 
 const allRestaurants = [avocadoMallorca, asDeBastos, elFartuquin, gocceDiLatte];
+
+describe('isPubliclyVisibleRestaurant', () => {
+  it('zeigt nur verified Lokale', () => {
+    expect(isPubliclyVisibleRestaurant(createRestaurant({ verification_status: 'verified' }))).toBe(
+      true
+    );
+    expect(
+      isPubliclyVisibleRestaurant(createRestaurant({ verification_status: 'to_be_verified' }))
+    ).toBe(false);
+    expect(
+      isPubliclyVisibleRestaurant(createRestaurant({ verification_status: 'pending_verification' }))
+    ).toBe(false);
+    expect(
+      isPubliclyVisibleRestaurant(createRestaurant({ verification_status: 'in_verification' }))
+    ).toBe(false);
+    expect(isPubliclyVisibleRestaurant(createRestaurant({ verification_status: 'rejected' }))).toBe(
+      false
+    );
+  });
+});
 
 describe('matchesQuery', () => {
   // Leere Suchanfrage soll immer matchen.

@@ -63,7 +63,7 @@ export default function AdminDashboardScreen() {
 
   const handleExportRestaurants = async () => {
     hapticLight();
-    const csv = restaurantsToCsv(getMergedRestaurants());
+    const csv = restaurantsToCsv(getMergedRestaurants({ includeUnverified: true }));
     await shareTextAsFile(csv, `celiacsafe-restaurants-${Date.now()}.csv`);
   };
 

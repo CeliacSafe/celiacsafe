@@ -4,7 +4,7 @@
  * dass die Ergebnisliste konsistent und performant berechnet wird.
  */
 
-import type { Restaurant } from '../types/Restaurant';
+import type { Restaurant, VerificationStatus } from '../types/Restaurant';
 
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
 import { COUNTRY_NAMES } from '../i18n/lookups';
@@ -17,6 +17,13 @@ import {
   matchesVenueTypeFilter,
 } from './filterTextMatch';
 import { cuisineMatchesDiet, restaurantMatchesVenueType } from './venueNormalization';
+
+const PUBLIC_VERIFICATION_STATUSES = new Set<VerificationStatus>(['verified']);
+
+/** Nur verifizierte Lokale sind in der öffentlichen App sichtbar. */
+export function isPubliclyVisibleRestaurant(restaurant: Restaurant): boolean {
+  return PUBLIC_VERIFICATION_STATUSES.has(restaurant.verification_status);
+}
 
 export interface FilterCriteria {
   selectedVenueTypes: string[];
