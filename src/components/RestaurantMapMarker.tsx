@@ -1,14 +1,17 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
-import { Marker } from 'react-native-maps';
+import { Callout, Marker } from 'react-native-maps';
 
 import CustomMarker from './CustomMarker';
+import MapMarkerCallout from './MapMarkerCallout';
 import type { Restaurant } from '../types/Restaurant';
 
 interface RestaurantMapMarkerProps {
   restaurant: Restaurant;
+  venueTypeLabel: string | null;
   isSelected: boolean;
-  onPress: (restaurantId: string) => void;
+  onSelect: (restaurantId: string) => void;
+  onRestaurantOpen: (restaurantId: string) => void;
 }
 
 /**
@@ -16,8 +19,10 @@ interface RestaurantMapMarkerProps {
  */
 const RestaurantMapMarker = memo(function MapRestaurantMarker({
   restaurant,
+  venueTypeLabel,
   isSelected,
-  onPress,
+  onSelect,
+  onRestaurantOpen,
 }: RestaurantMapMarkerProps) {
   const coordinate = useMemo(
     () => ({
@@ -41,7 +46,7 @@ const RestaurantMapMarker = memo(function MapRestaurantMarker({
     <Marker
       identifier={restaurant.id}
       coordinate={coordinate}
-      onPress={() => onPress(restaurant.id)}
+      onPress={() => onSelect(restaurant.id)}
       tracksViewChanges={tracksViewChanges}
       anchor={{ x: 0.5, y: 1 }}
     >
@@ -49,6 +54,13 @@ const RestaurantMapMarker = memo(function MapRestaurantMarker({
         isSelected={isSelected}
         isFeatured={restaurant.is_premium_partner === true}
       />
+      <Callout tooltip={false}>
+        <MapMarkerCallout
+          name={restaurant.name}
+          venueTypeLabel={venueTypeLabel}
+          onNamePress={() => onRestaurantOpen(restaurant.id)}
+        />
+      </Callout>
     </Marker>
   );
 });

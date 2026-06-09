@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,7 +24,7 @@ import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import type { MapRegion } from '../types/MapRegion';
-import { hapticError, hapticMedium } from '../utils/haptics';
+import { hapticError, hapticLight, hapticMedium } from '../utils/haptics';
 import { toMapFilterCriteria } from '../utils/platformLinks';
 import { applyFilters } from '../utils/searchAndFilter';
 import { isKnownCountryCode } from '../utils/filterTextMatch';
@@ -48,7 +48,7 @@ export function MapaScreen() {
   const navigation = useNavigation<MapaNavigationProp>();
   const insets = useSafeAreaInsets();
   const styles = useThemedStyles(createStyles);
-  const { regionName } = useLocalized();
+  const { regionName, venueTypeName } = useLocalized();
   const language = useAppLanguage();
   const mapRef = useRef<MapView>(null);
   const { location, loading: locationLoading, requestLocation, lastErrorRef } = useUserLocation();
@@ -68,6 +68,8 @@ export function MapaScreen() {
   const sortBy = useFilterStore((state) => state.sortBy);
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
   const resetFilters = useFilterStore((state) => state.resetFilters);
+
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
 
   const areaLabel = useMemo(() => {
     const query = searchQuery.trim();
@@ -140,7 +142,12 @@ export function MapaScreen() {
     resetFilters();
   }, [resetFilters]);
 
-  const handleMarkerPress = useCallback(
+  const handleMarkerSelect = useCallback((restaurantId: string) => {
+    hapticLight();
+    setSelectedRestaurantId(restaurantId);
+  }, []);
+
+  const handleRestaurantOpen = useCallback(
     (restaurantId: string) => {
       hapticMedium();
       navigation.navigate('RestaurantDetail', { restaurantId });
@@ -178,11 +185,21 @@ export function MapaScreen() {
         <RestaurantMapMarker
           key={restaurant.id}
           restaurant={restaurant}
-          isSelected={false}
-          onPress={handleMarkerPress}
+          venueTypeLabel={
+            restaurant.venue_type ? venueTypeName(restaurant.venue_type) : null
+          }
+          isSelected={selectedRestaurantId === restaurant.id}
+          onSelect={handleMarkerSelect}
+          onRestaurantOpen={handleRestaurantOpen}
         />
       )),
-    [handleMarkerPress, mappableRestaurants]
+    [
+      handleMarkerSelect,
+      handleRestaurantOpen,
+      mappableRestaurants,
+      selectedRestaurantId,
+      venueTypeName,
+    ]
   );
 
   return (

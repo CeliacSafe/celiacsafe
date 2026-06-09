@@ -23,7 +23,8 @@ import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import type { MapRegion } from '../types/MapRegion';
-import { hapticError, hapticMedium } from '../utils/haptics';
+import type { Restaurant } from '../types/Restaurant';
+import { hapticError, hapticLight, hapticMedium } from '../utils/haptics';
 import { toMapFilterCriteria } from '../utils/platformLinks';
 import { applyFilters } from '../utils/searchAndFilter';
 import { isKnownCountryCode } from '../utils/filterTextMatch';
@@ -45,7 +46,7 @@ export function MapaScreen() {
   const navigation = useNavigation<MapaNavigationProp>();
   const insets = useSafeAreaInsets();
   const styles = useThemedStyles(createStyles);
-  const { regionName } = useLocalized();
+  const { regionName, venueTypeName } = useLocalized();
   const language = useAppLanguage();
   const { loading: locationLoading, requestLocation, lastErrorRef } = useUserLocation();
   const { restaurants } = useRestaurants();
@@ -66,6 +67,13 @@ export function MapaScreen() {
   const resetFilters = useFilterStore((state) => state.resetFilters);
 
   const [viewRegion, setViewRegion] = useState<MapRegion>(INITIAL_REGION);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
+
+  const getVenueTypeLabel = useCallback(
+    (restaurant: Restaurant) =>
+      restaurant.venue_type ? venueTypeName(restaurant.venue_type) : null,
+    [venueTypeName]
+  );
 
   const areaLabel = useMemo(() => {
     const query = searchQuery.trim();
@@ -138,7 +146,16 @@ export function MapaScreen() {
     resetFilters();
   }, [resetFilters]);
 
-  const handleMarkerPress = useCallback(
+  const handleMarkerPress = useCallback((restaurantId: string) => {
+    if (!restaurantId) {
+      setSelectedRestaurantId(null);
+      return;
+    }
+    hapticLight();
+    setSelectedRestaurantId(restaurantId);
+  }, []);
+
+  const handleRestaurantOpen = useCallback(
     (restaurantId: string) => {
       hapticMedium();
       navigation.navigate('RestaurantDetail', { restaurantId });
@@ -172,7 +189,10 @@ export function MapaScreen() {
       <InteractiveOsmMap
         restaurants={mappableRestaurants}
         region={viewRegion}
+        selectedRestaurantId={selectedRestaurantId}
+        getVenueTypeLabel={getVenueTypeLabel}
         onMarkerPress={handleMarkerPress}
+        onRestaurantOpen={handleRestaurantOpen}
       />
 
       {showNoPinsEmpty ? (

@@ -18,6 +18,7 @@ const LEAFLET_CSS = `https://unpkg.com/leaflet@${LEAFLET_VERSION}/dist/leaflet.c
 const LEAFLET_JS = `https://unpkg.com/leaflet@${LEAFLET_VERSION}/dist/leaflet.js`;
 
 let leafletPromise: Promise<any> | null = null;
+let popupStylesInjected = false;
 
 function loadLeaflet(): Promise<any> {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -46,6 +47,65 @@ function loadLeaflet(): Promise<any> {
     document.body.appendChild(script);
   });
   return leafletPromise;
+}
+
+function injectPopupStyles(primary: string, textSecondary: string, background: string) {
+  if (popupStylesInjected || typeof document === 'undefined') {
+    return;
+  }
+  const style = document.createElement('style');
+  style.setAttribute('data-celiacsafe-map-popup', 'true');
+  style.textContent = `
+    .celiacsafe-leaflet-popup .leaflet-popup-content-wrapper {
+      background: ${background};
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      padding: 0;
+    }
+    .celiacsafe-leaflet-popup .leaflet-popup-content {
+      margin: 10px 12px;
+      min-width: 120px;
+    }
+    .celiacsafe-leaflet-popup .leaflet-popup-tip {
+      background: ${background};
+    }
+    .celiacsafe-map-popup-name {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 16px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: ${primary};
+      text-align: left;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .celiacsafe-map-popup-name:hover {
+      opacity: 0.85;
+    }
+    .celiacsafe-map-popup-type {
+      margin-top: 4px;
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      line-height: 1.3;
+      color: ${textSecondary};
+    }
+  `;
+  document.head.appendChild(style);
+  popupStylesInjected = true;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /** Grobe Umrechnung eines Breitengrad-Spans in eine Web-Mercator-Zoomstufe. */
@@ -80,30 +140,47 @@ function createPinIcon(
   });
 }
 
+function buildPopupHtml(name: string, venueTypeLabel: string | null, restaurantId: string): string {
+  const typeHtml = venueTypeLabel
+    ? `<div class="celiacsafe-map-popup-type">${escapeHtml(venueTypeLabel)}</div>`
+    : '';
+  return `<button type="button" class="celiacsafe-map-popup-name" data-restaurant-id="${escapeHtml(restaurantId)}">${escapeHtml(name)}</button>${typeHtml}`;
+}
+
 interface Props {
   restaurants: Restaurant[];
   region: MapRegion;
   selectedRestaurantId?: string | null;
+  getVenueTypeLabel: (restaurant: Restaurant) => string | null;
   onMarkerPress: (restaurantId: string) => void;
+  onRestaurantOpen: (restaurantId: string) => void;
 }
 
 export default function InteractiveOsmMap({
   restaurants,
   region,
   selectedRestaurantId = null,
+  getVenueTypeLabel,
   onMarkerPress,
+  onRestaurantOpen,
 }: Props) {
   const { colors } = useTheme();
   const containerRef = useRef<View>(null);
   const mapRef = useRef<any>(null);
   const leafletRef = useRef<any>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
-  const restaurantsRef = useRef(restaurants);
-  restaurantsRef.current = restaurants;
-  const onPressRef = useRef(onMarkerPress);
-  onPressRef.current = onMarkerPress;
+  const getVenueTypeLabelRef = useRef(getVenueTypeLabel);
+  getVenueTypeLabelRef.current = getVenueTypeLabel;
+  const onSelectRef = useRef(onMarkerPress);
+  onSelectRef.current = onMarkerPress;
+  const onOpenRef = useRef(onRestaurantOpen);
+  onOpenRef.current = onRestaurantOpen;
   const didFitRef = useRef(false);
   const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    injectPopupStyles(colors.primary, colors.textSecondary, colors.background);
+  }, [colors.background, colors.primary, colors.textSecondary]);
 
   useEffect(() => {
     let cancelled = false;
@@ -124,6 +201,10 @@ export default function InteractiveOsmMap({
           attribution: '&copy; OpenStreetMap',
         }).addTo(map);
         mapRef.current = map;
+        map.on('click', () => {
+          map.closePopup();
+          onSelectRef.current('');
+        });
         setTimeout(() => map.invalidateSize(), 0);
         if (!cancelled) {
           setReady(true);
@@ -151,6 +232,23 @@ export default function InteractiveOsmMap({
     }
   }, [region]);
 
+  const bindPopupHandlers = (marker: any, restaurantId: string) => {
+    marker.off('popupopen');
+    marker.on('popupopen', () => {
+      const popupEl = marker.getPopup()?.getElement() as HTMLElement | undefined;
+      const button = popupEl?.querySelector<HTMLButtonElement>('.celiacsafe-map-popup-name');
+      if (!button) {
+        return;
+      }
+      const handleOpen = (event: Event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onOpenRef.current(restaurantId);
+      };
+      button.addEventListener('click', handleOpen, { once: true });
+    });
+  };
+
   useEffect(() => {
     const L = leafletRef.current;
     const map = mapRef.current;
@@ -174,17 +272,34 @@ export default function InteractiveOsmMap({
         isSelected,
         isFeatured
       );
+      const venueTypeLabel = getVenueTypeLabelRef.current(r);
+      const popupHtml = buildPopupHtml(r.name, venueTypeLabel, r.id);
       const current = existing.get(r.id);
       if (current) {
         current.setLatLng([r.latitude, r.longitude]);
         current.setIcon(icon);
+        current.bindPopup(popupHtml, {
+          closeButton: true,
+          className: 'celiacsafe-leaflet-popup',
+          maxWidth: 240,
+          offset: [0, -8],
+        });
+        bindPopupHandlers(current, r.id);
       } else {
         const marker = L.marker([r.latitude, r.longitude], { title: r.name, icon });
+        marker.bindPopup(popupHtml, {
+          closeButton: true,
+          className: 'celiacsafe-leaflet-popup',
+          maxWidth: 240,
+          offset: [0, -8],
+        });
+        bindPopupHandlers(marker, r.id);
         marker.on('click', (event: { originalEvent?: Event }) => {
           if (event.originalEvent) {
             L.DomEvent.stopPropagation(event.originalEvent);
           }
-          onPressRef.current(r.id);
+          onSelectRef.current(r.id);
+          marker.openPopup();
         });
         marker.addTo(map);
         existing.set(r.id, marker);
@@ -197,6 +312,11 @@ export default function InteractiveOsmMap({
       }
     }
 
+    if (selectedRestaurantId) {
+      const selectedMarker = existing.get(selectedRestaurantId);
+      selectedMarker?.openPopup();
+    }
+
     if (!didFitRef.current && existing.size > 0) {
       const bounds = L.latLngBounds(
         Array.from(existing.values()).map((m: any) => m.getLatLng())
@@ -206,7 +326,14 @@ export default function InteractiveOsmMap({
         didFitRef.current = true;
       }
     }
-  }, [restaurants, ready, selectedRestaurantId, colors.primary, colors.accent, colors.background]);
+  }, [
+    restaurants,
+    ready,
+    selectedRestaurantId,
+    colors.primary,
+    colors.accent,
+    colors.background,
+  ]);
 
   return <View ref={containerRef} style={styles.map} />;
 }
