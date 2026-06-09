@@ -90,7 +90,8 @@ export type VerificationMethod =
   | 'face_certified'
   | 'regional_assoc_certified'
   | 'operator_declaration'
-  | 'multiple_sources';
+  | 'multiple_sources'
+  | 'official_website';
 
 /** Lieferdienst, über den das Lokal erreichbar ist. */
 export type DeliveryPlatform =

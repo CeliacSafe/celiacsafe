@@ -2,10 +2,12 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { Alert, Platform } from 'react-native';
 
+import i18n from '../i18n';
+
 export async function shareTextAsFile(content: string, filename: string): Promise<void> {
   const directory = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
   if (!directory) {
-    Alert.alert('Export', 'Kein Dateisystem verfügbar.');
+    Alert.alert(i18n.t('admin.export_title'), i18n.t('admin.export_no_filesystem'));
     return;
   }
 
@@ -27,7 +29,7 @@ export async function shareTextAsFile(content: string, filename: string): Promis
 
   const canShare = await Sharing.isAvailableAsync();
   if (!canShare) {
-    Alert.alert('Export', 'Teilen nicht verfügbar.');
+    Alert.alert(i18n.t('admin.export_title'), i18n.t('admin.export_no_share'));
     return;
   }
 

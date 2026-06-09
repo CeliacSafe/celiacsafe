@@ -65,10 +65,16 @@ const VERIFICATION_LABELS: Record<
     en: 'Multiple sources',
     de: 'Mehrere Quellen',
   },
+  official_website: {
+    icon: 'web',
+    es: 'Web oficial',
+    en: 'Official website',
+    de: 'Offizielle Website',
+  },
 };
 
 const ENDORSED_BY: Record<AppLanguage, string> = {
-  es: 'Avalado por:',
+  es: 'Respaldado por:',
   en: 'Endorsed by:',
   de: 'Empfohlen von:',
 };

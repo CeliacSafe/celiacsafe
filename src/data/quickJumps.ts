@@ -56,6 +56,16 @@ export const QUICK_JUMPS: QuickJumpRegion[] = [
     region: { latitude: 52.52, longitude: 13.405, latitudeDelta: 0.25, longitudeDelta: 0.25 },
   },
   {
+    code: 'DE-HE',
+    labels: { es: 'Fráncfort', en: 'Frankfurt', de: 'Frankfurt' },
+    region: { latitude: 50.1109, longitude: 8.6821, latitudeDelta: 0.2, longitudeDelta: 0.2 },
+  },
+  {
+    code: 'DE-HH',
+    labels: { es: 'Hamburgo', en: 'Hamburg', de: 'Hamburg' },
+    region: { latitude: 53.5511, longitude: 9.9937, latitudeDelta: 0.25, longitudeDelta: 0.25 },
+  },
+  {
     code: 'DE-NW',
     labels: { es: 'Renania del Norte-Westfalia', en: 'NRW', de: 'NRW' },
     region: { latitude: 51.25, longitude: 6.75, latitudeDelta: 1.2, longitudeDelta: 1.2 },
