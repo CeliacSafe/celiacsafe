@@ -235,7 +235,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 1,
+    zIndex: 50,
   },
   emptyOverlay: {
     ...StyleSheet.absoluteFillObject,

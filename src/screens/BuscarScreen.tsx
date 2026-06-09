@@ -451,7 +451,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     backgroundColor: colors.background,
     borderBottomWidth: 1,
     borderBottomColor: colors.lineSoft,
-    zIndex: 2,
+    zIndex: 50,
   },
   homeButton: {
     width: spacing.xxl,

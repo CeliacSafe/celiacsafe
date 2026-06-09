@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 
 import AdminScreenLayout from '../../components/AdminScreenLayout';
+import SearchSuggestionsDropdown from '../../components/SearchSuggestionsDropdown';
 import type { PerfilStackParamList } from '../../navigation/PerfilStack';
+import { useSearchFieldFocus } from '../../hooks/useSearchFieldFocus';
+import { useSearchSuggestions } from '../../hooks/useSearchSuggestions';
 import { useAdminStore } from '../../store/adminStore';
 import { useTheme } from '../../theme/ThemeContext';
 import { useThemedStyles } from '../../theme/useThemedStyles';
@@ -14,6 +17,10 @@ import { radius, spacing } from '../../theme/spacing';
 import { typography } from '../../theme/typography';
 import { getMergedRestaurants } from '../../utils/restaurantDataService';
 import { hapticLight } from '../../utils/haptics';
+import {
+  suggestionToSearchQuery,
+  type SearchSuggestion,
+} from '../../utils/searchSuggestions';
 
 type Nav = NativeStackNavigationProp<PerfilStackParamList, 'AdminRestaurants'>;
 
@@ -24,8 +31,17 @@ export default function AdminRestaurantsScreen() {
   const navigation = useNavigation<Nav>();
   const dataRevision = useAdminStore((s) => s.dataRevision);
   const [query, setQuery] = useState('');
+  const { focused, onFocus, onBlur, dismiss } = useSearchFieldFocus();
 
   const restaurants = useMemo(() => getMergedRestaurants(), [dataRevision]);
+  const suggestions = useSearchSuggestions(query, restaurants);
+  const showSuggestions = focused && query.trim().length >= 1 && suggestions.length > 0;
+
+  const handleSelectSuggestion = (suggestion: SearchSuggestion) => {
+    setQuery(suggestionToSearchQuery(suggestion));
+    dismiss();
+    Keyboard.dismiss();
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -52,13 +68,20 @@ export default function AdminRestaurantsScreen() {
         </Pressable>
       }
     >
-      <View style={styles.searchWrap}>
+      <View style={[styles.searchWrap, showSuggestions && styles.searchWrapSuggestions]}>
         <TextInput
           value={query}
           onChangeText={setQuery}
+          onFocus={onFocus}
+          onBlur={onBlur}
           placeholder={t('search.placeholder')}
           placeholderTextColor={colors.textSecondary}
           style={styles.search}
+        />
+        <SearchSuggestionsDropdown
+          suggestions={suggestions}
+          visible={showSuggestions}
+          onSelect={handleSelectSuggestion}
         />
       </View>
       <FlatList
@@ -91,6 +114,10 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   searchWrap: {
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.sm,
+  },
+  searchWrapSuggestions: {
+    position: 'relative',
+    zIndex: 30,
   },
   search: {
     ...typography.body,

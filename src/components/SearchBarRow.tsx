@@ -2,6 +2,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import SearchSuggestionsDropdown from './SearchSuggestionsDropdown';
+import { useSearchFieldFocus } from '../hooks/useSearchFieldFocus';
+import { useSearchSuggestions } from '../hooks/useSearchSuggestions';
 import { useFilterStore } from '../store/filterStore';
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
@@ -9,6 +12,10 @@ import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import { hapticLight } from '../utils/haptics';
+import {
+  suggestionToSearchQuery,
+  type SearchSuggestion,
+} from '../utils/searchSuggestions';
 
 interface SearchBarRowProps {
   filtersOpen?: boolean;
@@ -30,19 +37,38 @@ function SearchBarRow({
   const styles = useThemedStyles(createStyles);
   const searchQuery = useFilterStore((state) => state.searchQuery);
   const setSearchQuery = useFilterStore((state) => state.setSearchQuery);
+  const { focused, onFocus, onBlur, dismiss } = useSearchFieldFocus();
+  const suggestions = useSearchSuggestions(searchQuery);
+  const showSuggestions =
+    focused && searchQuery.trim().length >= 1 && suggestions.length > 0;
 
   const handleClear = () => {
     setSearchQuery('');
+    dismiss();
+    Keyboard.dismiss();
+  };
+
+  const handleSelectSuggestion = (suggestion: SearchSuggestion) => {
+    setSearchQuery(suggestionToSearchQuery(suggestion));
+    dismiss();
     Keyboard.dismiss();
   };
 
   return (
     <View style={[styles.row, embedded && styles.rowEmbedded, searchOnly && styles.rowSearchOnly]}>
-      <View style={[styles.inputWrap, (searchOnly || embedded) && styles.inputWrapFlex]}>
+      <View
+        style={[
+          styles.inputWrap,
+          (searchOnly || embedded) && styles.inputWrapFlex,
+          showSuggestions && styles.inputWrapSuggestions,
+        ]}
+      >
         <MaterialCommunityIcons name="magnify" size={20} color={colors.textSecondary} />
         <TextInput
           value={searchQuery}
           onChangeText={setSearchQuery}
+          onFocus={onFocus}
+          onBlur={onBlur}
           placeholder={t('search.placeholder')}
           placeholderTextColor={colors.textSecondary}
           selectionColor={colors.primary}
@@ -56,6 +82,11 @@ function SearchBarRow({
             <MaterialCommunityIcons name="close-circle" size={18} color={colors.textSecondary} />
           </Pressable>
         ) : null}
+        <SearchSuggestionsDropdown
+          suggestions={suggestions}
+          visible={showSuggestions}
+          onSelect={handleSelectSuggestion}
+        />
       </View>
       {!searchOnly && onToggleFilters ? (
         <Pressable
@@ -105,6 +136,10 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   },
   inputWrapFlex: {
     flex: 1,
+  },
+  inputWrapSuggestions: {
+    position: 'relative',
+    zIndex: 30,
   },
   input: {
     ...typography.body,

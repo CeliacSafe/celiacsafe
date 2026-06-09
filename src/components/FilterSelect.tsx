@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useTheme } from '../theme/ThemeContext';
@@ -52,6 +52,19 @@ function FilterSelect({
       setCustomDraft(value ?? '');
     }
   }, [open, value]);
+
+  const visibleOptions = useMemo(() => {
+    const draft = customDraft.trim().toLowerCase();
+    if (!allowCustomInput || draft.length === 0) {
+      return options;
+    }
+    return options.filter(
+      (option) =>
+        option.value === null ||
+        option.label.toLowerCase().includes(draft) ||
+        option.value.toLowerCase().includes(draft)
+    );
+  }, [allowCustomInput, customDraft, options]);
 
   const applyCustomInput = () => {
     hapticLight();
@@ -107,7 +120,7 @@ function FilterSelect({
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
           <Pressable style={styles.sheet} onPress={() => undefined}>
             <ScrollView keyboardShouldPersistTaps="handled">
-              {options.map((option) => {
+              {visibleOptions.map((option) => {
                 const selected = value === option.value;
                 return (
                   <Pressable
