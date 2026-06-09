@@ -131,6 +131,8 @@ VERIFICATION_STATUS_MAP = {
     "in_verification": "in_verification",
     "verified": "verified",
     "verified_100_percent_gluten_free": "verified",
+    "verified_100_percent_gluten_free_owner_recheck": "verified",
+    "verified_dedicated_gluten_free_recheck_current_wording": "verified",
     "rejected": "rejected",
 }
 

@@ -60,14 +60,14 @@ def has_coordinates(lat: Any, lng: Any) -> bool:
     return lat_f is not None and lng_f is not None
 
 
-def nominatim_search(query: str) -> tuple[float, float] | None:
-    """Fragt Nominatim nach einer Adresse ab (max. 1 Treffer, nur Spanien)."""
+def nominatim_search(query: str, *, country_code: str = "es") -> tuple[float, float] | None:
+    """Fragt Nominatim nach einer Adresse ab (max. 1 Treffer, laenderspezifisch)."""
     params = urllib.parse.urlencode(
         {
             "q": query,
             "format": "json",
             "limit": 1,
-            "countrycodes": "es",
+            "countrycodes": country_code.lower(),
         }
     )
     url = f"https://nominatim.openstreetmap.org/search?{params}"
@@ -106,14 +106,21 @@ def resolve_coordinate_columns(headers: list[str]) -> tuple[str, str]:
     )
 
 
-def build_search_query(row: dict[str, Any]) -> str:
+def build_search_query(row: dict[str, Any], *, country_code: str = "es") -> str:
     query = parse_string(row.get("geocoding_query"))
     if query:
         return query
-    return build_address_query(row)
+    return build_address_query(row, country_code=country_code)
 
 
-def build_address_query(row: dict[str, Any]) -> str:
+def country_label(country_code: str) -> str:
+    code = country_code.strip().upper()
+    if code == "DE":
+        return "Deutschland"
+    return "Espana"
+
+
+def build_address_query(row: dict[str, Any], *, country_code: str = "es") -> str:
     parts: list[str] = []
     street = row.get("address_street")
     postal = row.get("postal_code")
@@ -128,12 +135,12 @@ def build_address_query(row: dict[str, Any]) -> str:
         parts.append(str(city).strip())
     if province and province != city:
         parts.append(str(province).strip())
-    parts.append("Espana")
+    parts.append(country_label(country_code))
     return ", ".join(parts)
 
 
-def build_city_query(city: str) -> str:
-    return f"{city.strip()}, Espana"
+def build_city_query(city: str, *, country_code: str = "es") -> str:
+    return f"{city.strip()}, {country_label(country_code)}"
 
 
 def geocode_workbook(
@@ -142,6 +149,7 @@ def geocode_workbook(
     *,
     sheet_name: str,
     fallback_only: bool,
+    country_code: str = "es",
 ) -> dict[str, int]:
     workbook = load_workbook(input_path)
     if sheet_name not in workbook.sheetnames:
@@ -199,9 +207,9 @@ def geocode_workbook(
         coords: tuple[float, float] | None = None
 
         if not fallback_only:
-            query = build_search_query(row)
+            query = build_search_query(row, country_code=country_code)
             print(f"[{row_index}] Online: {name} — {query}")
-            coords = nominatim_search(query)
+            coords = nominatim_search(query, country_code=country_code)
             time.sleep(NOMINATIM_DELAY_SEC)
             if coords:
                 stats["online_geocoding"] += 1
@@ -211,9 +219,9 @@ def geocode_workbook(
             if city:
                 city_key = str(city).strip().lower()
                 if city_key not in city_cache:
-                    city_query = build_city_query(str(city))
+                    city_query = build_city_query(str(city), country_code=country_code)
                     print(f"[{row_index}] Stadt-Fallback: {name} — {city_query}")
-                    city_cache[city_key] = nominatim_search(city_query)
+                    city_cache[city_key] = nominatim_search(city_query, country_code=country_code)
                     time.sleep(NOMINATIM_DELAY_SEC)
                 coords = city_cache[city_key]
                 if coords and fallback_only:
@@ -267,6 +275,11 @@ def main() -> None:
         action="store_true",
         help="Nur Stadt-Mittelpunkte per Nominatim, keine Adress-Suche",
     )
+    parser.add_argument(
+        "--country-code",
+        default="es",
+        help="ISO-Laendercode fuer Nominatim (Standard: es, Deutschland: de)",
+    )
     args = parser.parse_args()
 
     if not args.input.exists():
@@ -282,6 +295,7 @@ def main() -> None:
         args.output,
         sheet_name=args.sheet,
         fallback_only=args.fallback_only,
+        country_code=args.country_code,
     )
 
     print()
