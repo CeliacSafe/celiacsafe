@@ -35,6 +35,8 @@ PLATFORM_ALIASES: dict[str, str] = {
     "phone_only": "phone_only",
     "walk_in_only": "walk_in_only",
     "instagram_dm": "instagram_dm",
+    "reservator": "own_website",
+    "lieferando": "lieferando",
 }
 
 # Optionale Spalten im Blatt ``restaurants`` (snake_case)
