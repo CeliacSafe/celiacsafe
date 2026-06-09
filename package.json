@@ -17,6 +17,7 @@
     "data:delta-de": "python scripts/delta-de-to-excel.py",
     "data:geocode-de": "python scripts/geocode.py data-source/CeliacSafe_Datenbank_v4_Germany_Delta_Consolidated.xlsx data-source/CeliacSafe_Datenbank_v4_Germany_Delta_Consolidated_geocoded.xlsx --country-code de",
     "data:apply-commercial-links": "python scripts/apply-commercial-links-audit.py",
+    "data:apply-descriptions": "python scripts/apply-descriptions-audit.py",
     "data:excel-template": "python scripts/create-excel-template.py",
     "data:upgrade-excel": "python scripts/upgrade-excel-schema.py",
     "data:enrich-excel": "python scripts/enrich-excel-links.py",
