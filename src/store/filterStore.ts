@@ -1,4 +1,4 @@
-import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
+import type { QuickFilterId, RatingChip, SearchCategoryTab } from '../data/filterOptions';
 import { create } from 'zustand';
 
 /**
@@ -56,6 +56,7 @@ const initialState = {
   deliveryAvailable: null as boolean | null,
   dietVegan: false,
   dietVegetarian: false,
+  dietLactoseFree: false,
   minRating: 'all' as RatingChip,
   categoryTab: 'all' as SearchCategoryTab,
 };
@@ -117,6 +118,60 @@ export const useFilterStore = create<FilterState>((set, get) => ({
 
   setDietVegetarian: (value) => set({ dietVegetarian: value }),
 
+  setDietLactoseFree: (value) => set({ dietLactoseFree: value }),
+
+  setQuickFilter: (id) => {
+    const clearQuick = {
+      dietLactoseFree: false,
+      dietVegan: false,
+    };
+    switch (id) {
+      case 'all':
+        set((state) => ({
+          ...clearQuick,
+          selectedVenueTypes:
+            state.selectedVenueTypes.length === 1 &&
+            ['pastry_shop', 'pizzeria'].includes(state.selectedVenueTypes[0])
+              ? []
+              : state.selectedVenueTypes,
+          categoryTab: state.categoryTab === 'bakery' ? 'all' : state.categoryTab,
+        }));
+        break;
+      case 'lactose_free':
+        set({ ...clearQuick, dietLactoseFree: true, selectedVenueTypes: [], categoryTab: 'all' });
+        break;
+      case 'pastry_shop':
+        set({ ...clearQuick, selectedVenueTypes: ['pastry_shop'], categoryTab: 'all' });
+        break;
+      case 'pizzeria':
+        set({ ...clearQuick, selectedVenueTypes: ['pizzeria'], categoryTab: 'all' });
+        break;
+      case 'vegan':
+        set({ ...clearQuick, dietVegan: true, selectedVenueTypes: [], categoryTab: 'all' });
+        break;
+    }
+  },
+
+  getActiveQuickFilter: () => {
+    const state = get();
+    if (state.dietLactoseFree) {
+      return 'lactose_free';
+    }
+    if (state.dietVegan) {
+      return 'vegan';
+    }
+    if (
+      state.selectedVenueTypes.length === 1 &&
+      state.selectedVenueTypes[0] === 'pastry_shop'
+    ) {
+      return 'pastry_shop';
+    }
+    if (state.selectedVenueTypes.length === 1 && state.selectedVenueTypes[0] === 'pizzeria') {
+      return 'pizzeria';
+    }
+    return 'all';
+  },
+
   setMinRating: (value) => set({ minRating: value }),
 
   setCategoryTab: (tab) =>
@@ -149,6 +204,7 @@ export const useFilterStore = create<FilterState>((set, get) => ({
       state.deliveryAvailable != null ||
       state.dietVegan ||
       state.dietVegetarian ||
+      state.dietLactoseFree ||
       state.minRating !== 'all'
     );
   },

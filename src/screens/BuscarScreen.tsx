@@ -14,6 +14,7 @@ import AppBrandMark from '../components/AppBrandMark';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
+import SearchQuickFilterChips from '../components/SearchQuickFilterChips';
 import SearchQuickFiltersRow from '../components/SearchQuickFiltersRow';
 import SearchFilterPanel from '../components/SearchFilterPanel';
 import SkeletonCard from '../components/SkeletonCard';
@@ -86,6 +87,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const deliveryAvailable = useFilterStore((state) => state.deliveryAvailable);
   const dietVegan = useFilterStore((state) => state.dietVegan);
   const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
+  const dietLactoseFree = useFilterStore((state) => state.dietLactoseFree);
   const minRating = useFilterStore((state) => state.minRating);
   const categoryTab = useFilterStore((state) => state.categoryTab);
   const sortBy = useFilterStore((state) => state.sortBy);
@@ -132,6 +134,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       deliveryAvailable,
       dietVegan,
       dietVegetarian,
+      dietLactoseFree,
       minRating,
       categoryTab,
     }),
@@ -146,6 +149,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       deliveryAvailable,
       dietVegan,
       dietVegetarian,
+      dietLactoseFree,
       minRating,
       categoryTab,
     ]
@@ -192,6 +196,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     deliveryAvailable,
     dietVegan,
     dietVegetarian,
+    dietLactoseFree,
     minRating,
     categoryTab,
     location?.latitude,
@@ -362,20 +367,23 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <View style={styles.stickyBar}>
-        <Pressable
-          onPress={handleHomePress}
-          style={({ pressed }) => [styles.homeButton, pressed && styles.homeButtonPressed]}
-          accessibilityRole="button"
-          accessibilityLabel={t('search.brand_title')}
-        >
-          <MaterialCommunityIcons name="home-outline" size={22} color={colors.textPrimary} />
-        </Pressable>
-        <SearchBarRow
-          embedded
-          filtersOpen={filtersOpen}
-          onToggleFilters={() => setFiltersOpen((open) => !open)}
-        />
+      <View style={styles.stickySection}>
+        <View style={styles.stickyBar}>
+          <Pressable
+            onPress={handleHomePress}
+            style={({ pressed }) => [styles.homeButton, pressed && styles.homeButtonPressed]}
+            accessibilityRole="button"
+            accessibilityLabel={t('search.brand_title')}
+          >
+            <MaterialCommunityIcons name="home-outline" size={22} color={colors.textPrimary} />
+          </Pressable>
+          <SearchBarRow
+            embedded
+            filtersOpen={filtersOpen}
+            onToggleFilters={() => setFiltersOpen((open) => !open)}
+          />
+        </View>
+        <SearchQuickFilterChips />
       </View>
 
       {loading ? (
@@ -446,16 +454,21 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  stickySection: {
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lineSoft,
+    zIndex: 50,
+  },
   stickyBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     paddingHorizontal: spacing.screenPadding,
     paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.xs,
     backgroundColor: colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lineSoft,
+    borderBottomWidth: 0,
     zIndex: 50,
   },
   homeButton: {

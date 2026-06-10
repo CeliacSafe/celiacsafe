@@ -23,6 +23,17 @@ export type RatingChip = (typeof RATING_CHIPS)[number];
 
 export type SearchCategoryTab = 'all' | 'verified' | 'bakery' | 'community';
 
+/** Schnellfilter-Chips unter der Suchleiste auf dem Startbildschirm. */
+export type QuickFilterId = 'all' | 'lactose_free' | 'pastry_shop' | 'pizzeria' | 'vegan';
+
+export const QUICK_FILTER_IDS: QuickFilterId[] = [
+  'all',
+  'lactose_free',
+  'pastry_shop',
+  'pizzeria',
+  'vegan',
+];
+
 export const SORT_OPTIONS = [
   { code: 'name_asc', labels: { es: 'Nombre A-Z', en: 'Name A-Z', de: 'Name A-Z' } },
   { code: 'name_desc', labels: { es: 'Nombre Z-A', en: 'Name Z-A', de: 'Name Z-A' } },

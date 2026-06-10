@@ -188,6 +188,25 @@ describe('matchesFilter', () => {
     expect(result).toHaveLength(1);
     expect(result[0].name).toBe('As de Bastos');
   });
+
+  it('filtert nach laktosefrei in Beschreibung oder cuisine_types', () => {
+    const lactoseFree = createRestaurant({
+      id: 'lactose-1',
+      name: 'Sin Lactosa Cafe',
+      description_es: 'Opciones sin lactosa disponibles.',
+    });
+    const regular = createRestaurant({ id: 'regular-1', name: 'Regular Cafe' });
+    const criteria = {
+      selectedVenueTypes: [],
+      selectedRegions: [],
+      selectedPriceRanges: [],
+      onlyFaceCertified: false,
+      onlyAoecsCertified: false,
+      dietLactoseFree: true,
+    };
+    expect(matchesFilter(lactoseFree, criteria)).toBe(true);
+    expect(matchesFilter(regular, criteria)).toBe(false);
+  });
 });
 
 describe('sortRestaurants', () => {

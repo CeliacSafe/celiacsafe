@@ -113,3 +113,29 @@ export function cuisineMatchesDiet(
     match(c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
   );
 }
+
+const LACTOSE_FREE_MARKERS = [
+  'lactose free',
+  'lactose-free',
+  'sin lactosa',
+  'laktosefrei',
+  'ohne laktose',
+  'zero lactose',
+];
+
+function normalizeSearchText(value: string): string {
+  return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+/** Prüft Beschreibungen und cuisine_types auf Laktose-frei-Hinweise. */
+export function restaurantMatchesLactoseFree(restaurant: Restaurant): boolean {
+  const haystack = normalizeSearchText(
+    [
+      ...(restaurant.cuisine_types ?? []),
+      restaurant.description_es ?? '',
+      restaurant.description_en ?? '',
+      restaurant.description_de ?? '',
+    ].join(' ')
+  );
+  return LACTOSE_FREE_MARKERS.some((marker) => haystack.includes(normalizeSearchText(marker)));
+}

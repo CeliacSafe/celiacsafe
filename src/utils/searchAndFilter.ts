@@ -16,7 +16,11 @@ import {
   matchesRegionFilter,
   matchesVenueTypeFilter,
 } from './filterTextMatch';
-import { cuisineMatchesDiet, restaurantMatchesVenueType } from './venueNormalization';
+import {
+  cuisineMatchesDiet,
+  restaurantMatchesLactoseFree,
+  restaurantMatchesVenueType,
+} from './venueNormalization';
 
 const PUBLIC_VERIFICATION_STATUSES = new Set<VerificationStatus>(['verified']);
 
@@ -36,6 +40,7 @@ export interface FilterCriteria {
   deliveryAvailable?: boolean | null;
   dietVegan?: boolean;
   dietVegetarian?: boolean;
+  dietLactoseFree?: boolean;
   minRating?: RatingChip;
   categoryTab?: SearchCategoryTab;
 }
@@ -117,6 +122,9 @@ export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolea
     return false;
   }
   if (c.dietVegetarian && !cuisineMatchesDiet(restaurant.cuisine_types, 'vegetarian')) {
+    return false;
+  }
+  if (c.dietLactoseFree && !restaurantMatchesLactoseFree(restaurant)) {
     return false;
   }
   if (c.categoryTab === 'verified' && restaurant.verification_status === 'rejected') {

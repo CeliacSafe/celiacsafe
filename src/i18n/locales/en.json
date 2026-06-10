@@ -72,6 +72,11 @@
     "apply_one": "Apply {{count}} result",
     "apply_other": "Apply {{count}} results",
     "all": "All",
+    "quick_chip_all": "All",
+    "quick_chip_lactose_free": "Lactose-free 🥛",
+    "quick_chip_pastry": "Pastry shop 🥐",
+    "quick_chip_pizza": "Pizzeria 🍕",
+    "quick_chip_vegan": "Vegan 🌱",
     "custom_input": "Or enter text…",
     "custom_apply": "Apply",
     "more_filters": "More filters"

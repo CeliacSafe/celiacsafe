@@ -64,6 +64,7 @@ export function MapaScreen() {
   const deliveryAvailable = useFilterStore((state) => state.deliveryAvailable);
   const dietVegan = useFilterStore((state) => state.dietVegan);
   const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
+  const dietLactoseFree = useFilterStore((state) => state.dietLactoseFree);
   const categoryTab = useFilterStore((state) => state.categoryTab);
   const sortBy = useFilterStore((state) => state.sortBy);
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
@@ -103,6 +104,7 @@ export function MapaScreen() {
       deliveryAvailable,
       dietVegan,
       dietVegetarian,
+      dietLactoseFree,
       categoryTab,
     }),
     [
@@ -116,6 +118,7 @@ export function MapaScreen() {
       deliveryAvailable,
       dietVegan,
       dietVegetarian,
+      dietLactoseFree,
       categoryTab,
     ]
   );
