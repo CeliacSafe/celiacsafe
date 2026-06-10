@@ -41,4 +41,19 @@ describe('mergeBundledWithRemote', () => {
     const match = merged.find((r) => r.id === 'es_001');
     expect(match?.name).toBe('Remote Name');
   });
+
+  it('ergänzt Beschreibungen aus dem Bundle wenn Supabase sie nicht hat', () => {
+    const remote = [
+      {
+        ...createRestaurant('ES-CT-GRANOLLERS-001', 'ES'),
+        name: '0% Gluten KrümCoffee Granollers',
+        city: 'Granollers',
+      },
+    ];
+    const merged = mergeBundledWithRemote(remote);
+    const match = merged.find((r) => r.id === 'ES-CT-GRANOLLERS-001');
+    expect(match?.description_de).toContain('KrümCoffee');
+    expect(match?.description_en).toContain('KrümCoffee');
+    expect(match?.description_es).toContain('KrümCoffee');
+  });
 });

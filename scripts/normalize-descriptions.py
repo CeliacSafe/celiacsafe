@@ -168,6 +168,30 @@ def normalize_header(value: Any) -> str:
     return str(value).strip().lower().replace(" ", "_")
 
 
+def krumcoffee_copy(city: str) -> dict[str, str]:
+    city_en = CITY_EXONYMS_EN.get(city, city)
+    city_es = CITY_EXONYMS_ES.get(city, city)
+    return {
+        "de": (
+            f"100% glutenfreies KrümCoffee-Café in {city} mit Kaffee, Frühstück, "
+            f"Brunch, Kuchen, Gebäck und herzhaften Snacks."
+        ),
+        "en": (
+            f"100% gluten-free KrümCoffee café in {city_en} serving coffee, breakfast, "
+            f"brunch, cakes, pastries, and savoury snacks."
+        ),
+        "es": (
+            f"Cafetería KrümCoffee 100% sin gluten en {city_es} con café, desayuno, "
+            f"brunch, tartas, bollería y snacks salados."
+        ),
+    }
+
+
+def is_krumcoffee(name: Any) -> bool:
+    text = str(name or "").lower()
+    return "krümcoffee" in text or "krumcoffee" in text or "krüm coffee" in text
+
+
 def translate_from_german(description_de: str) -> tuple[str, str] | None:
     """Gibt (en, es) zurueck, wenn der DE-Text einem Template entspricht."""
     text = description_de.strip()
@@ -184,7 +208,7 @@ def translate_from_german(description_de: str) -> tuple[str, str] | None:
 
 def apply_to_workbook(workbook_path: Path) -> dict[str, Any]:
     workbook = load_workbook(workbook_path)
-    stats = {"seed_de_fixed": 0, "en_set": 0, "es_set": 0, "unmatched": []}
+    stats = {"seed_de_fixed": 0, "special_copy": 0, "en_set": 0, "es_set": 0, "unmatched": []}
 
     if "restaurants" not in workbook.sheetnames:
         workbook.close()
@@ -195,7 +219,7 @@ def apply_to_workbook(workbook_path: Path) -> dict[str, Any]:
     headers = [normalize_header(cell) for cell in header_row]
     cols = {header: index for index, header in enumerate(headers) if header}
 
-    required = {"id", "description_de", "description_en", "description_es"}
+    required = {"id", "name", "city", "description_de", "description_en", "description_es"}
     missing = required - set(cols)
     if missing:
         workbook.close()
@@ -209,6 +233,18 @@ def apply_to_workbook(workbook_path: Path) -> dict[str, Any]:
 
         de_cell = sheet.cell(row=row_index, column=cols["description_de"] + 1)
         description_de = str(de_cell.value or "").strip()
+        name = sheet.cell(row=row_index, column=cols["name"] + 1).value
+        city = str(sheet.cell(row=row_index, column=cols["city"] + 1).value or "").strip()
+
+        if is_krumcoffee(name) and city:
+            copy = krumcoffee_copy(city)
+            de_cell.value = copy["de"]
+            sheet.cell(row=row_index, column=cols["description_en"] + 1, value=copy["en"])
+            sheet.cell(row=row_index, column=cols["description_es"] + 1, value=copy["es"])
+            stats["special_copy"] += 1
+            stats["en_set"] += 1
+            stats["es_set"] += 1
+            continue
 
         if restaurant_id in SEED_DE_FIXES:
             description_de = SEED_DE_FIXES[restaurant_id]
@@ -257,6 +293,7 @@ def main() -> None:
         stats = apply_to_workbook(target)
         print(f"\n{target.name}")
         print(f"  DE-Seed-Texte ersetzt: {stats['seed_de_fixed']}")
+        print(f"  Spezial-Texte (z. B. KrümCoffee): {stats['special_copy']}")
         print(f"  description_en gesetzt: {stats['en_set']}")
         print(f"  description_es gesetzt: {stats['es_set']}")
         if stats["unmatched"]:

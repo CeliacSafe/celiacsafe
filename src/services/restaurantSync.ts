@@ -124,7 +124,19 @@ function buildBundleLookups(bundled: Restaurant[]): BundleLookups {
   return { byId, bySlug, byName, cityCentroids };
 }
 
-/** Maps-Deeplinks und Koordinaten aus restaurants.json ergänzen, solange Supabase/Cache unvollständig sind. */
+/** Maps-Deeplinks, Koordinaten und Texte aus restaurants.json ergänzen, solange Supabase/Cache unvollständig sind. */
+function pickBundledText(
+  remoteValue: string | undefined,
+  bundledValue: string | undefined
+): string | undefined {
+  const remote = remoteValue?.trim();
+  if (remote) {
+    return remote;
+  }
+  const bundled = bundledValue?.trim();
+  return bundled || undefined;
+}
+
 export function enrichRestaurantsFromBundle(restaurants: Restaurant[]): Restaurant[] {
   const lookups = buildBundleLookups(bundledData.restaurants as Restaurant[]);
 
@@ -151,6 +163,9 @@ export function enrichRestaurantsFromBundle(restaurants: Restaurant[]): Restaura
       ...restaurant,
       google_maps_url: restaurant.google_maps_url ?? bundledMatch?.google_maps_url,
       apple_maps_url: restaurant.apple_maps_url ?? bundledMatch?.apple_maps_url,
+      description_de: pickBundledText(restaurant.description_de, bundledMatch?.description_de),
+      description_en: pickBundledText(restaurant.description_en, bundledMatch?.description_en),
+      description_es: pickBundledText(restaurant.description_es, bundledMatch?.description_es),
       latitude:
         restaurant.latitude ?? bundledMatch?.latitude ?? cityCentroid?.latitude,
       longitude:
