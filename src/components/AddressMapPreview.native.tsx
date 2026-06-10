@@ -4,6 +4,7 @@ import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import CustomMarker from './CustomMarker';
 import { radius } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
+import { getMapPinStyle } from '../utils/mapPinStyle';
 
 interface AddressMapPreviewProps {
   restaurant: Restaurant;
@@ -13,6 +14,7 @@ interface AddressMapPreviewProps {
 const MAP_DELTA = 0.005;
 
 export default function AddressMapPreview({ restaurant, onPress }: AddressMapPreviewProps) {
+  const pinStyle = getMapPinStyle(restaurant);
   const mapRegion = {
     latitude: restaurant.latitude!,
     longitude: restaurant.longitude!,
@@ -39,7 +41,7 @@ export default function AddressMapPreview({ restaurant, onPress }: AddressMapPre
           }}
           tracksViewChanges={false}
         >
-          <CustomMarker />
+          <CustomMarker pinStyle={pinStyle} />
         </Marker>
       </MapView>
     </Pressable>

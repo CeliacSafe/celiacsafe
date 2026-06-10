@@ -4,6 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import type { MapRegion } from '../types/MapRegion';
 import type { Restaurant } from '../types/Restaurant';
+import type { MapPinStyle } from '../utils/mapPinStyle';
+import { getMapPinStyle } from '../utils/mapPinStyle';
 
 /**
  * Interaktive OpenStreetMap-Karte für das Web (Leaflet via CDN).
@@ -116,25 +118,30 @@ function zoomFromDelta(latitudeDelta: number): number {
   return Math.max(3, Math.min(17, Math.round(Math.log2(360 / latitudeDelta))));
 }
 
+const PIN_ICONS: Record<MapPinStyle['category'], string> = {
+  cafe_bakery: '☕',
+  restaurant: '🍽',
+  fast_pizza: '🍕',
+};
+
 function createPinIcon(
   L: any,
-  primary: string,
+  pinStyle: MapPinStyle,
   accent: string,
-  paper: string,
   isSelected: boolean,
   isFeatured: boolean
 ) {
   const highlighted = isSelected || isFeatured;
   const size = highlighted ? 44 : 36;
-  const dotSize = highlighted ? 14 : 12;
-  const bg = highlighted ? accent : primary;
+  const bg = highlighted ? accent : pinStyle.fill;
   const glow = highlighted
-    ? 'box-shadow:0 0 0 8px rgba(212,134,58,0.28),0 4px 12px rgba(0,0,0,0.25);'
+    ? `box-shadow:0 0 0 8px ${pinStyle.fill}48,0 4px 12px rgba(0,0,0,0.25);`
     : 'box-shadow:0 4px 12px rgba(0,0,0,0.25);';
+  const icon = PIN_ICONS[pinStyle.category];
 
   return L.divIcon({
     className: 'celiacsafe-pin',
-    html: `<div style="width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;background:${bg};${glow}transform:rotate(-45deg);display:flex;align-items:center;justify-content:center"><div style="width:${dotSize}px;height:${dotSize}px;border-radius:50%;background:${paper};transform:rotate(45deg)"></div></div>`,
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;background:${bg};${glow}transform:rotate(-45deg);display:flex;align-items:center;justify-content:center"><span style="font-size:${highlighted ? 16 : 14}px;line-height:1;transform:rotate(45deg)">${icon}</span></div>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size],
   });
@@ -264,14 +271,8 @@ export default function InteractiveOsmMap({
       nextIds.add(r.id);
       const isSelected = r.id === selectedRestaurantId;
       const isFeatured = r.is_premium_partner === true;
-      const icon = createPinIcon(
-        L,
-        colors.primary,
-        colors.accent,
-        colors.background,
-        isSelected,
-        isFeatured
-      );
+      const pinStyle = getMapPinStyle(r);
+      const icon = createPinIcon(L, pinStyle, colors.accent, isSelected, isFeatured);
       const venueTypeLabel = getVenueTypeLabelRef.current(r);
       const popupHtml = buildPopupHtml(r.name, venueTypeLabel, r.id);
       const current = existing.get(r.id);
@@ -298,8 +299,8 @@ export default function InteractiveOsmMap({
           if (event.originalEvent) {
             L.DomEvent.stopPropagation(event.originalEvent);
           }
+          marker.closePopup();
           onSelectRef.current(r.id);
-          marker.openPopup();
         });
         marker.addTo(map);
         existing.set(r.id, marker);
@@ -314,7 +315,7 @@ export default function InteractiveOsmMap({
 
     if (selectedRestaurantId) {
       const selectedMarker = existing.get(selectedRestaurantId);
-      selectedMarker?.openPopup();
+      selectedMarker?.closePopup();
     }
 
     if (!didFitRef.current && existing.size > 0) {

@@ -4,6 +4,7 @@
  */
 
 import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
+import type { UserDietaryPreferences } from '../store/userPreferencesStore';
 import type { Restaurant } from '../types/Restaurant';
 import { restaurantHasDelivery } from './platformLinks';
 import { cuisineMatchesDiet, normalizeVenueTypes } from './venueNormalization';
@@ -180,8 +181,10 @@ export function buildFilterOptionContext(state: {
   onlyAoecsCertified: boolean;
   dietVegan: boolean;
   dietVegetarian: boolean;
+  dietLactoseFree?: boolean;
   minRating: RatingChip;
   categoryTab: SearchCategoryTab;
+  profileDietary?: UserDietaryPreferences;
 }): FilterOptionContext {
   return {
     selectedVenueTypes: state.selectedVenueTypes,
@@ -194,8 +197,10 @@ export function buildFilterOptionContext(state: {
     onlyAoecsCertified: state.onlyAoecsCertified,
     dietVegan: state.dietVegan,
     dietVegetarian: state.dietVegetarian,
+    dietLactoseFree: state.dietLactoseFree,
     minRating: state.minRating,
     categoryTab: state.categoryTab,
+    profileDietary: state.profileDietary,
     searchQuery: state.searchQuery,
   };
 }

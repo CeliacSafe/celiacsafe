@@ -19,13 +19,6 @@ import unicodedata
 from pathlib import Path
 from typing import Any
 
-try:
-    from openpyxl import load_workbook
-except ImportError:
-    print("Fehler: openpyxl nicht installiert.")
-    print("Bitte: pip install -r scripts/requirements.txt")
-    sys.exit(1)
-
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_AUDIT = (
     ROOT
@@ -36,6 +29,28 @@ DEFAULT_TARGETS = [
     ROOT / "data-source" / "CeliacSafe_Datenbank_v4_Spain_129_geocoded.xlsx",
     ROOT / "data-source" / "CeliacSafe_Datenbank_v4_Germany_Delta_Consolidated_geocoded.xlsx",
 ]
+
+AUDIT_MARKERS: tuple[re.Pattern[str], ...] = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in [
+        r"offiziell(er|en)?\s+auftritt",
+        r"als\s+100\s*%\s*gluten",
+        r"100\s*%\s*gluten",
+        r"für die app",
+        r"geeignet\s+für",
+        r"verifizier",
+        r"kontamin",
+        r"beschrieben",
+        r"weist\s+.*\s+aus",
+    ]
+)
+
+
+def is_audit_style_description(text: str) -> bool:
+    cleaned = text.strip()
+    if not cleaned:
+        return False
+    return any(marker.search(cleaned) for marker in AUDIT_MARKERS)
 
 
 def normalize_header(value: Any) -> str:
@@ -114,21 +129,17 @@ def map_audit_row_to_workbook_id(
 
 
 def description_updates_from_audit_row(row: dict[str, Any]) -> dict[str, str]:
+    """Nur echte Website-Beschreibungen — keine App-Audit-Empfehlungen."""
     updates: dict[str, str] = {}
 
-    description_de = parse_string(row.get("recommended_app_description_de"))
-    if not description_de:
-        description_de = parse_string(row.get("description_de_from_site_or_validation"))
-    if description_de:
-        updates["description_de"] = description_de
-
-    description_en = parse_string(row.get("description_en_from_site_or_validation"))
-    if description_en:
-        updates["description_en"] = description_en
-
-    description_es = parse_string(row.get("description_es_from_site_or_validation"))
-    if description_es:
-        updates["description_es"] = description_es
+    for field, source_key in (
+        ("description_de", "description_de_from_site_or_validation"),
+        ("description_en", "description_en_from_site_or_validation"),
+        ("description_es", "description_es_from_site_or_validation"),
+    ):
+        value = parse_string(row.get(source_key))
+        if value and not is_audit_style_description(value):
+            updates[field] = value
 
     return updates
 

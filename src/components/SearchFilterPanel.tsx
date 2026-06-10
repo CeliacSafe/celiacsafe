@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
 import FilterSelect, { type FilterSelectOption } from './FilterSelect';
+import { useFilterCriteria } from '../hooks/useFilterCriteria';
+import { useProfileDietaryFilter } from '../hooks/useProfileDietaryFilter';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { COUNTRY_NAMES, VENUE_TYPE_NAMES } from '../i18n/lookups';
 import { REGION_NAMES } from '../i18n/regions';
@@ -56,6 +58,7 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const minRating = useFilterStore((s) => s.minRating);
   const dietVegan = useFilterStore((s) => s.dietVegan);
   const dietVegetarian = useFilterStore((s) => s.dietVegetarian);
+  const dietLactoseFree = useFilterStore((s) => s.dietLactoseFree);
   const onlyFaceCertified = useFilterStore((s) => s.onlyFaceCertified);
   const onlyAoecsCertified = useFilterStore((s) => s.onlyAoecsCertified);
   const categoryTab = useFilterStore((s) => s.categoryTab);
@@ -71,6 +74,8 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
   const setDietVegetarian = useFilterStore((s) => s.setDietVegetarian);
   const resetFilters = useFilterStore((s) => s.resetFilters);
   const hasActiveFilters = useFilterStore((s) => s.hasActiveFilters);
+  const profileDietary = useProfileDietaryFilter();
+  const filterCriteria = useFilterCriteria();
 
   const filterContext = useMemo(
     () =>
@@ -86,8 +91,10 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
         onlyAoecsCertified,
         dietVegan,
         dietVegetarian,
+        dietLactoseFree,
         minRating,
         categoryTab,
+        profileDietary,
       }),
     [
       searchQuery,
@@ -101,8 +108,10 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
       onlyAoecsCertified,
       dietVegan,
       dietVegetarian,
+      dietLactoseFree,
       minRating,
       categoryTab,
+      profileDietary,
     ]
   );
 
@@ -289,37 +298,6 @@ function SearchFilterPanel({ restaurants, onClose }: SearchFilterPanelProps) {
 
   const customInputPlaceholder = t('filter.custom_input');
   const customInputApplyLabel = t('filter.custom_apply');
-
-  const filterCriteria = useMemo(
-    () => ({
-      selectedVenueTypes,
-      selectedRegions,
-      selectedPriceRanges,
-      onlyFaceCertified,
-      onlyAoecsCertified,
-      selectedCountry,
-      selectedCity,
-      deliveryAvailable,
-      dietVegan,
-      dietVegetarian,
-      minRating,
-      categoryTab,
-    }),
-    [
-      selectedVenueTypes,
-      selectedRegions,
-      selectedPriceRanges,
-      onlyFaceCertified,
-      onlyAoecsCertified,
-      selectedCountry,
-      selectedCity,
-      deliveryAvailable,
-      dietVegan,
-      dietVegetarian,
-      minRating,
-      categoryTab,
-    ]
-  );
 
   const resultCount = useMemo(
     () => applyFilters(restaurants, searchQuery, filterCriteria, sortBy).length,

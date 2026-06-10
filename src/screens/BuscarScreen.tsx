@@ -20,6 +20,7 @@ import SearchQuickFiltersRow from '../components/SearchQuickFiltersRow';
 import SearchFilterPanel from '../components/SearchFilterPanel';
 import SkeletonCard from '../components/SkeletonCard';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { useFilterCriteria } from '../hooks/useFilterCriteria';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { hapticLight, hapticMedium } from '../utils/haptics';
 import { useRestaurants } from '../hooks/useRestaurants';
@@ -78,22 +79,10 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     useUserLocation();
   const searchQuery = useFilterStore((state) => state.searchQuery);
   const debouncedSearchQuery = useDebouncedValue(searchQuery);
-  const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
-  const selectedCountry = useFilterStore((state) => state.selectedCountry);
-  const selectedRegions = useFilterStore((state) => state.selectedRegions);
-  const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
-  const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
-  const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
-  const selectedCity = useFilterStore((state) => state.selectedCity);
-  const deliveryAvailable = useFilterStore((state) => state.deliveryAvailable);
-  const dietVegan = useFilterStore((state) => state.dietVegan);
-  const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
-  const dietLactoseFree = useFilterStore((state) => state.dietLactoseFree);
-  const minRating = useFilterStore((state) => state.minRating);
-  const categoryTab = useFilterStore((state) => state.categoryTab);
   const sortBy = useFilterStore((state) => state.sortBy);
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
   const resetFilters = useFilterStore((state) => state.resetFilters);
+  const filterCriteria = useFilterCriteria();
   const [refreshing, setRefreshing] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(NEARBY_PAGE_SIZE);
@@ -126,39 +115,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
     hapticMedium();
     resetFilters();
   }, [resetFilters]);
-
-  const filterCriteria = useMemo(
-    () => ({
-      selectedVenueTypes,
-      selectedRegions,
-      selectedPriceRanges,
-      onlyFaceCertified,
-      onlyAoecsCertified,
-      selectedCountry,
-      selectedCity,
-      deliveryAvailable,
-      dietVegan,
-      dietVegetarian,
-      dietLactoseFree,
-      minRating,
-      categoryTab,
-    }),
-    [
-      selectedVenueTypes,
-      selectedRegions,
-      selectedPriceRanges,
-      onlyFaceCertified,
-      onlyAoecsCertified,
-      selectedCountry,
-      selectedCity,
-      deliveryAvailable,
-      dietVegan,
-      dietVegetarian,
-      dietLactoseFree,
-      minRating,
-      categoryTab,
-    ]
-  );
 
   const isBrowsingNearby = !hasActiveFilters() && searchQuery.trim().length === 0;
   const showFeaturedCities = isBrowsingNearby;
@@ -195,24 +151,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   useEffect(() => {
     setVisibleCount(NEARBY_PAGE_SIZE);
-  }, [
-    searchQuery,
-    selectedVenueTypes,
-    selectedRegions,
-    selectedPriceRanges,
-    onlyFaceCertified,
-    onlyAoecsCertified,
-    selectedCountry,
-    selectedCity,
-    deliveryAvailable,
-    dietVegan,
-    dietVegetarian,
-    dietLactoseFree,
-    minRating,
-    categoryTab,
-    location?.latitude,
-    location?.longitude,
-  ]);
+  }, [searchQuery, filterCriteria, location?.latitude, location?.longitude]);
 
   const openDetail = useCallback(
     (restaurantId: string) => {

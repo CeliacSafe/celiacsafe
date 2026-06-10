@@ -4,12 +4,14 @@
  * dass die Ergebnisliste konsistent und performant berechnet wird.
  */
 
+import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
+import type { UserDietaryPreferences } from '../store/userPreferencesStore';
 import type { Restaurant, VerificationStatus } from '../types/Restaurant';
 
-import type { RatingChip, SearchCategoryTab } from '../data/filterOptions';
 import { COUNTRY_NAMES } from '../i18n/lookups';
 import { compareWithPremiumInCity } from './restaurantSort';
 import { restaurantHasDelivery } from './platformLinks';
+import { resolveRestaurantAllergens } from './restaurantFields';
 import {
   matchesCityFilter,
   matchesCountryFilter,
@@ -43,6 +45,8 @@ export interface FilterCriteria {
   dietLactoseFree?: boolean;
   minRating?: RatingChip;
   categoryTab?: SearchCategoryTab;
+  /** Persistierte Profil-Praeferenzen — gelten in Suche und auf der Karte. */
+  profileDietary?: UserDietaryPreferences;
 }
 
 export function normalize(s: string): string {
@@ -79,6 +83,26 @@ export function matchesQuery(restaurant: Restaurant, query: string): boolean {
   );
 
   return terms.every((term) => haystack.includes(term));
+}
+
+function matchesProfileDietary(
+  restaurant: Restaurant,
+  profile?: UserDietaryPreferences
+): boolean {
+  if (!profile) {
+    return true;
+  }
+  const allergens = resolveRestaurantAllergens(restaurant);
+  if (profile.lactoseFree && !allergens.sin_lactosa) {
+    return false;
+  }
+  if (profile.vegan && !allergens.vegan) {
+    return false;
+  }
+  if (profile.wheatFree && !allergens.sin_trigo) {
+    return false;
+  }
+  return true;
 }
 
 export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolean {
@@ -137,6 +161,9 @@ export function matchesFilter(restaurant: Restaurant, c: FilterCriteria): boolea
     return false;
   }
   if (c.categoryTab === 'bakery' && !restaurantMatchesVenueType(restaurant, 'bakery')) {
+    return false;
+  }
+  if (!matchesProfileDietary(restaurant, c.profileDietary)) {
     return false;
   }
   return true;

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import Disclaimer from '../components/Disclaimer';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import ProfileDietaryPreferences from '../components/ProfileDietaryPreferences';
 import ProfileMenuCard from '../components/ProfileMenuCard';
 import ProfileMenuRow, { ProfileMenuStaticRow } from '../components/ProfileMenuRow';
 import ProfileSection from '../components/ProfileSection';
@@ -93,6 +94,12 @@ function PerfilScreen() {
         <ProfileSection title={t('profile.appearance')}>
           <View style={styles.languageCardWrap}>
             <ThemeSwitcher />
+          </View>
+        </ProfileSection>
+
+        <ProfileSection title={t('profile.section_dietary')}>
+          <View style={styles.languageCardWrap}>
+            <ProfileDietaryPreferences />
           </View>
         </ProfileSection>
 

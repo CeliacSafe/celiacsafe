@@ -207,6 +207,51 @@ describe('matchesFilter', () => {
     expect(matchesFilter(lactoseFree, criteria)).toBe(true);
     expect(matchesFilter(regular, criteria)).toBe(false);
   });
+
+  it('filtert nach Profil-Praeferenzen (vegan, laktosefrei, weizenfrei)', () => {
+    const veganRestaurant = createRestaurant({
+      id: 'vegan-1',
+      cuisine_types: ['Vegana'],
+    });
+    const nonVegan = createRestaurant({ id: 'non-vegan-1' });
+    const base = {
+      selectedVenueTypes: [],
+      selectedRegions: [],
+      selectedPriceRanges: [],
+      onlyFaceCertified: false,
+      onlyAoecsCertified: false,
+    };
+
+    expect(
+      matchesFilter(veganRestaurant, {
+        ...base,
+        profileDietary: { lactoseFree: false, vegan: true, wheatFree: false },
+      })
+    ).toBe(true);
+    expect(
+      matchesFilter(nonVegan, {
+        ...base,
+        profileDietary: { lactoseFree: false, vegan: true, wheatFree: false },
+      })
+    ).toBe(false);
+
+    const wheatExplicit = createRestaurant({
+      id: 'wheat-1',
+      allergens: { sin_trigo: false },
+    });
+    expect(
+      matchesFilter(wheatExplicit, {
+        ...base,
+        profileDietary: { lactoseFree: false, vegan: false, wheatFree: true },
+      })
+    ).toBe(false);
+    expect(
+      matchesFilter(createRestaurant({ id: 'wheat-2', verification_status: 'verified' }), {
+        ...base,
+        profileDietary: { lactoseFree: false, vegan: false, wheatFree: true },
+      })
+    ).toBe(true);
+  });
 });
 
 describe('sortRestaurants', () => {

@@ -1,29 +1,27 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
-import { Callout, Marker } from 'react-native-maps';
+import { Marker } from 'react-native-maps';
 
 import CustomMarker from './CustomMarker';
-import MapMarkerCallout from './MapMarkerCallout';
 import type { Restaurant } from '../types/Restaurant';
+import { getMapPinStyle } from '../utils/mapPinStyle';
 
 interface RestaurantMapMarkerProps {
   restaurant: Restaurant;
-  venueTypeLabel: string | null;
   isSelected: boolean;
   onSelect: (restaurantId: string) => void;
-  onRestaurantOpen: (restaurantId: string) => void;
 }
 
 /**
- * Einzelner Karten-Marker — memoized, damit nicht alle 107 Pins bei jedem Render neu mounten.
+ * Einzelner Karten-Marker — memoized, damit nicht alle Pins bei jedem Render neu mounten.
  */
 const RestaurantMapMarker = memo(function MapRestaurantMarker({
   restaurant,
-  venueTypeLabel,
   isSelected,
   onSelect,
-  onRestaurantOpen,
 }: RestaurantMapMarkerProps) {
+  const pinStyle = useMemo(() => getMapPinStyle(restaurant), [restaurant]);
+
   const coordinate = useMemo(
     () => ({
       latitude: restaurant.latitude!,
@@ -40,7 +38,7 @@ const RestaurantMapMarker = memo(function MapRestaurantMarker({
     }
     const timer = setTimeout(() => setTracksViewChanges(false), 600);
     return () => clearTimeout(timer);
-  }, [tracksViewChanges, isSelected]);
+  }, [tracksViewChanges, isSelected, pinStyle.fill]);
 
   return (
     <Marker
@@ -51,16 +49,10 @@ const RestaurantMapMarker = memo(function MapRestaurantMarker({
       anchor={{ x: 0.5, y: 1 }}
     >
       <CustomMarker
+        pinStyle={pinStyle}
         isSelected={isSelected}
         isFeatured={restaurant.is_premium_partner === true}
       />
-      <Callout tooltip={false}>
-        <MapMarkerCallout
-          name={restaurant.name}
-          venueTypeLabel={venueTypeLabel}
-          onNamePress={() => onRestaurantOpen(restaurant.id)}
-        />
-      </Callout>
     </Marker>
   );
 });

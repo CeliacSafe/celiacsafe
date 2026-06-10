@@ -51,11 +51,26 @@ function searchQuery(restaurant: Restaurant): string {
   return [restaurant.name, restaurant.city].filter(Boolean).join(' ').trim();
 }
 
-/** Karten-Tab: keine Suche-spezifischen Tabs/Diät-Filter, damit Pins sichtbar bleiben. */
-export function toMapFilterCriteria<T extends { categoryTab?: unknown; minRating?: unknown; dietVegan?: boolean; dietVegetarian?: boolean }>(
+/** Karten-Tab: keine Suche-spezifischen Tabs/Diät-Chips, Profil-Praeferenzen bleiben aktiv. */
+export function toMapFilterCriteria<
+  T extends {
+    categoryTab?: unknown;
+    minRating?: unknown;
+    dietVegan?: boolean;
+    dietVegetarian?: boolean;
+    dietLactoseFree?: boolean;
+  },
+>(
   criteria: T
-): Omit<T, 'categoryTab' | 'minRating' | 'dietVegan' | 'dietVegetarian'> {
-  const { categoryTab: _c, minRating: _r, dietVegan: _v, dietVegetarian: _g, ...mapCriteria } = criteria;
+): Omit<T, 'categoryTab' | 'minRating' | 'dietVegan' | 'dietVegetarian' | 'dietLactoseFree'> {
+  const {
+    categoryTab: _c,
+    minRating: _r,
+    dietVegan: _v,
+    dietVegetarian: _g,
+    dietLactoseFree: _l,
+    ...mapCriteria
+  } = criteria;
   return mapCriteria;
 }
 

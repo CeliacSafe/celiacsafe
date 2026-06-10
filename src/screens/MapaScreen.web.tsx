@@ -9,9 +9,11 @@ import EmptyState from '../components/EmptyState';
 import InteractiveOsmMap from '../components/InteractiveOsmMap';
 import LoadingSpinner from '../components/LoadingSpinner';
 import MapSearchPill from '../components/MapSearchPill';
+import MapSelectedPreview from '../components/MapSelectedPreview';
 import RegionQuickJumps from '../components/RegionQuickJumps';
 import SearchCountryChips from '../components/SearchCountryChips';
 import { QUICK_JUMPS } from '../data/quickJumps';
+import { useFilterCriteria } from '../hooks/useFilterCriteria';
 import { useRestaurants } from '../hooks/useRestaurants';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { useLocalized } from '../hooks/useLocalized';
@@ -51,21 +53,13 @@ export function MapaScreen() {
   const { loading: locationLoading, requestLocation, lastErrorRef } = useUserLocation();
   const { restaurants } = useRestaurants();
   const searchQuery = useFilterStore((state) => state.searchQuery);
-  const selectedVenueTypes = useFilterStore((state) => state.selectedVenueTypes);
   const selectedCountry = useFilterStore((state) => state.selectedCountry);
   const selectedRegions = useFilterStore((state) => state.selectedRegions);
-  const selectedPriceRanges = useFilterStore((state) => state.selectedPriceRanges);
-  const onlyFaceCertified = useFilterStore((state) => state.onlyFaceCertified);
-  const onlyAoecsCertified = useFilterStore((state) => state.onlyAoecsCertified);
   const selectedCity = useFilterStore((state) => state.selectedCity);
-  const deliveryAvailable = useFilterStore((state) => state.deliveryAvailable);
-  const dietVegan = useFilterStore((state) => state.dietVegan);
-  const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
-  const dietLactoseFree = useFilterStore((state) => state.dietLactoseFree);
-  const categoryTab = useFilterStore((state) => state.categoryTab);
   const sortBy = useFilterStore((state) => state.sortBy);
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
   const resetFilters = useFilterStore((state) => state.resetFilters);
+  const filterCriteria = useFilterCriteria();
 
   const [viewRegion, setViewRegion] = useState<MapRegion>(INITIAL_REGION);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
@@ -96,37 +90,6 @@ export function MapaScreen() {
     return t('map.all_areas');
   }, [language, regionName, searchQuery, selectedCity, selectedCountry, selectedRegions, t]);
 
-  const filterCriteria = useMemo(
-    () => ({
-      selectedVenueTypes,
-      selectedRegions,
-      selectedPriceRanges,
-      onlyFaceCertified,
-      onlyAoecsCertified,
-      selectedCountry,
-      selectedCity,
-      deliveryAvailable,
-      dietVegan,
-      dietVegetarian,
-      dietLactoseFree,
-      categoryTab,
-    }),
-    [
-      selectedVenueTypes,
-      selectedRegions,
-      selectedPriceRanges,
-      onlyFaceCertified,
-      onlyAoecsCertified,
-      selectedCountry,
-      selectedCity,
-      deliveryAvailable,
-      dietVegan,
-      dietVegetarian,
-      dietLactoseFree,
-      categoryTab,
-    ]
-  );
-
   const mapFilterCriteria = useMemo(() => toMapFilterCriteria(filterCriteria), [filterCriteria]);
 
   const filteredRestaurants = useMemo(
@@ -143,6 +106,11 @@ export function MapaScreen() {
   );
 
   const showNoPinsEmpty = hasActiveFilters() && mappableRestaurants.length === 0;
+
+  const selectedRestaurant = useMemo(
+    () => mappableRestaurants.find((r) => r.id === selectedRestaurantId) ?? null,
+    [mappableRestaurants, selectedRestaurantId]
+  );
 
   const handleClearFilters = useCallback(() => {
     hapticMedium();
@@ -224,6 +192,12 @@ export function MapaScreen() {
       </View>
 
       {locationLoading ? <LoadingSpinner fullscreen message={t('map.locating')} /> : null}
+
+      <MapSelectedPreview
+        restaurant={selectedRestaurant}
+        bottomInset={insets.bottom}
+        onPress={handleRestaurantOpen}
+      />
     </View>
   );
 }

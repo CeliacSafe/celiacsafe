@@ -1,24 +1,26 @@
 import { memo } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useTheme } from '../theme/ThemeContext';
 import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
+import type { MapPinStyle } from '../utils/mapPinStyle';
 
 interface CustomMarkerProps {
+  pinStyle: MapPinStyle;
   isSelected?: boolean;
   isFeatured?: boolean;
 }
 
 const PIN_SIZE = 36;
 const PIN_SIZE_FEATURED = 44;
-const DOT_SIZE = 12;
-const DOT_SIZE_FEATURED = 14;
 
 /**
- * Teardrop-Pin fuer react-native-maps (Sage / Saffron bei Auswahl oder Premium).
+ * Farbkodierter Teardrop-Pin nach Lokalkategorie (Café/Bäckerei, Restaurant, Pizza/Fast Food).
  */
 const CustomMarker = memo(function MarkerPin({
+  pinStyle,
   isSelected = false,
   isFeatured = false,
 }: CustomMarkerProps) {
@@ -26,12 +28,12 @@ const CustomMarker = memo(function MarkerPin({
   const { colors } = useTheme();
   const highlighted = isSelected || isFeatured;
   const pinSize = highlighted ? PIN_SIZE_FEATURED : PIN_SIZE;
-  const dotSize = highlighted ? DOT_SIZE_FEATURED : DOT_SIZE;
-  const pinColor = highlighted ? colors.accent : colors.primary;
+  const iconSize = highlighted ? 16 : 14;
+  const pinColor = highlighted ? colors.accent : pinStyle.fill;
 
   return (
     <View style={[styles.outer, highlighted && styles.outerFeatured]}>
-      {highlighted ? <View style={styles.glow} /> : null}
+      {highlighted ? <View style={[styles.glow, { backgroundColor: `${pinStyle.fill}48` }]} /> : null}
       <View
         style={[
           styles.pin,
@@ -42,14 +44,11 @@ const CustomMarker = memo(function MarkerPin({
           },
         ]}
       >
-        <View
-          style={[
-            styles.dot,
-            {
-              width: dotSize,
-              height: dotSize,
-            },
-          ]}
+        <MaterialCommunityIcons
+          name={pinStyle.icon}
+          size={iconSize}
+          color={colors.onPrimary}
+          style={styles.icon}
         />
       </View>
     </View>
@@ -76,7 +75,6 @@ const createStyles = (colors: AppColors) =>
       width: PIN_SIZE_FEATURED + 16,
       height: PIN_SIZE_FEATURED + 16,
       borderRadius: (PIN_SIZE_FEATURED + 16) / 2,
-      backgroundColor: 'rgba(212, 134, 58, 0.28)',
     },
     pin: {
       borderTopLeftRadius: PIN_SIZE / 2,
@@ -98,9 +96,7 @@ const createStyles = (colors: AppColors) =>
         },
       }),
     },
-    dot: {
-      borderRadius: DOT_SIZE / 2,
-      backgroundColor: colors.background,
+    icon: {
       transform: [{ rotate: '45deg' }],
     },
   });

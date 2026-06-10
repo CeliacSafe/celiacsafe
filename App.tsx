@@ -17,7 +17,9 @@ import { RootTabs } from './src/navigation/RootTabs';
 import { buildNavigationTheme } from './src/navigation/theme';
 import { useFavoritesStore } from './src/store/favoritesStore';
 import { useLanguageStore } from './src/store/languageStore';
+import { UserProvider } from './src/context/UserContext';
 import { useThemeStore } from './src/store/themeStore';
+import { useUserPreferencesStore } from './src/store/userPreferencesStore';
 import { fontAssets } from './src/theme/fonts';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
@@ -45,9 +47,15 @@ export default function App() {
   const favoritesHydrated = useFavoritesStore((state) => state.hasHydrated);
   const languageHydrated = useLanguageStore((state) => state.hasHydrated);
   const themeHydrated = useThemeStore((state) => state.hasHydrated);
+  const userPreferencesHydrated = useUserPreferencesStore((state) => state.hasHydrated);
   const [fontsLoaded] = useFonts(fontAssets);
 
-  const isReady = favoritesHydrated && languageHydrated && themeHydrated && fontsLoaded;
+  const isReady =
+    favoritesHydrated &&
+    languageHydrated &&
+    themeHydrated &&
+    userPreferencesHydrated &&
+    fontsLoaded;
 
   useEffect(() => {
     if (isReady) {
@@ -57,15 +65,17 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <GestureHandlerRootView style={styles.root}>
-        {isReady ? (
-          <AppContent />
-        ) : (
-          <View style={styles.boot}>
-            <LoadingSpinner fullscreen />
-          </View>
-        )}
-      </GestureHandlerRootView>
+      <UserProvider>
+        <GestureHandlerRootView style={styles.root}>
+          {isReady ? (
+            <AppContent />
+          ) : (
+            <View style={styles.boot}>
+              <LoadingSpinner fullscreen />
+            </View>
+          )}
+        </GestureHandlerRootView>
+      </UserProvider>
     </ThemeProvider>
   );
 }

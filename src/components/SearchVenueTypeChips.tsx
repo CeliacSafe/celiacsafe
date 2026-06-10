@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import FilterChipRow from './FilterChipRow';
+import { useProfileDietaryFilter } from '../hooks/useProfileDietaryFilter';
 import { PRIMARY_VENUE_TYPES } from '../data/filterOptions';
 import { useAppLanguage } from '../i18n/useAppLanguage';
 import { VENUE_TYPE_NAMES } from '../i18n/lookups';
@@ -33,9 +34,11 @@ function SearchVenueTypeChips({ restaurants }: SearchVenueTypeChipsProps) {
   const onlyAoecsCertified = useFilterStore((s) => s.onlyAoecsCertified);
   const dietVegan = useFilterStore((s) => s.dietVegan);
   const dietVegetarian = useFilterStore((s) => s.dietVegetarian);
+  const dietLactoseFree = useFilterStore((s) => s.dietLactoseFree);
   const minRating = useFilterStore((s) => s.minRating);
   const categoryTab = useFilterStore((s) => s.categoryTab);
   const setVenueTypeSingle = useFilterStore((s) => s.setVenueTypeSingle);
+  const profileDietary = useProfileDietaryFilter();
 
   const filterContext = useMemo(
     () =>
@@ -51,8 +54,10 @@ function SearchVenueTypeChips({ restaurants }: SearchVenueTypeChipsProps) {
         onlyAoecsCertified,
         dietVegan,
         dietVegetarian,
+        dietLactoseFree,
         minRating,
         categoryTab,
+        profileDietary,
       }),
     [
       searchQuery,
@@ -66,8 +71,10 @@ function SearchVenueTypeChips({ restaurants }: SearchVenueTypeChipsProps) {
       onlyAoecsCertified,
       dietVegan,
       dietVegetarian,
+      dietLactoseFree,
       minRating,
       categoryTab,
+      profileDietary,
     ]
   );
 

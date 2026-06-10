@@ -8,6 +8,7 @@ import { type AppColors } from '../theme/palette';
 import { radius, spacing } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
 import { restaurantHasMapCoordinates } from '../utils/platformLinks';
+import { getMapPinStyle } from '../utils/mapPinStyle';
 
 interface RestaurantMiniMapProps {
   restaurant: Restaurant;
@@ -34,6 +35,8 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
       ...MINI_DELTA,
     };
   }, [restaurant.latitude, restaurant.longitude]);
+
+  const pinStyle = useMemo(() => getMapPinStyle(restaurant), [restaurant]);
 
   const [tracksViewChanges, setTracksViewChanges] = useState(Platform.OS === 'android');
 
@@ -62,7 +65,7 @@ const RestaurantMiniMap = memo(function RestaurantMiniMap({
       liteMode={Platform.OS === 'android'}
     >
       <Marker coordinate={region} tracksViewChanges={tracksViewChanges}>
-        <CustomMarker />
+        <CustomMarker pinStyle={pinStyle} />
       </Marker>
     </MapView>
   );
