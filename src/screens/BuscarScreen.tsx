@@ -279,10 +279,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
               {' '}
               <Text style={styles.valuePropositionTail}>{t('search.value_proposition_tail')}</Text>
             </Text>
-            <Text style={styles.greeting}>
-              {t('search.greeting_line1')}
-              <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
-            </Text>
           </View>
           <LanguageSwitcher variant="header" />
         </View>
@@ -533,17 +529,6 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   valuePropositionTail: {
     fontFamily: fontFamilies.sans,
     color: colors.textSecondary,
-  },
-  greeting: {
-    fontFamily: fontFamilies.serifRegular,
-    fontSize: 30,
-    lineHeight: 33,
-    letterSpacing: -0.6,
-    color: colors.textPrimary,
-  },
-  greetingAccent: {
-    fontFamily: fontFamilies.serifItalic,
-    color: colors.accent,
   },
   list: {
     flex: 1,
