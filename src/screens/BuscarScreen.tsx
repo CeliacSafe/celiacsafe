@@ -258,6 +258,11 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         <View style={styles.editorialHeader}>
           <View style={styles.editorialLeft}>
             <AppBrandMark />
+            <Text style={styles.valueProposition} accessibilityRole="text">
+              <Text style={styles.valuePropositionLead}>{t('search.value_proposition_lead')}</Text>
+              {' '}
+              <Text style={styles.valuePropositionTail}>{t('search.value_proposition_tail')}</Text>
+            </Text>
             <Text style={styles.greeting}>
               {t('search.greeting_line1')}
               <Text style={styles.greetingAccent}>{t('search.greeting_accent')}</Text>
@@ -480,6 +485,21 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     flex: 1,
     gap: spacing.sm,
     minWidth: 0,
+  },
+  valueProposition: {
+    fontFamily: fontFamilies.sans,
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: 0.1,
+    maxWidth: 320,
+  },
+  valuePropositionLead: {
+    fontFamily: fontFamilies.sansSemiBold,
+    color: colors.primary,
+  },
+  valuePropositionTail: {
+    fontFamily: fontFamilies.sans,
+    color: colors.textSecondary,
   },
   greeting: {
     fontFamily: fontFamilies.serifRegular,
