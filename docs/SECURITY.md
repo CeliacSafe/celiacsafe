@@ -18,6 +18,7 @@ In **dieser Reihenfolge** ausführen (falls noch nicht geschehen):
 | 008 | `008_audit_and_staff_submissions.sql` | Audit-Log-Trigger, `updated_by`, Staff-CSV-Import, Rate-Limit-Ausnahme für Staff |
 | 009 | `009_add_premium_partner.sql` | `is_premium_partner`-Flag + Index |
 | 010 | `010_enforce_mfa_aal2.sql` | MFA/AAL2 in `is_admin()`/`is_staff()` erzwingen |
+| 011 | `011_enable_rls_migrations_table.sql` | RLS auf `_celiacsafe_migrations` (Supabase Lint) |
 
 Lokal (optional): `npm run supabase:migrate` mit `SUPABASE_DB_PASSWORD` in `.env`.
 

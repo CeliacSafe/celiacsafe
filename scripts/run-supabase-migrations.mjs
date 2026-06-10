@@ -100,6 +100,10 @@ async function ensureMigrationTable(client) {
       applied_at timestamptz not null default now()
     );
   `);
+  await client.query(`
+    alter table public._celiacsafe_migrations enable row level security;
+    revoke all on table public._celiacsafe_migrations from anon, authenticated;
+  `);
 }
 
 async function isApplied(client, id) {

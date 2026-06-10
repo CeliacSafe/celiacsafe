@@ -66,10 +66,16 @@ const CHECKS = [
     ) as ok`,
   },
   {
-    name: 'Staff von Rate-Limit ausgenommen',
-    sql: `select pg_get_functiondef(p.oid) like '%is_staff()%' as ok
-      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname = 'public' and p.proname = 'enforce_submission_rate_limit'`,
+    name: 'RLS auf allen public-Tabellen',
+    sql: `select not exists (
+      select 1
+      from pg_class c
+      join pg_namespace n on n.oid = c.relnamespace
+      where n.nspname = 'public'
+        and c.relkind = 'r'
+        and c.relname not like 'pg_%'
+        and c.relrowsecurity = false
+    ) as ok`,
   },
 ];
 
