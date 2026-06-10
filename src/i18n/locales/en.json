@@ -41,7 +41,20 @@
     "location_tap_to_enable": "Tap to sort by distance",
     "load_more": "Load more",
     "showing_nearby": "{{shown}} of {{total}} nearby",
-    "offline_stale": "Offline – showing saved data. Tap to refresh."
+    "offline_stale": "Offline – showing saved data. Tap to refresh.",
+    "featured_cities_title": "Featured",
+    "featured_cities_subtitle": "Explore cities with verified gluten-free restaurants",
+    "featured_city_palma": "Palma de Mallorca",
+    "featured_city_madrid": "Madrid",
+    "featured_city_barcelona": "Barcelona",
+    "featured_city_berlin": "Berlin",
+    "featured_region_balearic": "Balearic Islands",
+    "featured_region_madrid": "Community of Madrid",
+    "featured_region_catalonia": "Catalonia",
+    "featured_region_berlin": "Germany",
+    "featured_city_count_one": "{{count}} restaurant",
+    "featured_city_count_other": "{{count}} restaurants",
+    "featured_city_a11y": "Search restaurants in {{city}}, {{count}} results"
   },
   "filter": {
     "title": "Filters",

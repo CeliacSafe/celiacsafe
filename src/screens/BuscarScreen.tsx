@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
 import AppBrandMark from '../components/AppBrandMark';
+import FeaturedCities from '../components/FeaturedCities';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
@@ -99,6 +100,10 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const [locationRequested, setLocationRequested] = useState(false);
   const listRef = useRef<FlatList<Restaurant>>(null);
 
+  const handleFeaturedCitySelect = useCallback(() => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, []);
+
   const handleHomePress = useCallback(() => {
     hapticLight();
     listRef.current?.scrollToOffset({ offset: 0, animated: true });
@@ -156,6 +161,9 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   );
 
   const isBrowsingNearby = !hasActiveFilters() && searchQuery.trim().length === 0;
+  const showFeaturedCities = isBrowsingNearby;
+  const hideNearbyList =
+    isBrowsingNearby && (locationLoading || !location) && searchQuery.trim().length === 0;
 
   const filteredRestaurants = useMemo(
     () => applyFilters(restaurants, debouncedSearchQuery, filterCriteria, sortBy),
@@ -174,11 +182,14 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   }, [filteredRestaurants, isBrowsingNearby, location]);
 
   const displayRestaurants = useMemo(() => {
+    if (hideNearbyList) {
+      return [];
+    }
     if (!isBrowsingNearby) {
       return sortedRestaurants;
     }
     return sortedRestaurants.slice(0, visibleCount);
-  }, [isBrowsingNearby, sortedRestaurants, visibleCount]);
+  }, [hideNearbyList, isBrowsingNearby, sortedRestaurants, visibleCount]);
 
   const hasMoreNearby = isBrowsingNearby && visibleCount < sortedRestaurants.length;
 
@@ -296,7 +307,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
         ) : null}
 
         <View style={styles.feedHeader}>
-          {isBrowsingNearby ? (
+          {isBrowsingNearby && !hideNearbyList ? (
             <Pressable
               onPress={
                 Platform.OS === 'web' && !locationLoading
@@ -328,9 +339,15 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
             </Pressable>
           ) : null}
 
-          <View style={styles.counterRow}>
-            <Text style={styles.counterText}>{counterLabel}</Text>
-          </View>
+          {showFeaturedCities ? (
+            <FeaturedCities restaurants={restaurants} onSelectCity={handleFeaturedCitySelect} />
+          ) : null}
+
+          {!hideNearbyList ? (
+            <View style={styles.counterRow}>
+              <Text style={styles.counterText}>{counterLabel}</Text>
+            </View>
+          ) : null}
         </View>
       </View>
     ),
@@ -338,12 +355,15 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       colors,
       counterLabel,
       filtersOpen,
+      handleFeaturedCitySelect,
+      hideNearbyList,
       isBrowsingNearby,
       location,
       locationError,
       locationLoading,
       onRefresh,
       restaurants,
+      showFeaturedCities,
       styles,
       t,
     ]

@@ -41,7 +41,20 @@
     "location_tap_to_enable": "Toca para ordenar por distancia",
     "load_more": "Cargar más",
     "showing_nearby": "{{shown}} de {{total}} cerca",
-    "offline_stale": "Sin conexión: se muestran datos guardados. Toca para actualizar."
+    "offline_stale": "Sin conexión: se muestran datos guardados. Toca para actualizar.",
+    "featured_cities_title": "Destacados",
+    "featured_cities_subtitle": "Explora ciudades con restaurantes verificados sin gluten",
+    "featured_city_palma": "Palma de Mallorca",
+    "featured_city_madrid": "Madrid",
+    "featured_city_barcelona": "Barcelona",
+    "featured_city_berlin": "Berlin",
+    "featured_region_balearic": "Islas Baleares",
+    "featured_region_madrid": "Comunidad de Madrid",
+    "featured_region_catalonia": "Cataluña",
+    "featured_region_berlin": "Alemania",
+    "featured_city_count_one": "{{count}} restaurante",
+    "featured_city_count_other": "{{count}} restaurantes",
+    "featured_city_a11y": "Buscar restaurantes en {{city}}, {{count}} resultados"
   },
   "filter": {
     "title": "Filtros",
