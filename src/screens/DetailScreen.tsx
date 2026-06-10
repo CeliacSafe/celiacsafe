@@ -9,6 +9,7 @@ import DeliveryButtons from '../components/DeliveryButtons';
 import DescriptionBlock from '../components/DescriptionBlock';
 import DetailBodyHeader from '../components/DetailBodyHeader';
 import DetailHeader from '../components/DetailHeader';
+import DetailPrimaryActions from '../components/DetailPrimaryActions';
 import Disclaimer from '../components/Disclaimer';
 import EmptyState from '../components/EmptyState';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -65,7 +66,8 @@ export default function DetailScreen({ route, navigation }: Props) {
 
         <View style={styles.bodySheet}>
           <DetailBodyHeader restaurant={restaurant} />
-          <QuickActionsBar restaurant={restaurant} layout="grid" />
+          <DetailPrimaryActions restaurant={restaurant} />
+          <QuickActionsBar restaurant={restaurant} layout="grid" omitKeys={['call', 'maps']} />
           <DescriptionBlock restaurant={restaurant} />
           <OpeningHours restaurant={restaurant} />
           <VerificationSection restaurant={restaurant} />

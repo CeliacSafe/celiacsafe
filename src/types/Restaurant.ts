@@ -48,6 +48,23 @@ export type RegionCode =
   | 'DE-SH'
   | 'DE-TH';
 
+/** Vereinfachte Kategorie für Filter, Chips und Detail-UI. */
+export type RestaurantCategory = 'restaurant' | 'bakery' | 'pizza' | 'cafe' | 'fastfood';
+
+/** Begleit-Allergene / Diät-Hinweise für Zöliakie-Nutzer. */
+export interface RestaurantAllergens {
+  sin_lactosa?: boolean;
+  vegan?: boolean;
+  sin_trigo?: boolean;
+}
+
+/** CamelCase-Alias für API/Frontend-Konsumenten (entspricht snake_case in JSON). */
+export type RestaurantAllergensCamel = {
+  sinLactosa?: boolean;
+  vegan?: boolean;
+  sinTrigo?: boolean;
+};
+
 /** Art des Lokals — bestimmt Icon, Kategorie-Filter und Suchvorschläge. */
 export type VenueType =
   | 'restaurant'
@@ -170,13 +187,19 @@ export interface Restaurant {
   /** Apple-Maps-Profil (Teilen-Link vom Unternehmen). */
   apple_maps_url?: string;
   venue_type?: VenueType;
+  /** Vereinfachte Kategorie — optional; sonst aus `venue_type` abgeleitet. */
+  category?: RestaurantCategory;
   cuisine_types?: string[];
   price_range?: PriceRange;
   meal_types?: MealType[];
   verification_methods?: VerificationMethod[];
   last_verified_at?: string;
+  /** Offiziell von Verband (FACE/DZG/AOECS) geprüft — optional explizit gesetzt. */
+  is_certified?: boolean;
   face_program?: boolean;
   aoecs_certified?: boolean;
+  /** Begleit-Allergene / Diät — optional; sonst aus Beschreibung/cuisine abgeleitet. */
+  allergens?: RestaurantAllergens;
   national_authority?: string;
   phone?: string;
   whatsapp?: string;

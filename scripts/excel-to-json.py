@@ -75,6 +75,7 @@ STRING_FIELDS = {
     "postal_code",
     "address_street",
     "venue_type",
+    "category",
     "price_range",
     "national_authority",
     "phone",
@@ -103,8 +104,13 @@ LIST_FIELDS = {
 BOOLEAN_FIELDS = {
     "face_program",
     "aoecs_certified",
+    "is_certified",
     "is_published",
     "is_hidden",
+}
+
+JSON_OBJECT_FIELDS = {
+    "allergens",
 }
 
 FLOAT_FIELDS = {
@@ -187,6 +193,22 @@ def parse_list(value: Any) -> list[str] | None:
     parts = re.split(r"[;,|]", text)
     items = [part.strip() for part in parts if part.strip()]
     return items or None
+
+
+def parse_json_object(value: Any) -> dict[str, Any] | None:
+    """Parst JSON-Objekte (z. B. allergens) aus Excel-Zellen."""
+    if value is None or value == "":
+        return None
+    if isinstance(value, dict):
+        return value or None
+    text = str(value).strip()
+    if not text:
+        return None
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        return None
+    return parsed if isinstance(parsed, dict) else None
 
 
 def parse_float(value: Any) -> float | None:
@@ -434,6 +456,11 @@ def row_to_restaurant(row: dict[str, Any], row_number: int) -> dict[str, Any]:
 
     for field in BOOLEAN_FIELDS:
         parsed = parse_bool(row.get(field))
+        if parsed is not None:
+            restaurant[field] = parsed
+
+    for field in JSON_OBJECT_FIELDS:
+        parsed = parse_json_object(row.get(field))
         if parsed is not None:
             restaurant[field] = parsed
 

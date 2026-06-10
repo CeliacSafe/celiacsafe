@@ -15,6 +15,7 @@ import { radius, shadows, spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
 import type { Restaurant } from '../types/Restaurant';
 import { formatDistanceKm } from '../utils/restaurantDistance';
+import { isRestaurantCertified } from '../utils/restaurantFields';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -38,8 +39,7 @@ function RestaurantCard({
   const styles = useThemedStyles(createStyles);
   const { regionName, cuisineName, venueTypeName, description } = useLocalized();
   const isEditorial = variant === 'editorial';
-  const showVerificationBadge =
-    restaurant.face_program === true || restaurant.aoecs_certified === true;
+  const showVerificationBadge = isRestaurantCertified(restaurant);
   const regionLabel = regionName(restaurant.region_code);
   const venueLabel = restaurant.venue_type ? venueTypeName(restaurant.venue_type) : null;
   const cuisineTypes = restaurant.cuisine_types ?? [];

@@ -13,7 +13,7 @@ const RESTAURANT_SELECT = `
   google_maps_url, apple_maps_url,
   venue_type, cuisine_types,
   price_range, meal_types, verification_status, verification_methods, last_verified_at,
-  face_program, aoecs_certified, national_authority, phone, whatsapp, email, website,
+  face_program, aoecs_certified, is_certified, category, allergens, national_authority, phone, whatsapp, email, website,
   menu_url, instagram, facebook, opening_hours, seasonal_closure, description_es,
   description_en, description_de, featured_image_url, is_premium_partner,
   delivery_links ( platform, url, is_active ),

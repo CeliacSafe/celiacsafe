@@ -23,6 +23,8 @@ import { openPhone, openUrl, openWhatsApp } from '../utils/openExternalUrl';
 interface QuickActionsBarProps {
   restaurant: Restaurant;
   layout?: 'scroll' | 'grid';
+  /** Aktionen ausblenden, die woanders prominent angezeigt werden. */
+  omitKeys?: string[];
 }
 
 type ActionIconName = keyof typeof MaterialCommunityIcons.glyphMap;
@@ -39,7 +41,7 @@ function normalizeWebsiteUrl(url: string): string {
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
-function QuickActionsBar({ restaurant, layout = 'scroll' }: QuickActionsBarProps) {
+function QuickActionsBar({ restaurant, layout = 'scroll', omitKeys = [] }: QuickActionsBarProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
@@ -122,11 +124,17 @@ function QuickActionsBar({ restaurant, layout = 'scroll' }: QuickActionsBarProps
     return null;
   }
 
+  const visibleActions = actions.filter((action) => !omitKeys.includes(action.key));
+
+  if (visibleActions.length === 0) {
+    return null;
+  }
+
   if (layout === 'grid') {
     return (
       <View style={styles.gridWrapper}>
         <View style={styles.grid}>
-          {actions.map((action) => (
+          {visibleActions.map((action) => (
             <Pressable
               key={action.key}
               onPress={action.onPress}
@@ -151,7 +159,7 @@ function QuickActionsBar({ restaurant, layout = 'scroll' }: QuickActionsBarProps
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {actions.map((action) => (
+        {visibleActions.map((action) => (
           <Pressable
             key={action.key}
             onPress={action.onPress}
