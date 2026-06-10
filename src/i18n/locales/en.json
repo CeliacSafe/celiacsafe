@@ -166,7 +166,22 @@
     "cta_suggest_desc": "Know a gluten-free spot? Share it with us.",
     "cta_report_title": "Report an issue",
     "cta_report_desc": "Wrong details or closed down? Let us know.",
-    "recent_title": "Recently verified"
+    "recent_title": "Recently verified",
+    "feed_live": "Live",
+    "feed_subtitle": "Recent activity from the CeliacSafe community",
+    "feed_activity": "Rated safe by {{name}} {{timeAgo}}",
+    "feed_time_today": "today",
+    "feed_time_yesterday": "yesterday",
+    "feed_time_minutes_one": "{{count}} minute ago",
+    "feed_time_minutes_other": "{{count}} minutes ago",
+    "feed_time_hours_one": "{{count}} hour ago",
+    "feed_time_hours_other": "{{count}} hours ago",
+    "feed_time_days_one": "{{count}} day ago",
+    "feed_time_days_other": "{{count}} days ago",
+    "feed_time_weeks_one": "{{count}} week ago",
+    "feed_time_weeks_other": "{{count}} weeks ago",
+    "feed_time_months_one": "{{count}} month ago",
+    "feed_time_months_other": "{{count}} months ago"
   },
   "favorites": {
     "title": "Favourites",

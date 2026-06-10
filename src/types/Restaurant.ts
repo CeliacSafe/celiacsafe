@@ -194,6 +194,8 @@ export interface Restaurant {
   meal_types?: MealType[];
   verification_methods?: VerificationMethod[];
   last_verified_at?: string;
+  /** Name der Community-Person, die verifiziert hat (optional). */
+  verified_by?: string;
   /** Offiziell von Verband (FACE/DZG/AOECS) geprüft — optional explizit gesetzt. */
   is_certified?: boolean;
   face_program?: boolean;

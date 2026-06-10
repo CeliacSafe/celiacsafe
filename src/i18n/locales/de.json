@@ -166,7 +166,22 @@
     "cta_suggest_desc": "Kennst du ein glutenfreies Lokal? Teile es mit uns.",
     "cta_report_title": "Fehler melden",
     "cta_report_desc": "Falsche Angaben oder geschlossen? Sag uns Bescheid.",
-    "recent_title": "Zuletzt geprüft"
+    "recent_title": "Zuletzt geprüft",
+    "feed_live": "Live",
+    "feed_subtitle": "Aktuelle Aktivität aus der CeliacSafe-Community",
+    "feed_activity": "Von {{name}} {{timeAgo}} als sicher bewertet",
+    "feed_time_today": "heute",
+    "feed_time_yesterday": "gestern",
+    "feed_time_minutes_one": "vor {{count}} Minute",
+    "feed_time_minutes_other": "vor {{count}} Minuten",
+    "feed_time_hours_one": "vor {{count}} Stunde",
+    "feed_time_hours_other": "vor {{count}} Stunden",
+    "feed_time_days_one": "vor {{count}} Tag",
+    "feed_time_days_other": "vor {{count}} Tagen",
+    "feed_time_weeks_one": "vor {{count}} Woche",
+    "feed_time_weeks_other": "vor {{count}} Wochen",
+    "feed_time_months_one": "vor {{count}} Monat",
+    "feed_time_months_other": "vor {{count}} Monaten"
   },
   "favorites": {
     "title": "Favoriten",

@@ -6,7 +6,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import RestaurantCard from '../components/RestaurantCard';
+import RecentVerifiedFeed from '../components/RecentVerifiedFeed';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { ComunidadStackParamList } from '../navigation/ComunidadStack';
 import { useTheme } from '../theme/ThemeContext';
@@ -15,12 +15,9 @@ import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 import { fontFamilies } from '../theme/fonts';
 import { typography } from '../theme/typography';
-import type { Restaurant } from '../types/Restaurant';
 import { reportErrorViaEmail } from '../utils/submitViaEmail';
 
 type ComunidadNavigationProp = NativeStackNavigationProp<ComunidadStackParamList, 'ComunidadMain'>;
-
-const RECENT_LIMIT = 6;
 
 export function ComunidadScreen() {
   const { t } = useTranslation();
@@ -44,12 +41,6 @@ export function ComunidadScreen() {
       cities: cities.size,
       countries: countries.size,
     };
-  }, [restaurants]);
-
-  const recent = useMemo(() => {
-    return [...restaurants]
-      .sort((a, b) => (b.last_verified_at ?? '').localeCompare(a.last_verified_at ?? ''))
-      .slice(0, RECENT_LIMIT);
   }, [restaurants]);
 
   const openDetail = useCallback(
@@ -83,6 +74,9 @@ export function ComunidadScreen() {
           description={t('community.cta_suggest_desc')}
           onPress={() => navigation.navigate('SubmitRestaurant')}
         />
+
+        <RecentVerifiedFeed restaurants={restaurants} onSelectRestaurant={openDetail} />
+
         <ActionCard
           icon="alert-circle-outline"
           title={t('community.cta_report_title')}
@@ -91,20 +85,6 @@ export function ComunidadScreen() {
             reportErrorViaEmail();
           }}
         />
-
-        {recent.length > 0 ? (
-          <View style={styles.recentSection}>
-            <Text style={styles.sectionTitle}>{t('community.recent_title')}</Text>
-            {recent.map((item: Restaurant) => (
-              <RestaurantCard
-                key={item.id}
-                restaurant={item}
-                variant="editorial"
-                onPress={() => openDetail(item.id)}
-              />
-            ))}
-          </View>
-        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -244,13 +224,5 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   actionDesc: {
     ...typography.bodySmall,
     color: colors.textSecondary,
-  },
-  recentSection: {
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  sectionTitle: {
-    ...typography.h3,
-    color: colors.textPrimary,
   },
 });

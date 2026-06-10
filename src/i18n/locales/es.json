@@ -166,7 +166,22 @@
     "cta_suggest_desc": "¿Conoces un sitio sin gluten? Compártelo con nosotros.",
     "cta_report_title": "Reportar un error",
     "cta_report_desc": "¿Datos incorrectos o ha cerrado? Avísanos.",
-    "recent_title": "Verificados recientemente"
+    "recent_title": "Verificados recientemente",
+    "feed_live": "En vivo",
+    "feed_subtitle": "Actividad reciente de la comunidad CeliacSafe",
+    "feed_activity": "{{name}} lo valoró como seguro {{timeAgo}}",
+    "feed_time_today": "hoy",
+    "feed_time_yesterday": "ayer",
+    "feed_time_minutes_one": "hace {{count}} minuto",
+    "feed_time_minutes_other": "hace {{count}} minutos",
+    "feed_time_hours_one": "hace {{count}} hora",
+    "feed_time_hours_other": "hace {{count}} horas",
+    "feed_time_days_one": "hace {{count}} día",
+    "feed_time_days_other": "hace {{count}} días",
+    "feed_time_weeks_one": "hace {{count}} semana",
+    "feed_time_weeks_other": "hace {{count}} semanas",
+    "feed_time_months_one": "hace {{count}} mes",
+    "feed_time_months_other": "hace {{count}} meses"
   },
   "favorites": {
     "title": "Favoritos",
