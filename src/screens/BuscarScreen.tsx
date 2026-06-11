@@ -118,8 +118,12 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
 
   const isBrowsingNearby = !hasActiveFilters() && searchQuery.trim().length === 0;
   const showFeaturedCities = isBrowsingNearby;
+  /** Web: Liste auch ohne GPS (nach Name); Native: kurz warten bis Standort da ist. */
   const hideNearbyList =
-    isBrowsingNearby && (locationLoading || !location) && searchQuery.trim().length === 0;
+    Platform.OS !== 'web' &&
+    isBrowsingNearby &&
+    (locationLoading || !location) &&
+    searchQuery.trim().length === 0;
 
   const filteredRestaurants = useMemo(
     () => applyFilters(restaurants, debouncedSearchQuery, filterCriteria, sortBy),
@@ -264,7 +268,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
                 {locationLoading
                   ? t('search.location_requesting')
                   : locationError
-                    ? t('search.location_denied')
+                    ? locationError
                     : location
                       ? t('search.nearby_hint')
                       : Platform.OS === 'web'

@@ -1,11 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
+import SkeletonCard from '../components/SkeletonCard';
 import SwipeableRestaurantCard from '../components/SwipeableRestaurantCard';
 import { useRestaurants } from '../hooks/useRestaurants';
 import type { FavoritosStackParamList } from '../navigation/FavoritosStack';
@@ -17,6 +19,15 @@ import { spacing } from '../theme/spacing';
 import type { Restaurant } from '../types/Restaurant';
 
 type FavoritosNavigationProp = NativeStackNavigationProp<FavoritosStackParamList, 'FavoritosList'>;
+type RootTabNavigationProp = BottomTabNavigationProp<{
+  Buscar: undefined;
+  Comunidad: undefined;
+  Mapa: undefined;
+  Favoritos: undefined;
+  Perfil: undefined;
+}>;
+
+const LOADING_SKELETON_COUNT = 3;
 
 function FavoritesHeader({ count }: { count: number }) {
   const { t } = useTranslation();
@@ -42,6 +53,8 @@ export function FavoritosScreen() {
   const { restaurants, loading } = useRestaurants();
   const favorites = useFavoritesStore((state) => state.favorites);
 
+  const favoriteCount = Object.keys(favorites).length;
+
   const favoriteRestaurants = useMemo(() => {
     const ids = Object.entries(favorites)
       .sort(([, left], [, right]) => right.localeCompare(left))
@@ -59,6 +72,10 @@ export function FavoritosScreen() {
     [navigation]
   );
 
+  const goToSearch = useCallback(() => {
+    navigation.getParent<RootTabNavigationProp>()?.navigate('Buscar');
+  }, [navigation]);
+
   const renderItem = useCallback(
     ({ item }: { item: Restaurant }) => (
       <SwipeableRestaurantCard restaurant={item} onPress={() => openDetail(item.id)} />
@@ -67,9 +84,22 @@ export function FavoritosScreen() {
   );
 
   const listHeader = useMemo(
-    () => <FavoritesHeader count={favoriteRestaurants.length} />,
-    [favoriteRestaurants.length]
+    () => <FavoritesHeader count={favoriteCount} />,
+    [favoriteCount]
   );
+
+  if (loading && favoriteCount > 0) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <FavoritesHeader count={favoriteCount} />
+        <View style={styles.loadingList}>
+          {Array.from({ length: LOADING_SKELETON_COUNT }, (_, index) => (
+            <SkeletonCard key={`favorite-skeleton-${index}`} />
+          ))}
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (!loading && favoriteRestaurants.length === 0) {
     return (
@@ -80,6 +110,8 @@ export function FavoritosScreen() {
           iconName="heart-outline"
           title={t('favorites.empty_title')}
           description={t('favorites.empty_description')}
+          actionLabel={t('favorites.empty_discover_cta')}
+          onAction={goToSearch}
         />
       </SafeAreaView>
     );
@@ -126,15 +158,20 @@ const createHeaderStyles = (colors: AppColors) =>
     },
   });
 
-const createStyles = (colors: AppColors) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  listContent: {
-    paddingHorizontal: spacing.screenPadding,
-    paddingBottom: spacing.xxl,
-  },
-});
+const createStyles = (colors: AppColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    listContent: {
+      paddingHorizontal: spacing.screenPadding,
+      paddingBottom: spacing.xxl,
+    },
+    loadingList: {
+      paddingHorizontal: spacing.screenPadding,
+      gap: spacing.md,
+    },
+  });
 
 // i18n-migrated

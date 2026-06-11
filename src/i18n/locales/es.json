@@ -37,6 +37,10 @@
     "location_requesting": "Obteniendo ubicación…",
     "location_denied": "Sin ubicación — ordenados por nombre.",
     "location_tap_to_enable": "Toca para ordenar por distancia",
+    "location_error_denied": "Acceso a ubicación denegado — restaurantes ordenados por nombre.",
+    "location_error_timeout": "No se pudo obtener la ubicación a tiempo. Inténtalo de nuevo.",
+    "location_error_generic": "No se pudo obtener tu ubicación.",
+    "location_error_unsupported": "Tu navegador no admite geolocalización.",
     "load_more": "Cargar más",
     "showing_nearby": "{{shown}} de {{total}} cerca",
     "offline_stale": "Sin conexión: se muestran datos guardados. Toca para actualizar.",
@@ -190,6 +194,7 @@
     "count_other": "{{count}} restaurantes guardados",
     "empty_title": "Aún no hay favoritos",
     "empty_description": "Toca el corazón en cualquier restaurante para guardarlo",
+    "empty_discover_cta": "Descubrir restaurantes",
     "add": "Añadir a favoritos",
     "remove": "Eliminar"
   },

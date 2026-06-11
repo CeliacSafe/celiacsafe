@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState, type MutableRefObject } from 'react';
 
+import i18n from '../i18n';
+
 interface UserLocation {
   latitude: number;
   longitude: number;
@@ -15,20 +17,14 @@ interface UseUserLocationResult {
 
 const LOCATION_TIMEOUT_MS = 10_000;
 
-const PERMISSION_DENIED_MESSAGE =
-  'Necesitamos acceso a tu ubicación para mostrar restaurantes cercanos.';
-const TIMEOUT_MESSAGE = 'No se pudo obtener la ubicación a tiempo. Inténtalo de nuevo.';
-const GENERIC_ERROR_MESSAGE = 'No se pudo obtener tu ubicación.';
-const UNSUPPORTED_MESSAGE = 'Tu navegador no admite geolocalización.';
-
 function mapGeolocationError(code: number): string {
   switch (code) {
     case 1:
-      return PERMISSION_DENIED_MESSAGE;
+      return i18n.t('search.location_error_denied');
     case 3:
-      return TIMEOUT_MESSAGE;
+      return i18n.t('search.location_error_timeout');
     default:
-      return GENERIC_ERROR_MESSAGE;
+      return i18n.t('search.location_error_generic');
   }
 }
 
@@ -78,7 +74,7 @@ export function useUserLocation(): UseUserLocationResult {
     try {
       const geolocation = getBrowserGeolocation();
       if (!geolocation) {
-        const message = UNSUPPORTED_MESSAGE;
+        const message = i18n.t('search.location_error_unsupported');
         lastErrorRef.current = message;
         setError(message);
         return null;
@@ -88,7 +84,8 @@ export function useUserLocation(): UseUserLocationResult {
       setLocation(nextLocation);
       return nextLocation;
     } catch (cause: unknown) {
-      const message = cause instanceof Error ? cause.message : GENERIC_ERROR_MESSAGE;
+      const message =
+        cause instanceof Error ? cause.message : i18n.t('search.location_error_generic');
       lastErrorRef.current = message;
       setError(message);
       return null;

@@ -37,6 +37,10 @@
     "location_requesting": "Getting your location…",
     "location_denied": "No location — sorted by name.",
     "location_tap_to_enable": "Tap to sort by distance",
+    "location_error_denied": "Location access denied — restaurants are sorted by name.",
+    "location_error_timeout": "Could not get your location in time. Please try again.",
+    "location_error_generic": "Could not get your location.",
+    "location_error_unsupported": "Your browser does not support geolocation.",
     "load_more": "Load more",
     "showing_nearby": "{{shown}} of {{total}} nearby",
     "offline_stale": "Offline – showing saved data. Tap to refresh.",
@@ -190,6 +194,7 @@
     "count_other": "{{count}} saved restaurants",
     "empty_title": "No favourites yet",
     "empty_description": "Tap the heart on any restaurant to save it",
+    "empty_discover_cta": "Discover restaurants",
     "add": "Add to favourites",
     "remove": "Remove"
   },

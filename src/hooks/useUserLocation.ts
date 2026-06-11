@@ -1,6 +1,8 @@
 import * as Location from 'expo-location';
 import { useCallback, useRef, useState, type MutableRefObject } from 'react';
 
+import i18n from '../i18n';
+
 interface UserLocation {
   latitude: number;
   longitude: number;
@@ -17,19 +19,14 @@ interface UseUserLocationResult {
 
 const LOCATION_TIMEOUT_MS = 10_000;
 
-const PERMISSION_DENIED_MESSAGE =
-  'Necesitamos acceso a tu ubicación para mostrar restaurantes cercanos.';
-const TIMEOUT_MESSAGE = 'No se pudo obtener la ubicación a tiempo. Inténtalo de nuevo.';
-const GENERIC_ERROR_MESSAGE = 'No se pudo obtener tu ubicación.';
-
 function mapLocationError(cause: unknown): string {
   if (cause instanceof Error) {
     if (cause.message.includes('timeout') || cause.message.includes('Timeout')) {
-      return TIMEOUT_MESSAGE;
+      return i18n.t('search.location_error_timeout');
     }
-    return cause.message || GENERIC_ERROR_MESSAGE;
+    return cause.message || i18n.t('search.location_error_generic');
   }
-  return GENERIC_ERROR_MESSAGE;
+  return i18n.t('search.location_error_generic');
 }
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
@@ -67,7 +64,7 @@ export function useUserLocation(): UseUserLocationResult {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        const message = PERMISSION_DENIED_MESSAGE;
+        const message = i18n.t('search.location_error_denied');
         lastErrorRef.current = message;
         setError(message);
         return null;

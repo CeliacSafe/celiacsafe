@@ -37,6 +37,10 @@
     "location_requesting": "Standort wird ermittelt…",
     "location_denied": "Ohne Standort — sortiert nach Name.",
     "location_tap_to_enable": "Tippen, um nach Entfernung zu sortieren",
+    "location_error_denied": "Standortzugriff verweigert — Restaurants werden nach Name sortiert.",
+    "location_error_timeout": "Standort konnte nicht rechtzeitig ermittelt werden. Bitte erneut versuchen.",
+    "location_error_generic": "Standort konnte nicht ermittelt werden.",
+    "location_error_unsupported": "Dein Browser unterstützt keine Standortabfrage.",
     "load_more": "Mehr laden",
     "showing_nearby": "{{shown}} von {{total}} in der Nähe",
     "offline_stale": "Offline – es werden gespeicherte Daten angezeigt. Zum Aktualisieren tippen.",
@@ -190,6 +194,7 @@
     "count_other": "{{count}} gespeicherte Restaurants",
     "empty_title": "Noch keine Favoriten",
     "empty_description": "Tippe auf das Herz bei einem Restaurant, um es zu speichern",
+    "empty_discover_cta": "Restaurants entdecken",
     "add": "Zu Favoriten hinzufügen",
     "remove": "Entfernen"
   },
