@@ -10,17 +10,16 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import EmptyState from '../components/EmptyState';
-import AppBrandMark from '../components/AppBrandMark';
-import FeaturedCities from '../components/FeaturedCities';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
 import ProfileFilterBadge from '../components/ProfileFilterBadge';
 import SearchQuickFilterChips from '../components/SearchQuickFilterChips';
-import SearchQuickFiltersRow from '../components/SearchQuickFiltersRow';
+import SearchSortButton from '../components/SearchSortButton';
 import SearchFilterPanel from '../components/SearchFilterPanel';
 import SkeletonCard from '../components/SkeletonCard';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { SORT_OPTIONS } from '../data/filterOptions';
+import { useAppLanguage } from '../i18n/useAppLanguage';
 import { useFilterCriteria } from '../hooks/useFilterCriteria';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { hapticLight, hapticMedium } from '../utils/haptics';
@@ -33,7 +32,6 @@ import { useThemedStyles } from '../theme/useThemedStyles';
 import { type AppColors } from '../theme/palette';
 import { spacing, radius } from '../theme/spacing';
 
-import { fontFamilies } from '../theme/fonts';
 import { typography } from '../theme/typography';
 import { formatResultCount } from '../utils/pluralize';
 import { sortRestaurantsByDistance, restaurantDistanceKm } from '../utils/restaurantDistance';
@@ -72,6 +70,7 @@ const BuscarRestaurantRow = memo(function BuscarRestaurantRow({
 
 export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const { t } = useTranslation();
+  const language = useAppLanguage();
   const navigation = useNavigation<BuscarNavigationProp>();
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
@@ -89,10 +88,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const [visibleCount, setVisibleCount] = useState(NEARBY_PAGE_SIZE);
   const [locationRequested, setLocationRequested] = useState(false);
   const listRef = useRef<FlatList<Restaurant>>(null);
-
-  const handleFeaturedCitySelect = useCallback(() => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: true });
-  }, []);
 
   const handleHomePress = useCallback(() => {
     hapticLight();
@@ -118,7 +113,9 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   }, [resetFilters]);
 
   const isBrowsingNearby = !hasActiveFilters() && searchQuery.trim().length === 0;
-  const showFeaturedCities = isBrowsingNearby;
+  const sortLabel =
+    SORT_OPTIONS.find((option) => option.code === sortBy)?.labels[language] ??
+    SORT_OPTIONS[0].labels[language];
   /** Web: Liste auch ohne GPS (nach Name); Native: kurz warten bis Standort da ist. */
   const hideNearbyList =
     Platform.OS !== 'web' &&
@@ -196,14 +193,34 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   );
 
   const counterLabel = useMemo(() => {
-    if (isBrowsingNearby && sortedRestaurants.length > displayRestaurants.length) {
-      return t('search.showing_nearby', {
+    if (isBrowsingNearby) {
+      if (location) {
+        if (sortedRestaurants.length > displayRestaurants.length) {
+          return t('search.context_nearby_paged', {
+            shown: displayRestaurants.length,
+            total: sortedRestaurants.length,
+          }).toUpperCase();
+        }
+        return t('search.context_nearby', {
+          shown: displayRestaurants.length,
+          total: sortedRestaurants.length,
+        }).toUpperCase();
+      }
+      return t('search.context_sorted', {
         shown: displayRestaurants.length,
         total: sortedRestaurants.length,
+        sort: sortLabel,
       }).toUpperCase();
     }
     return formatResultCount(sortedRestaurants.length).toUpperCase();
-  }, [displayRestaurants.length, isBrowsingNearby, sortedRestaurants.length, t]);
+  }, [
+    displayRestaurants.length,
+    isBrowsingNearby,
+    location,
+    sortLabel,
+    sortedRestaurants.length,
+    t,
+  ]);
 
   const listSortKey = useMemo(() => {
     if (!location || !isBrowsingNearby) {
@@ -215,77 +232,48 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
   const listHeader = useMemo(
     () => (
       <View style={styles.scrollHeader}>
-        <View style={styles.editorialHeader}>
-          <View style={styles.editorialLeft}>
-            <AppBrandMark />
-            <Text style={styles.valueProposition} accessibilityRole="text">
-              <Text style={styles.valuePropositionLead}>{t('search.value_proposition_lead')}</Text>
-              {' '}
-              <Text style={styles.valuePropositionTail}>{t('search.value_proposition_tail')}</Text>
-            </Text>
-          </View>
-          <LanguageSwitcher variant="header" />
-        </View>
-
         {filtersOpen ? (
           <SearchFilterPanel restaurants={restaurants} onClose={() => setFiltersOpen(false)} />
         ) : null}
 
-        <SearchQuickFiltersRow restaurants={restaurants} />
-
         {syncError && restaurants.length > 0 ? (
           <Pressable
             onPress={onRefresh}
-            style={({ pressed }) => [styles.staleBanner, pressed && styles.nearbyBannerPressed]}
+            style={({ pressed }) => [styles.stalePill, pressed && styles.nearbyBannerPressed]}
           >
-            <MaterialCommunityIcons name="cloud-off-outline" size={16} color={colors.textSecondary} />
-            <Text style={styles.staleBannerText} numberOfLines={2}>
-              {t('search.offline_stale')}
+            <MaterialCommunityIcons name="cloud-off-outline" size={14} color={colors.textSecondary} />
+            <Text style={styles.stalePillText} numberOfLines={1}>
+              {t('search.offline_stale_short')}
             </Text>
-            <MaterialCommunityIcons name="refresh" size={16} color={colors.primary} />
+            <MaterialCommunityIcons name="refresh" size={14} color={colors.primary} />
           </Pressable>
         ) : null}
 
         <View style={styles.feedHeader}>
-          {isBrowsingNearby && !hideNearbyList ? (
+          {isBrowsingNearby && !hideNearbyList && !location ? (
             <Pressable
-              onPress={
-                Platform.OS === 'web' && !locationLoading
-                  ? handleRequestLocation
-                  : undefined
-              }
+              onPress={handleRequestLocation}
               disabled={locationLoading}
               style={({ pressed }) => [
                 styles.nearbyBanner,
-                Platform.OS === 'web' && !locationLoading && pressed && styles.nearbyBannerPressed,
+                pressed && styles.nearbyBannerPressed,
               ]}
-              accessibilityRole={Platform.OS === 'web' ? 'button' : undefined}
-              accessibilityLabel={
-                Platform.OS === 'web' ? t('search.location_tap_to_enable') : undefined
-              }
+              accessibilityRole="button"
+              accessibilityLabel={t('search.location_enable_sort')}
             >
               <MaterialCommunityIcons name="crosshairs-gps" size={16} color={colors.primary} />
               <Text style={styles.nearbyBannerText}>
                 {locationLoading
                   ? t('search.location_requesting')
-                  : locationError
-                    ? locationError
-                    : location
-                      ? t('search.nearby_hint')
-                      : Platform.OS === 'web'
-                        ? t('search.location_tap_to_enable')
-                        : t('search.nearby_hint')}
+                  : locationError ?? t('search.location_enable_sort')}
               </Text>
             </Pressable>
           ) : null}
 
-          {showFeaturedCities ? (
-            <FeaturedCities restaurants={restaurants} onSelectCity={handleFeaturedCitySelect} />
-          ) : null}
-
           {!hideNearbyList ? (
-            <View style={styles.counterRow}>
+            <View style={styles.contextRow}>
               <Text style={styles.counterText}>{counterLabel}</Text>
+              <SearchSortButton inline />
             </View>
           ) : null}
         </View>
@@ -295,7 +283,6 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       colors,
       counterLabel,
       filtersOpen,
-      handleFeaturedCitySelect,
       hideNearbyList,
       isBrowsingNearby,
       location,
@@ -303,9 +290,9 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
       locationLoading,
       onRefresh,
       restaurants,
-      showFeaturedCities,
       styles,
       t,
+      handleRequestLocation,
     ]
   );
 
@@ -446,34 +433,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   scrollHeader: {
     gap: spacing.sm,
     paddingBottom: spacing.sm,
-  },
-  editorialHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.md,
-  },
-  editorialLeft: {
-    flex: 1,
-    gap: spacing.sm,
-    minWidth: 0,
-  },
-  valueProposition: {
-    fontFamily: fontFamilies.sans,
-    fontSize: 14,
-    lineHeight: 20,
-    letterSpacing: 0.1,
-    maxWidth: 320,
-  },
-  valuePropositionLead: {
-    fontFamily: fontFamilies.sansSemiBold,
-    color: colors.primary,
-  },
-  valuePropositionTail: {
-    fontFamily: fontFamilies.sans,
-    color: colors.textSecondary,
+    paddingTop: spacing.xs,
   },
   list: {
     flex: 1,
@@ -495,20 +455,20 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   nearbyBannerPressed: {
     opacity: 0.85,
   },
-  staleBanner: {
-    marginHorizontal: spacing.screenPadding,
-    marginTop: spacing.xs,
+  stalePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    alignSelf: 'flex-start',
+    gap: spacing.xs,
     paddingHorizontal: spacing.cardPadding,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.lg,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceAlt,
+    maxWidth: '100%',
   },
-  staleBannerText: {
-    ...typography.bodySmall,
-    flex: 1,
+  stalePillText: {
+    ...typography.caption,
+    flexShrink: 1,
     color: colors.textSecondary,
   },
   nearbyBannerText: {
@@ -519,8 +479,15 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
   counterRow: {
     marginTop: spacing.xs,
   },
+  contextRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.xs,
+  },
   counterText: {
     ...typography.overline,
+    flex: 1,
     color: colors.primary,
   },
   listContent: {

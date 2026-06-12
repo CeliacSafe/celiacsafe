@@ -48,7 +48,7 @@ function FeaturedCities({ restaurants, onSelectCity }: FeaturedCitiesProps) {
   const tileGap = spacing.sm;
   const horizontalPadding = spacing.screenPadding * 2;
   const tileWidth = (width - horizontalPadding - tileGap) / 2;
-  const tileHeight = Math.max(132, Math.min(168, tileWidth * 0.72));
+  const tileHeight = Math.max(180, Math.min(200, tileWidth * 0.72));
 
   const cities = useMemo(
     () =>

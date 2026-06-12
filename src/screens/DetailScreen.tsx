@@ -9,6 +9,7 @@ import ContactDetailsSection from '../components/ContactDetailsSection';
 import DeliveryButtons from '../components/DeliveryButtons';
 import DescriptionBlock from '../components/DescriptionBlock';
 import DetailBodyHeader from '../components/DetailBodyHeader';
+import DetailCommunityActions from '../components/DetailCommunityActions';
 import DetailHeader from '../components/DetailHeader';
 import DetailPrimaryActions from '../components/DetailPrimaryActions';
 import Disclaimer from '../components/Disclaimer';
@@ -102,6 +103,7 @@ export default function DetailScreen({ route }: Props) {
           <DeliveryButtons restaurant={restaurant} />
           <ReservationSection restaurant={restaurant} />
           <ContactDetailsSection restaurant={restaurant} />
+          <DetailCommunityActions restaurantName={restaurant.name} />
           <Disclaimer variant="full" />
         </View>
       </ScrollView>

@@ -1,4 +1,4 @@
-import * as Application from 'expo-application';
+import { APP_VERSION_LABEL } from '../constants/appVersion';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -35,7 +35,7 @@ function PerfilScreen() {
   const { colors } = useTheme();
   const navigation = useNavigation<PerfilNavigationProp>();
   const styles = useThemedStyles(createStyles);
-  const appVersion = Application.nativeApplicationVersion ?? '1.0.0';
+  const appVersion = APP_VERSION_LABEL;
   const adminTapCount = useRef(0);
   const adminTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 

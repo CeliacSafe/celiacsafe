@@ -1,6 +1,6 @@
 {
   "name": "celiacsafe",
-  "version": "1.0.0",
+  "version": "0.9.0-beta",
   "main": "index.ts",
   "scripts": {
     "start": "powershell -ExecutionPolicy Bypass -File scripts/start-tunnel.ps1",

@@ -51,9 +51,19 @@ function OpeningHours({ restaurant }: OpeningHoursProps) {
     return null;
   }
 
+  const todayLine = hoursText.split('\n').find((line) => isTodayLine(line.trim(), todayName));
+  const isOpenNow = todayLine ? !isClosedLine(todayLine) : null;
+
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.title}>{`— ${t('detail.opening_hours')}`}</Text>
+      <View style={styles.titleRow}>
+        <Text style={styles.title}>{`— ${t('detail.opening_hours')}`}</Text>
+        {isOpenNow === true ? (
+          <Text style={styles.statusOpen}>{t('detail.open_now')}</Text>
+        ) : isOpenNow === false ? (
+          <Text style={styles.statusClosed}>{t('detail.closed_now')}</Text>
+        ) : null}
+      </View>
 
       <View style={styles.linesBox}>
         {hoursText.split('\n').map((line, index) => {
@@ -91,7 +101,23 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     ...typography.overline,
     color: colors.primary,
     letterSpacing: 1.6,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: spacing.sm + spacing.xs,
+    gap: spacing.sm,
+  },
+  statusOpen: {
+    ...typography.caption,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  statusClosed: {
+    ...typography.caption,
+    fontWeight: '700',
+    color: colors.heart,
   },
   linesBox: {
     gap: spacing.xs + 2,
