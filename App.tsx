@@ -39,8 +39,10 @@ function AppContent() {
     return (
       <BottomSheetModalProvider>
         <SafeAreaProvider>
-          <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
-          <OnboardingStack />
+          <NavigationContainer theme={navigationTheme}>
+            <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
+            <OnboardingStack />
+          </NavigationContainer>
         </SafeAreaProvider>
       </BottomSheetModalProvider>
     );
@@ -69,7 +71,7 @@ export default function App() {
   const [deepLinkChecked, setDeepLinkChecked] = useState(false);
 
   useEffect(() => {
-    if (!onboardingHydrated || deepLinkChecked) {
+    if (deepLinkChecked) {
       return;
     }
 
@@ -79,14 +81,31 @@ export default function App() {
       return;
     }
 
+    let cancelled = false;
+    const fallback = setTimeout(() => {
+      if (!cancelled) {
+        setDeepLinkChecked(true);
+      }
+    }, 2000);
+
     Linking.getInitialURL()
       .then((url) => {
         if (url && isRestaurantDeepLinkUrl(url)) {
           completeOnboarding();
         }
       })
-      .finally(() => setDeepLinkChecked(true));
-  }, [completeOnboarding, deepLinkChecked, onboardingHydrated]);
+      .finally(() => {
+        if (!cancelled) {
+          clearTimeout(fallback);
+          setDeepLinkChecked(true);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      clearTimeout(fallback);
+    };
+  }, [completeOnboarding, deepLinkChecked]);
 
   const isReady =
     favoritesHydrated &&
