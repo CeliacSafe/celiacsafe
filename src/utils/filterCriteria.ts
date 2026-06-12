@@ -15,3 +15,20 @@ export function withProfileDietary(
 export function hasActiveProfileDietary(dietary: UserDietaryPreferences): boolean {
   return dietary.lactoseFree || dietary.vegan || dietary.wheatFree;
 }
+
+/** Filter, die nur in der Suche gelten — auf der Karte werden sie ignoriert. */
+export function hasSearchOnlyFilters(state: {
+  dietVegan: boolean;
+  dietVegetarian: boolean;
+  dietLactoseFree: boolean;
+  minRating: string;
+  categoryTab: string;
+}): boolean {
+  return (
+    state.dietVegan ||
+    state.dietVegetarian ||
+    state.dietLactoseFree ||
+    state.minRating !== 'all' ||
+    state.categoryTab !== 'all'
+  );
+}

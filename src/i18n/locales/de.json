@@ -17,6 +17,25 @@
     "favorites": "Favoriten",
     "profile": "Profil"
   },
+  "onboarding": {
+    "step_indicator": "Schritt {{current}} von {{total}}",
+    "continue": "Weiter",
+    "mission_title": "Willkommen bei Celiac Safe",
+    "mission_body": "Celiac Safe hilft Menschen mit Zöliakie und Glutenunverträglichkeit, Restaurants in Spanien und Deutschland zu finden, die zu 100 % glutenfrei kochen — sicher und ohne Rätselraten.",
+    "mission_highlight": "Verifizierte Einträge. Keine Kreuzkontamination.",
+    "verification_title": "Wie wir prüfen",
+    "verification_body": "Wir listen Betriebe, die sich als vollständig glutenfrei deklarieren oder von Zöliakie-Verbänden zertifiziert sind.",
+    "verify_visit": "Eigener Besuch oder telefonische Bestätigung",
+    "verify_cert": "Zertifizierung (z. B. FACE, AOECS)",
+    "verify_declaration": "Erklärung des Betreibers",
+    "verification_disclaimer": "Die Angaben sind Orientierung — bitte immer beim Restaurant nachfragen.",
+    "location_title": "Restaurants in deiner Nähe",
+    "location_body": "Mit deinem Standort sortieren wir die Suche nach Entfernung und zentrieren die Karte auf dich.",
+    "location_enable": "Standort freigeben",
+    "location_skip": "Später",
+    "location_requesting": "Standort wird ermittelt…",
+    "location_web_hint": "Dein Browser fragt nach Erlaubnis — du kannst das auch später in der Suche tun."
+  },
   "search": {
     "brand_title": "Celiac Safe",
     "value_proposition_lead": "100 % glutenfreie Restaurants.",
@@ -44,6 +63,8 @@
     "load_more": "Mehr laden",
     "showing_nearby": "{{shown}} von {{total}} in der Nähe",
     "offline_stale": "Offline – es werden gespeicherte Daten angezeigt. Zum Aktualisieren tippen.",
+    "profile_filter_badge": "Profilfilter: {{filters}}",
+    "profile_filter_badge_a11y": "Aktive Profilfilter: {{filters}}. Tippen zum Bearbeiten im Profil.",
     "featured_cities_title": "Beliebte Regionen",
     "featured_cities_subtitle": "Entdecke Städte mit verifizierten glutenfreien Restaurants",
     "featured_city_palma": "Palma de Mallorca",
@@ -153,7 +174,9 @@
     "no_pins_description": "Passe die Filter an, um Treffer mit Koordinaten anzuzeigen.",
     "all_areas": "Alle Gebiete",
     "places_one": "{{count}} Ort",
-    "places_other": "{{count}} Orte"
+    "places_other": "{{count}} Orte",
+    "filter_sync_hint": "Einige Suchfilter (Diät-Chips, Bewertung, Kategorie) gelten nur in der Suche, nicht auf der Karte.",
+    "filter_sync_action": "Zur Suche"
   },
   "community": {
     "coming_soon": "Demnächst verfügbar",

@@ -19,6 +19,7 @@ interface FilterState {
   deliveryAvailable: boolean | null;
   dietVegan: boolean;
   dietVegetarian: boolean;
+  dietLactoseFree: boolean;
   minRating: RatingChip;
   categoryTab: SearchCategoryTab;
 
@@ -37,6 +38,9 @@ interface FilterState {
   setDeliveryAvailable: (value: boolean | null) => void;
   setDietVegan: (value: boolean) => void;
   setDietVegetarian: (value: boolean) => void;
+  setDietLactoseFree: (value: boolean) => void;
+  setQuickFilter: (id: QuickFilterId) => void;
+  getActiveQuickFilter: () => QuickFilterId;
   setMinRating: (value: RatingChip) => void;
   setCategoryTab: (tab: SearchCategoryTab) => void;
   resetFilters: () => void;
@@ -118,9 +122,9 @@ export const useFilterStore = create<FilterState>((set, get) => ({
 
   setDietVegetarian: (value) => set({ dietVegetarian: value }),
 
-  setDietLactoseFree: (value) => set({ dietLactoseFree: value }),
+  setDietLactoseFree: (value: boolean) => set({ dietLactoseFree: value }),
 
-  setQuickFilter: (id) => {
+  setQuickFilter: (id: QuickFilterId) => {
     const clearQuick = {
       dietLactoseFree: false,
       dietVegan: false,

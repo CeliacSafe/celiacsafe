@@ -15,6 +15,7 @@ import FeaturedCities from '../components/FeaturedCities';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchBarRow from '../components/SearchBarRow';
+import ProfileFilterBadge from '../components/ProfileFilterBadge';
 import SearchQuickFilterChips from '../components/SearchQuickFilterChips';
 import SearchQuickFiltersRow from '../components/SearchQuickFiltersRow';
 import SearchFilterPanel from '../components/SearchFilterPanel';
@@ -343,6 +344,7 @@ export function BuscarScreen(_screenProps: BuscarScreenProps) {
           />
         </View>
         <SearchQuickFilterChips />
+        <ProfileFilterBadge />
       </View>
 
       {loading ? (

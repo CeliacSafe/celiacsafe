@@ -17,6 +17,25 @@
     "favorites": "Favourites",
     "profile": "Profile"
   },
+  "onboarding": {
+    "step_indicator": "Step {{current}} of {{total}}",
+    "continue": "Continue",
+    "mission_title": "Welcome to Celiac Safe",
+    "mission_body": "Celiac Safe helps people with coeliac disease and gluten sensitivity find restaurants in Spain and Germany that cook 100% gluten-free — with confidence and without guesswork.",
+    "mission_highlight": "Verified listings. No cross-contamination.",
+    "verification_title": "How we verify",
+    "verification_body": "We list venues that self-declare as fully gluten-free or are certified by coeliac associations.",
+    "verify_visit": "Personal visit or phone confirmation",
+    "verify_cert": "Certification (e.g. FACE, AOECS)",
+    "verify_declaration": "Operator declaration",
+    "verification_disclaimer": "Data is indicative only — always confirm with the restaurant.",
+    "location_title": "Restaurants near you",
+    "location_body": "With your location we sort search results by distance and centre the map on you.",
+    "location_enable": "Enable location",
+    "location_skip": "Not now",
+    "location_requesting": "Getting your location…",
+    "location_web_hint": "Your browser will ask for permission — you can also do this later in Search."
+  },
   "search": {
     "brand_title": "Celiac Safe",
     "value_proposition_lead": "100% gluten-free restaurants.",
@@ -44,6 +63,8 @@
     "load_more": "Load more",
     "showing_nearby": "{{shown}} of {{total}} nearby",
     "offline_stale": "Offline – showing saved data. Tap to refresh.",
+    "profile_filter_badge": "Profile filters: {{filters}}",
+    "profile_filter_badge_a11y": "Active profile filters: {{filters}}. Tap to edit in Profile.",
     "featured_cities_title": "Featured",
     "featured_cities_subtitle": "Explore cities with verified gluten-free restaurants",
     "featured_city_palma": "Palma de Mallorca",
@@ -153,7 +174,9 @@
     "no_pins_description": "Adjust your filters to show venues with map coordinates.",
     "all_areas": "All areas",
     "places_one": "{{count}} place",
-    "places_other": "{{count}} places"
+    "places_other": "{{count}} places",
+    "filter_sync_hint": "Some search filters (diet chips, rating, category) only apply in Search, not on the map.",
+    "filter_sync_action": "Open Search"
   },
   "community": {
     "coming_soon": "Coming soon",

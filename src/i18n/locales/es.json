@@ -17,6 +17,25 @@
     "favorites": "Favoritos",
     "profile": "Perfil"
   },
+  "onboarding": {
+    "step_indicator": "Paso {{current}} de {{total}}",
+    "continue": "Continuar",
+    "mission_title": "Bienvenido a Celiac Safe",
+    "mission_body": "Celiac Safe ayuda a personas con celiaquía y sensibilidad al gluten a encontrar restaurantes en España y Alemania que cocinan 100 % sin gluten — con confianza y sin improvisar.",
+    "mission_highlight": "Fichas verificadas. Sin contaminación cruzada.",
+    "verification_title": "Cómo verificamos",
+    "verification_body": "Listamos establecimientos que se autodeclaran totalmente sin gluten o están certificados por asociaciones de celíacos.",
+    "verify_visit": "Visita propia o confirmación telefónica",
+    "verify_cert": "Certificación (p. ej. FACE, AOECS)",
+    "verify_declaration": "Declaración del operador",
+    "verification_disclaimer": "Los datos son orientativos — confirma siempre con el restaurante.",
+    "location_title": "Restaurantes cerca de ti",
+    "location_body": "Con tu ubicación ordenamos la búsqueda por distancia y centramos el mapa en ti.",
+    "location_enable": "Activar ubicación",
+    "location_skip": "Ahora no",
+    "location_requesting": "Obteniendo ubicación…",
+    "location_web_hint": "Tu navegador pedirá permiso — también puedes hacerlo más tarde en Buscar."
+  },
   "search": {
     "brand_title": "Celiac Safe",
     "value_proposition_lead": "Restaurantes 100 % sin gluten.",
@@ -44,6 +63,8 @@
     "load_more": "Cargar más",
     "showing_nearby": "{{shown}} de {{total}} cerca",
     "offline_stale": "Sin conexión: se muestran datos guardados. Toca para actualizar.",
+    "profile_filter_badge": "Filtros de perfil: {{filters}}",
+    "profile_filter_badge_a11y": "Filtros de perfil activos: {{filters}}. Toca para editar en Perfil.",
     "featured_cities_title": "Destacados",
     "featured_cities_subtitle": "Explora ciudades con restaurantes verificados sin gluten",
     "featured_city_palma": "Palma de Mallorca",
@@ -153,7 +174,9 @@
     "no_pins_description": "Ajusta los filtros para ver locales con coordenadas.",
     "all_areas": "Todas las zonas",
     "places_one": "{{count}} lugar",
-    "places_other": "{{count}} lugares"
+    "places_other": "{{count}} lugares",
+    "filter_sync_hint": "Algunos filtros de búsqueda (chips de dieta, valoración, categoría) solo aplican en Buscar, no en el mapa.",
+    "filter_sync_action": "Ir a Buscar"
   },
   "community": {
     "coming_soon": "Próximamente",

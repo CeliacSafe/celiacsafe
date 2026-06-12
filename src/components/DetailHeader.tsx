@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
@@ -49,7 +49,11 @@ function DetailHeader({ restaurant, onBack }: DetailHeaderProps) {
               accessibilityRole="button"
               style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
             >
-              <MaterialCommunityIcons name="arrow-left" size={20} color={colors.textPrimary} />
+              <MaterialCommunityIcons
+                name="arrow-left"
+                size={20}
+                color={Platform.OS === 'web' ? '#FFFFFF' : colors.textPrimary}
+              />
             </Pressable>
           ) : (
             <View style={styles.iconSpacer} />
@@ -90,7 +94,7 @@ const createStyles = (colors: AppColors) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: radius.pill,
-    backgroundColor: colors.overlay,
+    backgroundColor: Platform.OS === 'web' ? 'rgba(0,0,0,0.45)' : colors.overlay,
     alignItems: 'center',
     justifyContent: 'center',
   },

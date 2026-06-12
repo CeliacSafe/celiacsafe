@@ -6,20 +6,23 @@ import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 
 import LoadingSpinner from './src/components/LoadingSpinner';
 import { linking } from './src/navigation/linking';
+import OnboardingStack from './src/navigation/OnboardingStack';
 import { RootTabs } from './src/navigation/RootTabs';
 import { buildNavigationTheme } from './src/navigation/theme';
 import { useFavoritesStore } from './src/store/favoritesStore';
 import { useLanguageStore } from './src/store/languageStore';
 import { UserProvider } from './src/context/UserContext';
+import { useOnboardingStore } from './src/store/onboardingStore';
 import { useThemeStore } from './src/store/themeStore';
 import { useUserPreferencesStore } from './src/store/userPreferencesStore';
+import { isRestaurantDeepLinkUrl, isWebRestaurantDeepLink } from './src/utils/onboardingSkip';
 import { fontAssets } from './src/theme/fonts';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
@@ -30,6 +33,18 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 function AppContent() {
   const { colors, isDark } = useTheme();
   const navigationTheme = useMemo(() => buildNavigationTheme(colors, isDark), [colors, isDark]);
+  const hasCompletedOnboarding = useOnboardingStore((state) => state.hasCompletedOnboarding);
+
+  if (!hasCompletedOnboarding) {
+    return (
+      <BottomSheetModalProvider>
+        <SafeAreaProvider>
+          <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
+          <OnboardingStack />
+        </SafeAreaProvider>
+      </BottomSheetModalProvider>
+    );
+  }
 
   return (
     <BottomSheetModalProvider>
@@ -48,13 +63,38 @@ export default function App() {
   const languageHydrated = useLanguageStore((state) => state.hasHydrated);
   const themeHydrated = useThemeStore((state) => state.hasHydrated);
   const userPreferencesHydrated = useUserPreferencesStore((state) => state.hasHydrated);
+  const onboardingHydrated = useOnboardingStore((state) => state.hasHydrated);
+  const completeOnboarding = useOnboardingStore((state) => state.completeOnboarding);
   const [fontsLoaded] = useFonts(fontAssets);
+  const [deepLinkChecked, setDeepLinkChecked] = useState(false);
+
+  useEffect(() => {
+    if (!onboardingHydrated || deepLinkChecked) {
+      return;
+    }
+
+    if (isWebRestaurantDeepLink()) {
+      completeOnboarding();
+      setDeepLinkChecked(true);
+      return;
+    }
+
+    Linking.getInitialURL()
+      .then((url) => {
+        if (url && isRestaurantDeepLinkUrl(url)) {
+          completeOnboarding();
+        }
+      })
+      .finally(() => setDeepLinkChecked(true));
+  }, [completeOnboarding, deepLinkChecked, onboardingHydrated]);
 
   const isReady =
     favoritesHydrated &&
     languageHydrated &&
     themeHydrated &&
     userPreferencesHydrated &&
+    onboardingHydrated &&
+    deepLinkChecked &&
     fontsLoaded;
 
   useEffect(() => {

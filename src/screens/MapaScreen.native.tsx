@@ -8,6 +8,7 @@ import MapView, { PROVIDER_DEFAULT } from 'react-native-maps';
 
 import EmptyState from '../components/EmptyState';
 import LoadingSpinner from '../components/LoadingSpinner';
+import MapFilterSyncHint from '../components/MapFilterSyncHint';
 import MapSearchPill from '../components/MapSearchPill';
 import MapSelectedPreview from '../components/MapSelectedPreview';
 import RegionQuickJumps from '../components/RegionQuickJumps';
@@ -27,6 +28,7 @@ import { type AppColors } from '../theme/palette';
 import { spacing } from '../theme/spacing';
 import type { MapRegion } from '../types/MapRegion';
 import { hapticError, hapticLight, hapticMedium } from '../utils/haptics';
+import { hasSearchOnlyFilters } from '../utils/filterCriteria';
 import { toMapFilterCriteria } from '../utils/platformLinks';
 import { applyFilters } from '../utils/searchAndFilter';
 import { isKnownCountryCode } from '../utils/filterTextMatch';
@@ -61,6 +63,11 @@ export function MapaScreen() {
   const selectedCity = useFilterStore((state) => state.selectedCity);
   const sortBy = useFilterStore((state) => state.sortBy);
   const hasActiveFilters = useFilterStore((state) => state.hasActiveFilters);
+  const dietVegan = useFilterStore((state) => state.dietVegan);
+  const dietVegetarian = useFilterStore((state) => state.dietVegetarian);
+  const dietLactoseFree = useFilterStore((state) => state.dietLactoseFree);
+  const minRating = useFilterStore((state) => state.minRating);
+  const categoryTab = useFilterStore((state) => state.categoryTab);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const filterCriteria = useFilterCriteria();
 
@@ -100,6 +107,14 @@ export function MapaScreen() {
       ),
     [filteredRestaurants]
   );
+
+  const showSearchOnlyFilters = hasSearchOnlyFilters({
+    dietVegan,
+    dietVegetarian,
+    dietLactoseFree,
+    minRating,
+    categoryTab,
+  });
 
   const showNoPinsEmpty = hasActiveFilters() && mappableRestaurants.length === 0;
 
@@ -204,6 +219,7 @@ export function MapaScreen() {
           onMyLocationPress={handleMyLocationPress}
           locationLoading={locationLoading}
         />
+        {showSearchOnlyFilters ? <MapFilterSyncHint /> : null}
       </View>
 
       {locationLoading ? <LoadingSpinner fullscreen message={t('map.locating')} /> : null}
