@@ -2,9 +2,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BuscarStack from './BuscarStack';
+import { useTabBarBottomInset } from '../hooks/useTabBarBottomInset';
 import ComunidadStack from './ComunidadStack';
 import FavoritosStack from './FavoritosStack';
 import MapaStack from './MapaStack';
@@ -46,9 +46,11 @@ function createTabBarIcon(routeName: keyof RootTabParamList) {
   };
 }
 
+const TAB_BAR_CONTENT_HEIGHT = 56;
+
 export function RootTabs() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
+  const tabBarBottomInset = useTabBarBottomInset();
   const { colors } = useTheme();
   const favoriteCount = useFavoritesStore((state) => Object.keys(state.favorites).length);
 
@@ -68,8 +70,8 @@ export function RootTabs() {
           backgroundColor: colors.background,
           borderTopColor: colors.lineSoft,
           borderTopWidth: 1,
-          height: 56 + insets.bottom,
-          paddingBottom: insets.bottom + spacing.xs,
+          minHeight: TAB_BAR_CONTENT_HEIGHT + tabBarBottomInset,
+          paddingBottom: tabBarBottomInset + spacing.xs,
           paddingTop: spacing.sm,
         },
       }}

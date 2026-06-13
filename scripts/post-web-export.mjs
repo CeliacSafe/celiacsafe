@@ -47,6 +47,20 @@ html = html.replace(
   '<script type="module" src="$1"></script>'
 );
 
+html = html.replace(
+  /<meta name="viewport" content="([^"]*)"\s*\/?>/i,
+  (_, content) => {
+    const parts = content
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (!parts.some((part) => part.startsWith('viewport-fit='))) {
+      parts.push('viewport-fit=cover');
+    }
+    return `<meta name="viewport" content="${parts.join(', ')}" />`;
+  }
+);
+
 fs.writeFileSync(indexPath, html);
 
 console.log('post-web-export: _expo → expo-static kopiert, index.html angepasst (type=module).');

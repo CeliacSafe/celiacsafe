@@ -9,7 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useEffect, useMemo, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Linking, StyleSheet, View } from 'react-native';
+import { Linking, Platform, StyleSheet, View } from 'react-native';
 
 import LoadingSpinner from './src/components/LoadingSpinner';
 import { linking } from './src/navigation/linking';
@@ -121,6 +121,25 @@ export default function App() {
       SplashScreen.hideAsync().catch(() => undefined);
     }
   }, [isReady]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') {
+      return;
+    }
+
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport) {
+      return;
+    }
+
+    const content = viewport.getAttribute('content') ?? '';
+    if (!content.includes('viewport-fit=cover')) {
+      viewport.setAttribute(
+        'content',
+        `${content}${content ? ', ' : ''}viewport-fit=cover`.replace(/^,\s*/, '')
+      );
+    }
+  }, []);
 
   return (
     <ThemeProvider>
